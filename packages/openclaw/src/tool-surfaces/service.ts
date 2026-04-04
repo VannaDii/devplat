@@ -54,6 +54,7 @@ import {
   CreateAuditLogToolInputCodec,
   CreateMergeDecisionToolInputCodec,
   CreateRebaseResultToolInputCodec,
+  CreateTaskRecordToolInputCodec,
   CreateSpecRecordToolInputCodec,
   ExecuteCommandToolInputCodec,
   EvaluatePolicyActionToolInputCodec,
@@ -891,6 +892,31 @@ export function createRecordTelemetryEventTool(): AnyAgentTool {
 
       const event = await new TelemetryEventService().execute(decoded.value);
       return createTextResult(event);
+    },
+  };
+
+  return tool;
+}
+
+export function createTaskRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_task_record',
+    label: 'Create Task Record',
+    description:
+      'Normalize a queue task record before claim, execution, review, and merge lifecycle updates.',
+    parameters: readSchema(
+      'tool-create-task-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(CreateTaskRecordToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const record = new TaskQueueService().execute(decoded.value);
+      return Promise.resolve(createTextResult(record));
     },
   };
 

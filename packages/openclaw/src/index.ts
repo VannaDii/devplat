@@ -26,6 +26,7 @@ import {
   createRemediationPlanTool,
   createRememberMemoryEntryTool,
   createRecordTelemetryEventTool,
+  createTaskRecordTool,
   createReadStoredRecordTool,
   createRebaseResultTool,
   createReviewFindingTool,
@@ -116,6 +117,7 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createRememberMemoryEntryTool());
     api.registerTool(createEvaluatePolicyActionTool());
     api.registerTool(createRecordTelemetryEventTool());
+    api.registerTool(createTaskRecordTool());
     api.registerTool(createClaimTaskTool());
     api.registerTool(createUpdateTaskTool());
     api.registerTool(createReadStoredRecordTool());

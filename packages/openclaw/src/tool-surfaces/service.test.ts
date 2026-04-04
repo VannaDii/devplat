@@ -31,6 +31,7 @@ import {
   createStoreRecordTool,
   createSubmitGitHubActionTool,
   createSubmitPullRequestUpdateTool,
+  createTaskRecordTool,
   createUpdateTaskTool,
   createValidateArtifactTool,
   createVerifySonarBootstrapTool,
@@ -1024,6 +1025,35 @@ describe('tool surface service', () => {
       'tool-call-ls2',
       {},
     );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('creates task records from valid tool input', async () => {
+    const result = await createTaskRecordTool().execute('tool-call-tq1', {
+      id: 'queue-openclaw-1',
+      summary: ' Queue a Discord implementation slice ',
+      status: 'queued',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      taskId: 'task-queue-1',
+      sliceId: 'slice-queue-1',
+      threadId: 'thread-queue-1',
+    });
+
+    expect(result.details).toMatchObject({
+      id: 'queue-openclaw-1',
+      taskId: 'task-queue-1',
+      status: 'queued',
+      summary: 'Queue a Discord implementation slice',
+      trace: expect.arrayContaining(['queue:task-queue-1:queued']),
+    });
+  });
+
+  it('returns decode failures for invalid task record input', async () => {
+    const result = await createTaskRecordTool().execute('tool-call-tq2', {
+      id: 'queue-openclaw-2',
+    });
 
     expect(result.details).toMatchObject({ status: 'failed' });
   });

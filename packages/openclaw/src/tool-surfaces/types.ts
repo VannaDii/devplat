@@ -18,6 +18,7 @@ import type { TelemetryEvent } from '@vannadii/devplat-observability';
 import type { RebasePlan } from '@vannadii/devplat-branching';
 import type { StoreScope } from '@vannadii/devplat-storage';
 import type { PullRequestRecord } from '@vannadii/devplat-prs';
+import type { TaskRecord } from '@vannadii/devplat-queue';
 import type { ResearchBrief } from '@vannadii/devplat-research';
 import type { RemediationPlan } from '@vannadii/devplat-remediation';
 import type { ReviewFinding } from '@vannadii/devplat-review';
@@ -106,6 +107,8 @@ export interface EvaluatePolicyActionToolInput {
 }
 
 export type RecordTelemetryEventToolInput = TelemetryEvent;
+
+export type CreateTaskRecordToolInput = TaskRecord;
 
 export interface ReadStoredRecordToolInput {
   scope: StoreScope;

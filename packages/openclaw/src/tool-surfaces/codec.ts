@@ -27,6 +27,7 @@ import {
 } from '@vannadii/devplat-sonarcloud';
 import { SpecRecordCodec } from '@vannadii/devplat-specs';
 import { PullRequestRecordCodec } from '@vannadii/devplat-prs';
+import { TaskRecordCodec } from '@vannadii/devplat-queue';
 import { StoredRecordCodec } from '@vannadii/devplat-storage';
 
 import type {
@@ -42,6 +43,7 @@ import type {
   CreateAuditLogToolInput,
   CreateMergeDecisionToolInput,
   CreateRebaseResultToolInput,
+  CreateTaskRecordToolInput,
   CreateSpecRecordToolInput,
   ExecuteCommandToolInput,
   EvaluateSonarQualityGateToolInput,
@@ -175,6 +177,9 @@ export const EvaluatePolicyActionToolInputCodec: t.Type<EvaluatePolicyActionTool
 
 export const RecordTelemetryEventToolInputCodec: t.Type<RecordTelemetryEventToolInput> =
   TelemetryEventCodec as t.Type<RecordTelemetryEventToolInput>;
+
+export const CreateTaskRecordToolInputCodec: t.Type<CreateTaskRecordToolInput> =
+  TaskRecordCodec as t.Type<CreateTaskRecordToolInput>;
 
 export const ReadStoredRecordToolInputCodec: t.Type<ReadStoredRecordToolInput> =
   t.type({

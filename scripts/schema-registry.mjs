@@ -306,6 +306,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'CreateTaskRecordToolInput',
+    'schemas/tool-create-task-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'ReadStoredRecordToolInput',
     'schemas/tool-read-stored-record-params.schema.json',
   ],
