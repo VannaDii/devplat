@@ -58,6 +58,7 @@ import {
   CreateRebaseResultToolInputCodec,
   CreateTaskRecordToolInputCodec,
   CreateSpecRecordToolInputCodec,
+  EvaluateSlicePlanReadinessToolInputCodec,
   ExecuteCommandToolInputCodec,
   EvaluatePolicyActionToolInputCodec,
   EvaluateSonarQualityGateToolInputCodec,
@@ -276,6 +277,45 @@ export function createSlicePlanTool(): AnyAgentTool {
 
       const plan = new SlicePlanService().plan(decoded.value);
       return Promise.resolve(createTextResult(plan));
+    },
+  };
+
+  return tool;
+}
+
+export function createEvaluateSlicePlanReadinessTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'evaluate_slice_plan_readiness',
+    label: 'Evaluate Slice Plan Readiness',
+    description:
+      'Evaluate whether a slice plan is ready for execution given completed dependencies.',
+    parameters: readSchema(
+      'tool-evaluate-slice-plan-readiness-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        EvaluateSlicePlanReadinessToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const slicing = new SlicePlanService();
+      const plan = slicing.plan(decoded.value.plan);
+      const ready = slicing.readyForExecution(
+        plan,
+        decoded.value.completedSliceIds,
+      );
+      return Promise.resolve(
+        createTextResult({
+          plan,
+          completedSliceIds: decoded.value.completedSliceIds,
+          ready,
+        }),
+      );
     },
   };
 

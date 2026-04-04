@@ -8,6 +8,7 @@ import {
   createAuditLogTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
+  createEvaluateSlicePlanReadinessTool,
   createExecuteCommandTool,
   createEvaluatePolicyActionTool,
   createEvaluateSonarQualityGateTool,
@@ -173,6 +174,44 @@ describe('tool surface service', () => {
     const result = await createSlicePlanTool().execute('tool-call-sl2', {
       sliceId: 'slice-1',
     });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('evaluates slice plan readiness from valid tool input', async () => {
+    const result = await createEvaluateSlicePlanReadinessTool().execute(
+      'tool-call-sl3',
+      {
+        plan: {
+          sliceId: 'slice-2',
+          specId: 'spec-1',
+          title: ' Wire Discord controls ',
+          dependsOn: ['slice-0', 'slice-1'],
+          acceptanceCriteria: ['control persisted'],
+          doneConditions: ['tests pass'],
+          size: 'small',
+          updatedAt: '2026-04-04T00:00:00.000Z',
+        },
+        completedSliceIds: ['slice-0', 'slice-1'],
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      ready: true,
+      completedSliceIds: ['slice-0', 'slice-1'],
+      plan: {
+        title: 'Wire Discord controls',
+      },
+    });
+  });
+
+  it('returns decode failures for invalid slice readiness input', async () => {
+    const result = await createEvaluateSlicePlanReadinessTool().execute(
+      'tool-call-sl4',
+      {
+        completedSliceIds: ['slice-0'],
+      },
+    );
 
     expect(result.details).toMatchObject({ status: 'failed' });
   });

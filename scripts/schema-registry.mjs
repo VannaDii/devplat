@@ -186,6 +186,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'EvaluateSlicePlanReadinessToolInput',
+    'schemas/tool-evaluate-slice-plan-readiness-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'ResolveRuntimeConfigToolInput',
     'schemas/tool-resolve-runtime-config-params.schema.json',
   ],

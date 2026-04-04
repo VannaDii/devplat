@@ -20,6 +20,7 @@ import {
   createAuditLogTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
+  createEvaluateSlicePlanReadinessTool,
   createExecuteCommandTool,
   createEvaluatePolicyActionTool,
   createEvaluateSonarQualityGateTool,
@@ -100,6 +101,7 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createSpecRecordTool());
     api.registerTool(createApproveSpecRecordTool());
     api.registerTool(createSlicePlanTool());
+    api.registerTool(createEvaluateSlicePlanReadinessTool());
     api.registerTool(createResolveRuntimeConfigTool());
     api.registerTool(createArtifactEnvelopeTool());
     api.registerTool(createApprovalRecordTool());

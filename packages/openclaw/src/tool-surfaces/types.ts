@@ -42,6 +42,11 @@ export type ApproveSpecRecordToolInput = SpecRecord;
 
 export type CreateSlicePlanToolInput = SlicePlan;
 
+export interface EvaluateSlicePlanReadinessToolInput {
+  plan: SlicePlan;
+  completedSliceIds: string[];
+}
+
 export interface ResolveRuntimeConfigToolInput {
   env: Record<string, string>;
 }

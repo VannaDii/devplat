@@ -47,6 +47,7 @@ import type {
   CreateRebaseResultToolInput,
   CreateTaskRecordToolInput,
   CreateSpecRecordToolInput,
+  EvaluateSlicePlanReadinessToolInput,
   ExecuteCommandToolInput,
   EvaluateSonarQualityGateToolInput,
   EvaluatePolicyActionToolInput,
@@ -85,6 +86,12 @@ export const ApproveSpecRecordToolInputCodec: t.Type<ApproveSpecRecordToolInput>
 
 export const CreateSlicePlanToolInputCodec: t.Type<CreateSlicePlanToolInput> =
   SlicePlanCodec as t.Type<CreateSlicePlanToolInput>;
+
+export const EvaluateSlicePlanReadinessToolInputCodec: t.Type<EvaluateSlicePlanReadinessToolInput> =
+  t.type({
+    plan: SlicePlanCodec,
+    completedSliceIds: t.array(t.string),
+  });
 
 export const ResolveRuntimeConfigToolInputCodec: t.Type<ResolveRuntimeConfigToolInput> =
   t.type({
