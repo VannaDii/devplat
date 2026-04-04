@@ -40,6 +40,7 @@ import {
   createPlanRebaseDependentsTool,
   createSlicePlanTool,
   createSpecRecordTool,
+  createStoreRecordTool,
   createSubmitGitHubActionTool,
   createSubmitPullRequestUpdateTool,
   createUpdateTaskTool,
@@ -117,6 +118,7 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createUpdateTaskTool());
     api.registerTool(createReadStoredRecordTool());
     api.registerTool(createListStoredRecordsTool());
+    api.registerTool(createStoreRecordTool());
     api.registerTool(createSubmitPullRequestUpdateTool());
     api.registerTool(createPlanRebaseDependentsTool());
     api.registerTool(createSubmitGitHubActionTool());

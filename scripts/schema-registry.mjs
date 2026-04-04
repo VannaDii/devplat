@@ -312,6 +312,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'StoreRecordToolInput',
+    'schemas/tool-store-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'UpdateTaskToolInput',
     'schemas/tool-update-task-params.schema.json',
   ],

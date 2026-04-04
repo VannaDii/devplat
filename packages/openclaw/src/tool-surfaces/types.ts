@@ -11,6 +11,7 @@ import type {
   MergeDecisionArtifact,
   RebaseResultArtifact,
 } from '@vannadii/devplat-artifacts';
+import type { LifecycleStatus } from '@vannadii/devplat-core';
 import type { GitHubActionRequest } from '@vannadii/devplat-github';
 import type { MemoryEntry } from '@vannadii/devplat-memory';
 import type { TelemetryEvent } from '@vannadii/devplat-observability';
@@ -108,6 +109,23 @@ export interface ReadStoredRecordToolInput {
 
 export interface ListStoredRecordsToolInput {
   scope: StoreScope;
+}
+
+export interface StoreRecordToolRecord {
+  id: string;
+  key: string;
+  scope: StoreScope;
+  summary: string;
+  status: LifecycleStatus;
+  trace: string[];
+  updatedAt: string;
+  payload: Record<string, unknown>;
+}
+
+export interface StoreRecordToolInput {
+  record: StoreRecordToolRecord;
+  actorId: string;
+  privileged: boolean;
 }
 
 export interface SubmitPullRequestUpdateToolInput {

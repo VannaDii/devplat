@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/StoreRecordToolInput",
+  "definitions": {
+    "StoreRecordToolInput": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "$ref": "#/definitions/StoreRecordToolRecord"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "privileged": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "record",
+        "actorId",
+        "privileged"
+      ],
+      "additionalProperties": false
+    },
+    "StoreRecordToolRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/definitions/StoreScope"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      },
+      "required": [
+        "id",
+        "key",
+        "scope",
+        "summary",
+        "status",
+        "trace",
+        "updatedAt",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    "StoreScope": {
+      "type": "string",
+      "enum": [
+        "artifacts",
+        "memory",
+        "state",
+        "telemetry"
+      ]
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    }
+  }
+}

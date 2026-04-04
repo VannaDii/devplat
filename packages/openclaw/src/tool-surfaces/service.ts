@@ -66,6 +66,7 @@ import {
   ResolveRuntimeConfigToolInputCodec,
   RunGatesToolInputCodec,
   RunSupervisorStepToolInputCodec,
+  StoreRecordToolInputCodec,
   SubmitGitHubActionToolInputCodec,
   SubmitPullRequestUpdateToolInputCodec,
   UpdateTaskToolInputCodec,
@@ -922,6 +923,77 @@ export function createListStoredRecordsTool(): AnyAgentTool {
         status: 'ok',
         scope: decoded.value.scope,
         keys,
+      });
+    },
+  };
+
+  return tool;
+}
+
+export function createStoreRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'store_record',
+    label: 'Store Record',
+    description:
+      'Persist a structured DevPlat record through the file-backed Phase 0 storage layer when policy allows it.',
+    parameters: readSchema('tool-store-record-params.schema.json') as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(StoreRecordToolInputCodec, params);
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const request = decoded.value;
+      const policy = new DecisionPolicyService().evaluateControlAction(
+        'store-record',
+        request.privileged,
+      );
+
+      if (!policy.allowed) {
+        await new TelemetryEventService().record({
+          id: `telemetry:store-record:${String(Date.now())}`,
+          summary: `Blocked record storage for ${request.record.scope}/${request.record.key}`,
+          status: 'blocked',
+          trace: ['openclaw:store-record'],
+          updatedAt: new Date().toISOString(),
+          actorId: request.actorId,
+          action: 'store-record',
+          scope: 'storage',
+          details: {
+            scope: request.record.scope,
+            key: request.record.key,
+            blocked: true,
+          },
+        });
+        return createTextResult({
+          allowed: false,
+          policyDecisionId: policy.id,
+          scope: request.record.scope,
+          key: request.record.key,
+        });
+      }
+
+      const record = await new FileStoreService().store(request.record);
+      await new TelemetryEventService().record({
+        id: `telemetry:store-record:${String(Date.now())}`,
+        summary: `Stored record ${record.scope}/${record.key}`,
+        status: 'approved',
+        trace: ['openclaw:store-record'],
+        updatedAt: new Date().toISOString(),
+        actorId: request.actorId,
+        action: 'store-record',
+        scope: 'storage',
+        details: {
+          scope: record.scope,
+          key: record.key,
+          status: record.status,
+        },
+      });
+
+      return createTextResult({
+        allowed: true,
+        policyDecisionId: policy.id,
+        record,
       });
     },
   };

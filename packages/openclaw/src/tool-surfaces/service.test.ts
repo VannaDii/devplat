@@ -28,6 +28,7 @@ import {
   createRunSupervisorStepTool,
   createSlicePlanTool,
   createSpecRecordTool,
+  createStoreRecordTool,
   createSubmitGitHubActionTool,
   createSubmitPullRequestUpdateTool,
   createUpdateTaskTool,
@@ -975,6 +976,72 @@ describe('tool surface service', () => {
       'tool-call-ls2',
       {},
     );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('stores records from valid tool input when policy allows it', async () => {
+    const result = await createStoreRecordTool().execute('tool-call-ss1', {
+      record: {
+        id: 'storage-openclaw-write-1',
+        key: 'storage-openclaw-write-1',
+        scope: 'state',
+        summary: ' Persisted state snapshot ',
+        status: 'complete',
+        trace: [],
+        updatedAt: '2026-04-04T00:00:00.000Z',
+        payload: {
+          state: 'review',
+        },
+      },
+      actorId: 'operator-1',
+      privileged: false,
+    });
+
+    expect(result.details).toMatchObject({
+      allowed: true,
+      policyDecisionId: 'policy-store-record',
+      record: {
+        id: 'storage-openclaw-write-1',
+        key: 'storage-openclaw-write-1',
+        scope: 'state',
+        trace: expect.arrayContaining(['storage:state']),
+      },
+    });
+  });
+
+  it('blocks privileged record storage requests', async () => {
+    const result = await createStoreRecordTool().execute('tool-call-ss2', {
+      record: {
+        id: 'storage-openclaw-write-2',
+        key: 'storage-openclaw-write-2',
+        scope: 'telemetry',
+        summary: 'Blocked telemetry record',
+        status: 'review',
+        trace: [],
+        updatedAt: '2026-04-04T00:00:00.000Z',
+        payload: {
+          outcome: 'blocked',
+        },
+      },
+      actorId: 'operator-1',
+      privileged: true,
+    });
+
+    expect(result.details).toMatchObject({
+      allowed: false,
+      policyDecisionId: 'policy-store-record',
+      scope: 'telemetry',
+      key: 'storage-openclaw-write-2',
+    });
+  });
+
+  it('returns decode failures for invalid record storage input', async () => {
+    const result = await createStoreRecordTool().execute('tool-call-ss3', {
+      record: {
+        id: 'storage-openclaw-write-3',
+      },
+    });
 
     expect(result.details).toMatchObject({ status: 'failed' });
   });

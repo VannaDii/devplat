@@ -54,6 +54,7 @@ import type {
   ResolveRuntimeConfigToolInput,
   RunGatesToolInput,
   RunSupervisorStepToolInput,
+  StoreRecordToolInput,
   SubmitGitHubActionToolInput,
   SubmitPullRequestUpdateToolInput,
   UpdateTaskToolInput,
@@ -178,6 +179,12 @@ export const ListStoredRecordsToolInputCodec: t.Type<ListStoredRecordsToolInput>
   t.type({
     scope: StoredRecordCodec.props.scope,
   });
+
+export const StoreRecordToolInputCodec: t.Type<StoreRecordToolInput> = t.type({
+  record: StoredRecordCodec,
+  actorId: t.string,
+  privileged: t.boolean,
+});
 
 export const SubmitPullRequestUpdateToolInputCodec: t.Type<SubmitPullRequestUpdateToolInput> =
   t.type({
