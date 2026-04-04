@@ -33,6 +33,7 @@ import {
   createSubmitPullRequestUpdateTool,
   createUpdateTaskTool,
   createValidateArtifactTool,
+  createVerifySonarBootstrapTool,
 } from './service.js';
 
 describe('tool surface service', () => {
@@ -686,6 +687,53 @@ describe('tool surface service', () => {
       'tool-call-dc2',
       {
         id: 'control-1',
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('verifies Sonar bootstrap state from valid tool input', async () => {
+    const result = await createVerifySonarBootstrapTool().execute(
+      'tool-call-sb1',
+      {
+        projectKey: 'VannaDii_devplat',
+        qualityGateStatus: 'OK',
+        conditions: [
+          {
+            metricKey: 'coverage',
+            comparator: 'LT',
+            errorThreshold: '90',
+            actualValue: '99.69',
+          },
+          {
+            metricKey: 'new_coverage',
+            comparator: 'LT',
+            errorThreshold: '90',
+            actualValue: '100',
+          },
+        ],
+        evaluatedAt: '2026-04-04T00:00:00.000Z',
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      projectKey: 'VannaDii_devplat',
+      status: 'passed',
+      checks: {
+        qualityGateComputed: true,
+        qualityGatePassing: true,
+        overallCoverageCondition: true,
+        newCodeCoverageCondition: true,
+      },
+    });
+  });
+
+  it('returns decode failures for invalid Sonar bootstrap input', async () => {
+    const result = await createVerifySonarBootstrapTool().execute(
+      'tool-call-sb2',
+      {
+        projectKey: 'VannaDii_devplat',
       },
     );
 

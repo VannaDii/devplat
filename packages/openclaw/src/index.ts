@@ -45,6 +45,7 @@ import {
   createSubmitPullRequestUpdateTool,
   createUpdateTaskTool,
   createValidateArtifactTool,
+  createVerifySonarBootstrapTool,
 } from './tool-surfaces/service.js';
 
 function readSchema(fileName: string): Record<string, unknown> {
@@ -108,6 +109,7 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createOpenDiscordThreadTool());
     api.registerTool(createHandleDiscordApprovalTool());
     api.registerTool(createHandleDiscordControlTool());
+    api.registerTool(createVerifySonarBootstrapTool());
     api.registerTool(createEvaluateSonarQualityGateTool());
     api.registerTool(createReviewFindingTool());
     api.registerTool(createRemediationPlanTool());

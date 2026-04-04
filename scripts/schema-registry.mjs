@@ -258,6 +258,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'VerifySonarBootstrapToolInput',
+    'schemas/tool-verify-sonar-bootstrap-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'EvaluateSonarQualityGateToolInput',
     'schemas/tool-evaluate-sonar-quality-gate-params.schema.json',
   ],

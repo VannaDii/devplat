@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/VerifySonarBootstrapToolInput",
+  "definitions": {
+    "VerifySonarBootstrapToolInput": {
+      "$ref": "#/definitions/SonarBootstrapVerificationInput"
+    },
+    "SonarBootstrapVerificationInput": {
+      "type": "object",
+      "properties": {
+        "projectKey": {
+          "type": "string"
+        },
+        "qualityGateStatus": {
+          "$ref": "#/definitions/SonarApiQualityGateStatus"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SonarQualityGateConditionSnapshot"
+          }
+        },
+        "evaluatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectKey",
+        "qualityGateStatus",
+        "conditions",
+        "evaluatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "SonarApiQualityGateStatus": {
+      "type": "string",
+      "enum": [
+        "ERROR",
+        "NONE",
+        "OK"
+      ]
+    },
+    "SonarQualityGateConditionSnapshot": {
+      "type": "object",
+      "properties": {
+        "metricKey": {
+          "type": "string"
+        },
+        "comparator": {
+          "type": "string"
+        },
+        "errorThreshold": {
+          "type": "string"
+        },
+        "actualValue": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "metricKey",
+        "comparator",
+        "errorThreshold",
+        "actualValue"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

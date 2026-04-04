@@ -32,7 +32,10 @@ import { ResearchBriefService } from '@vannadii/devplat-research';
 import { RemediationPlanService } from '@vannadii/devplat-remediation';
 import { ReviewFindingsService } from '@vannadii/devplat-review';
 import { SlicePlanService } from '@vannadii/devplat-slicing';
-import { SonarQualityGateService } from '@vannadii/devplat-sonarcloud';
+import {
+  SonarBootstrapVerificationService,
+  SonarQualityGateService,
+} from '@vannadii/devplat-sonarcloud';
 import { SpecRecordService } from '@vannadii/devplat-specs';
 import { FileStoreService } from '@vannadii/devplat-storage';
 import { SupervisorCycleService } from '@vannadii/devplat-supervisor';
@@ -71,6 +74,7 @@ import {
   SubmitPullRequestUpdateToolInputCodec,
   UpdateTaskToolInputCodec,
   ValidateArtifactToolInputCodec,
+  VerifySonarBootstrapToolInputCodec,
 } from './codec.js';
 import { createToolPayloadText } from './logic.js';
 
@@ -682,6 +686,36 @@ export function createHandleDiscordControlTool(): AnyAgentTool {
         decoded.value,
       );
       return createTextResult(result);
+    },
+  };
+
+  return tool;
+}
+
+export function createVerifySonarBootstrapTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'verify_sonar_bootstrap',
+    label: 'Verify Sonar Bootstrap',
+    description:
+      'Verify that the configured Sonar project has a computed, passing quality gate with 90% overall and new-code coverage thresholds.',
+    parameters: readSchema(
+      'tool-verify-sonar-bootstrap-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        VerifySonarBootstrapToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const result = new SonarBootstrapVerificationService().execute(
+        decoded.value,
+      );
+      return Promise.resolve(createTextResult(result));
     },
   };
 

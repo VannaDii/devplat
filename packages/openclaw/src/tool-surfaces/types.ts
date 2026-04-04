@@ -22,7 +22,10 @@ import type { ResearchBrief } from '@vannadii/devplat-research';
 import type { RemediationPlan } from '@vannadii/devplat-remediation';
 import type { ReviewFinding } from '@vannadii/devplat-review';
 import type { SlicePlan } from '@vannadii/devplat-slicing';
-import type { SonarQualityGateResult } from '@vannadii/devplat-sonarcloud';
+import type {
+  SonarBootstrapVerificationInput,
+  SonarQualityGateResult,
+} from '@vannadii/devplat-sonarcloud';
 import type { SpecRecord } from '@vannadii/devplat-specs';
 
 export interface RunGatesToolInput {
@@ -68,6 +71,8 @@ export interface OpenDiscordThreadToolInput extends DiscordThreadSession {
 export type HandleDiscordApprovalToolInput = DiscordApprovalRequest;
 
 export type HandleDiscordControlToolInput = DiscordControlRequest;
+
+export type VerifySonarBootstrapToolInput = SonarBootstrapVerificationInput;
 
 export interface EvaluateSonarQualityGateToolInput {
   projectKey: SonarQualityGateResult['projectKey'];

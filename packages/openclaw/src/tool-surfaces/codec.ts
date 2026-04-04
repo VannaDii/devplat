@@ -21,7 +21,10 @@ import { ResearchBriefCodec } from '@vannadii/devplat-research';
 import { RemediationPlanCodec } from '@vannadii/devplat-remediation';
 import { ReviewFindingCodec } from '@vannadii/devplat-review';
 import { SlicePlanCodec } from '@vannadii/devplat-slicing';
-import { SonarQualityGateResultCodec } from '@vannadii/devplat-sonarcloud';
+import {
+  SonarBootstrapVerificationInputCodec,
+  SonarQualityGateResultCodec,
+} from '@vannadii/devplat-sonarcloud';
 import { SpecRecordCodec } from '@vannadii/devplat-specs';
 import { PullRequestRecordCodec } from '@vannadii/devplat-prs';
 import { StoredRecordCodec } from '@vannadii/devplat-storage';
@@ -59,6 +62,7 @@ import type {
   SubmitPullRequestUpdateToolInput,
   UpdateTaskToolInput,
   ValidateArtifactToolInput,
+  VerifySonarBootstrapToolInput,
 } from './types.js';
 
 export const RunGatesToolInputCodec: t.Type<RunGatesToolInput> = t.type({
@@ -139,6 +143,9 @@ export const HandleDiscordApprovalToolInputCodec: t.Type<HandleDiscordApprovalTo
 
 export const HandleDiscordControlToolInputCodec: t.Type<HandleDiscordControlToolInput> =
   DiscordControlRequestCodec as t.Type<HandleDiscordControlToolInput>;
+
+export const VerifySonarBootstrapToolInputCodec: t.Type<VerifySonarBootstrapToolInput> =
+  SonarBootstrapVerificationInputCodec as t.Type<VerifySonarBootstrapToolInput>;
 
 export const EvaluateSonarQualityGateToolInputCodec: t.Type<EvaluateSonarQualityGateToolInput> =
   t.type({
