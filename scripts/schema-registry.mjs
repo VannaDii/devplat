@@ -138,6 +138,24 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'CreateResearchBriefToolInput',
+    'schemas/tool-create-research-brief-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateSpecRecordToolInput',
+    'schemas/tool-create-spec-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateSlicePlanToolInput',
+    'schemas/tool-create-slice-plan-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'RunGatesToolInput',
     'schemas/tool-run-gates-params.schema.json',
   ],
@@ -146,6 +164,30 @@ export const schemaRegistry = [
     'tool-surfaces',
     'AllocateWorktreeToolInput',
     'schemas/tool-allocate-worktree-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'BindDiscordThreadToolInput',
+    'schemas/tool-bind-discord-thread-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'OpenDiscordThreadToolInput',
+    'schemas/tool-open-discord-thread-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'HandleDiscordApprovalToolInput',
+    'schemas/tool-handle-discord-approval-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'HandleDiscordControlToolInput',
+    'schemas/tool-handle-discord-control-params.schema.json',
   ],
   [
     'openclaw',

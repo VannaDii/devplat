@@ -8,14 +8,30 @@ import {
   ArtifactEnvelopeService,
 } from '@vannadii/devplat-artifacts';
 import { decodeWithCodec } from '@vannadii/devplat-core';
+import {
+  DiscordChannelBindingService,
+  DiscordControlPlaneService,
+  DiscordInteractiveApprovalService,
+  DiscordThreadSessionService,
+} from '@vannadii/devplat-discord';
 import { RunGatesService } from '@vannadii/devplat-gates';
 import { TaskQueueService } from '@vannadii/devplat-queue';
+import { ResearchBriefService } from '@vannadii/devplat-research';
+import { SlicePlanService } from '@vannadii/devplat-slicing';
+import { SpecRecordService } from '@vannadii/devplat-specs';
 import { SupervisorCycleService } from '@vannadii/devplat-supervisor';
 import { WorktreeAllocationService } from '@vannadii/devplat-worktrees';
 
 import {
   AllocateWorktreeToolInputCodec,
+  BindDiscordThreadToolInputCodec,
   ClaimTaskToolInputCodec,
+  CreateResearchBriefToolInputCodec,
+  CreateSlicePlanToolInputCodec,
+  CreateSpecRecordToolInputCodec,
+  HandleDiscordApprovalToolInputCodec,
+  HandleDiscordControlToolInputCodec,
+  OpenDiscordThreadToolInputCodec,
   RunGatesToolInputCodec,
   RunSupervisorStepToolInputCodec,
   UpdateTaskToolInputCodec,
@@ -80,6 +96,84 @@ export function createRunGatesTool(): AnyAgentTool {
   return tool;
 }
 
+export function createResearchBriefTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_research_brief',
+    label: 'Create Research Brief',
+    description:
+      'Normalize a research brief and return it as a structured DevPlat artifact.',
+    parameters: readSchema(
+      'tool-create-research-brief-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateResearchBriefToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new ResearchBriefService().toArtifact(decoded.value);
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createSpecRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_spec_record',
+    label: 'Create Spec Record',
+    description:
+      'Normalize a spec record and return it as a structured DevPlat artifact.',
+    parameters: readSchema(
+      'tool-create-spec-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(CreateSpecRecordToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new SpecRecordService().toArtifact(decoded.value);
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createSlicePlanTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_slice_plan',
+    label: 'Create Slice Plan',
+    description:
+      'Normalize a dependency-aware slice plan for implementation routing.',
+    parameters: readSchema(
+      'tool-create-slice-plan-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(CreateSlicePlanToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const plan = new SlicePlanService().plan(decoded.value);
+      return Promise.resolve(createTextResult(plan));
+    },
+  };
+
+  return tool;
+}
+
 export function createAllocateWorktreeTool(): AnyAgentTool {
   const tool: AnyAgentTool = {
     name: 'allocate_worktree',
@@ -105,6 +199,141 @@ export function createAllocateWorktreeTool(): AnyAgentTool {
         decoded.value.branchName,
       );
       return Promise.resolve(createTextResult(allocation));
+    },
+  };
+
+  return tool;
+}
+
+export function createBindDiscordThreadTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'bind_discord_thread',
+    label: 'Bind Discord Thread',
+    description:
+      'Bind a Discord thread to a deterministic spec, implementation, or audit routing key.',
+    parameters: readSchema(
+      'tool-bind-discord-thread-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(BindDiscordThreadToolInputCodec, params);
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const result = await new DiscordChannelBindingService().bindThread(
+        {
+          id: decoded.value.id,
+          summary: decoded.value.summary,
+          status: decoded.value.status,
+          trace: decoded.value.trace,
+          updatedAt: decoded.value.updatedAt,
+          guildId: decoded.value.guildId,
+          channelId: decoded.value.channelId,
+          kind: decoded.value.kind,
+          threadBindingMode: decoded.value.threadBindingMode,
+        },
+        decoded.value.threadId,
+        decoded.value.parentChannelId,
+        decoded.value.actorId,
+      );
+      return createTextResult(result);
+    },
+  };
+
+  return tool;
+}
+
+export function createOpenDiscordThreadTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'open_discord_thread',
+    label: 'Open Discord Thread',
+    description:
+      'Open and persist a Discord spec or implementation thread session with audit artifacts.',
+    parameters: readSchema(
+      'tool-open-discord-thread-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(OpenDiscordThreadToolInputCodec, params);
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const result = await new DiscordThreadSessionService().openThread(
+        {
+          id: decoded.value.id,
+          summary: decoded.value.summary,
+          status: decoded.value.status,
+          trace: decoded.value.trace,
+          updatedAt: decoded.value.updatedAt,
+          guildId: decoded.value.guildId,
+          channelId: decoded.value.channelId,
+          parentChannelId: decoded.value.parentChannelId,
+          threadId: decoded.value.threadId,
+          kind: decoded.value.kind,
+          specId: decoded.value.specId,
+          sliceId: decoded.value.sliceId,
+          artifactId: decoded.value.artifactId,
+        },
+        decoded.value.actorId,
+      );
+      return createTextResult(result);
+    },
+  };
+
+  return tool;
+}
+
+export function createHandleDiscordApprovalTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'handle_discord_approval',
+    label: 'Handle Discord Approval',
+    description:
+      'Process a Discord approval action with policy enforcement, audit artifacts, and telemetry.',
+    parameters: readSchema(
+      'tool-handle-discord-approval-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        HandleDiscordApprovalToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const result =
+        await new DiscordInteractiveApprovalService().handleApproval(
+          decoded.value,
+        );
+      return createTextResult(result);
+    },
+  };
+
+  return tool;
+}
+
+export function createHandleDiscordControlTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'handle_discord_control',
+    label: 'Handle Discord Control',
+    description:
+      'Process a thread-scoped Discord control action with policy checks and telemetry.',
+    parameters: readSchema(
+      'tool-handle-discord-control-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        HandleDiscordControlToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const result = await new DiscordControlPlaneService().handleAction(
+        decoded.value,
+      );
+      return createTextResult(result);
     },
   };
 

@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/BindDiscordThreadToolInput",
+  "definitions": {
+    "BindDiscordThreadToolInput": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "guildId": {
+          "type": "string"
+        },
+        "channelId": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/definitions/DiscordBindingKind"
+        },
+        "threadBindingMode": {
+          "type": "string",
+          "const": "inherit-parent"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "parentChannelId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "actorId",
+        "channelId",
+        "guildId",
+        "id",
+        "kind",
+        "parentChannelId",
+        "status",
+        "summary",
+        "threadBindingMode",
+        "threadId",
+        "trace",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    },
+    "DiscordBindingKind": {
+      "type": "string",
+      "enum": [
+        "spec",
+        "implementation",
+        "audit"
+      ]
+    }
+  }
+}

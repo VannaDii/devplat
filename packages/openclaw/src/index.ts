@@ -14,9 +14,16 @@ import {
 } from './plugin-config/index.js';
 import {
   createAllocateWorktreeTool,
+  createBindDiscordThreadTool,
   createClaimTaskTool,
+  createHandleDiscordApprovalTool,
+  createHandleDiscordControlTool,
+  createOpenDiscordThreadTool,
+  createResearchBriefTool,
   createRunGatesTool,
   createRunSupervisorStepTool,
+  createSlicePlanTool,
+  createSpecRecordTool,
   createUpdateTaskTool,
   createValidateArtifactTool,
 } from './tool-surfaces/service.js';
@@ -66,8 +73,15 @@ const devplatOpenClawPlugin = definePluginEntry({
     'OpenClaw capability bridge for the DevPlat Discord-first platform.',
   configSchema,
   register(api) {
+    api.registerTool(createResearchBriefTool());
+    api.registerTool(createSpecRecordTool());
+    api.registerTool(createSlicePlanTool());
     api.registerTool(createRunGatesTool());
     api.registerTool(createAllocateWorktreeTool());
+    api.registerTool(createBindDiscordThreadTool());
+    api.registerTool(createOpenDiscordThreadTool());
+    api.registerTool(createHandleDiscordApprovalTool());
+    api.registerTool(createHandleDiscordControlTool());
     api.registerTool(createClaimTaskTool());
     api.registerTool(createUpdateTaskTool());
     api.registerTool(createValidateArtifactTool());

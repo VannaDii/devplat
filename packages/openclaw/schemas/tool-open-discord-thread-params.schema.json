@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/OpenDiscordThreadToolInput",
+  "definitions": {
+    "OpenDiscordThreadToolInput": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "guildId": {
+          "type": "string"
+        },
+        "channelId": {
+          "type": "string"
+        },
+        "parentChannelId": {
+          "type": "string"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/definitions/DiscordThreadKind"
+        },
+        "specId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sliceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "artifactId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "actorId",
+        "artifactId",
+        "channelId",
+        "guildId",
+        "id",
+        "kind",
+        "parentChannelId",
+        "sliceId",
+        "specId",
+        "status",
+        "summary",
+        "threadId",
+        "trace",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    },
+    "DiscordThreadKind": {
+      "type": "string",
+      "enum": [
+        "spec",
+        "implementation"
+      ]
+    }
+  }
+}

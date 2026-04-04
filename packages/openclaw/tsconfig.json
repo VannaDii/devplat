@@ -31,6 +31,15 @@
       "path": "../queue"
     },
     {
+      "path": "../research"
+    },
+    {
+      "path": "../slicing"
+    },
+    {
+      "path": "../specs"
+    },
+    {
       "path": "../supervisor"
     },
     {

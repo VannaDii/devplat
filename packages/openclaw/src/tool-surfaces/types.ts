@@ -1,12 +1,42 @@
+import type {
+  DiscordApprovalRequest,
+  DiscordChannelBinding,
+  DiscordControlRequest,
+  DiscordThreadSession,
+} from '@vannadii/devplat-discord';
+import type { ResearchBrief } from '@vannadii/devplat-research';
+import type { SlicePlan } from '@vannadii/devplat-slicing';
+import type { SpecRecord } from '@vannadii/devplat-specs';
+
 export interface RunGatesToolInput {
   gateNames: string[];
   summary: string;
 }
 
+export type CreateResearchBriefToolInput = ResearchBrief;
+
+export type CreateSpecRecordToolInput = SpecRecord;
+
+export type CreateSlicePlanToolInput = SlicePlan;
+
 export interface AllocateWorktreeToolInput {
   taskId: string;
   branchName: string;
 }
+
+export interface BindDiscordThreadToolInput extends DiscordChannelBinding {
+  threadId: string;
+  parentChannelId: string;
+  actorId: string;
+}
+
+export interface OpenDiscordThreadToolInput extends DiscordThreadSession {
+  actorId: string;
+}
+
+export type HandleDiscordApprovalToolInput = DiscordApprovalRequest;
+
+export type HandleDiscordControlToolInput = DiscordControlRequest;
 
 export interface ClaimTaskToolInput {
   taskId: string;
