@@ -39,6 +39,7 @@ import {
   createRunGatesTool,
   createRunSupervisorStepTool,
   createPlanRebaseDependentsTool,
+  createPullRequestRecordTool,
   createSlicePlanTool,
   createSpecRecordTool,
   createStoreRecordTool,
@@ -123,6 +124,7 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createReadStoredRecordTool());
     api.registerTool(createListStoredRecordsTool());
     api.registerTool(createStoreRecordTool());
+    api.registerTool(createPullRequestRecordTool());
     api.registerTool(createSubmitPullRequestUpdateTool());
     api.registerTool(createPlanRebaseDependentsTool());
     api.registerTool(createSubmitGitHubActionTool());

@@ -136,6 +136,8 @@ export interface StoreRecordToolInput {
   privileged: boolean;
 }
 
+export type CreatePullRequestRecordToolInput = PullRequestRecord;
+
 export interface SubmitPullRequestUpdateToolInput {
   record: PullRequestRecord;
   actorId: string;

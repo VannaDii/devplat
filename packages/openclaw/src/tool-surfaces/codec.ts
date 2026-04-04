@@ -42,6 +42,7 @@ import type {
   CreateArtifactEnvelopeToolInput,
   CreateAuditLogToolInput,
   CreateMergeDecisionToolInput,
+  CreatePullRequestRecordToolInput,
   CreateRebaseResultToolInput,
   CreateTaskRecordToolInput,
   CreateSpecRecordToolInput,
@@ -197,6 +198,9 @@ export const StoreRecordToolInputCodec: t.Type<StoreRecordToolInput> = t.type({
   actorId: t.string,
   privileged: t.boolean,
 });
+
+export const CreatePullRequestRecordToolInputCodec: t.Type<CreatePullRequestRecordToolInput> =
+  PullRequestRecordCodec as t.Type<CreatePullRequestRecordToolInput>;
 
 export const SubmitPullRequestUpdateToolInputCodec: t.Type<SubmitPullRequestUpdateToolInput> =
   t.type({

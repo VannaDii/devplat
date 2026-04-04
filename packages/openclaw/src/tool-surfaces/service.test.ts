@@ -23,6 +23,7 @@ import {
   createOpenDiscordThreadTool,
   createResolveRuntimeConfigTool,
   createPlanRebaseDependentsTool,
+  createPullRequestRecordTool,
   createResearchBriefTool,
   createRunGatesTool,
   createRunSupervisorStepTool,
@@ -1120,6 +1121,43 @@ describe('tool surface service', () => {
         id: 'storage-openclaw-write-3',
       },
     });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('creates pull request records from valid tool input', async () => {
+    const result = await createPullRequestRecordTool().execute(
+      'tool-call-pr0',
+      {
+        prNumber: 42,
+        branchName: ' feature/discord-tools ',
+        baseBranch: ' main ',
+        title: ' Expand OpenClaw pull request wiring ',
+        labels: ['automation', 'automation', ' review '],
+        reviewState: 'review',
+        mergeReady: false,
+        updatedAt: '2026-04-04T00:00:00.000Z',
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      prNumber: 42,
+      branchName: 'feature/discord-tools',
+      baseBranch: 'main',
+      title: 'Expand OpenClaw pull request wiring',
+      labels: ['automation', 'review'],
+      reviewState: 'review',
+      mergeReady: false,
+    });
+  });
+
+  it('returns decode failures for invalid pull request record input', async () => {
+    const result = await createPullRequestRecordTool().execute(
+      'tool-call-prx',
+      {
+        prNumber: 42,
+      },
+    );
 
     expect(result.details).toMatchObject({ status: 'failed' });
   });

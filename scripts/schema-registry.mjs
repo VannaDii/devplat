@@ -336,6 +336,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'CreatePullRequestRecordToolInput',
+    'schemas/tool-create-pull-request-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'SubmitPullRequestUpdateToolInput',
     'schemas/tool-submit-pull-request-update-params.schema.json',
   ],

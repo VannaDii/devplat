@@ -53,6 +53,7 @@ import {
   CreateArtifactEnvelopeToolInputCodec,
   CreateAuditLogToolInputCodec,
   CreateMergeDecisionToolInputCodec,
+  CreatePullRequestRecordToolInputCodec,
   CreateRebaseResultToolInputCodec,
   CreateTaskRecordToolInputCodec,
   CreateSpecRecordToolInputCodec,
@@ -1055,6 +1056,34 @@ export function createStoreRecordTool(): AnyAgentTool {
         policyDecisionId: policy.id,
         record,
       });
+    },
+  };
+
+  return tool;
+}
+
+export function createPullRequestRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_pull_request_record',
+    label: 'Create Pull Request Record',
+    description:
+      'Normalize a pull request record before review, merge-readiness, and GitHub update decisions.',
+    parameters: readSchema(
+      'tool-create-pull-request-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreatePullRequestRecordToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const record = new PullRequestService().create(decoded.value);
+      return Promise.resolve(createTextResult(record));
     },
   };
 
