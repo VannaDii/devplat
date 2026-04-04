@@ -156,6 +156,18 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'ResolveRuntimeConfigToolInput',
+    'schemas/tool-resolve-runtime-config-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateArtifactEnvelopeToolInput',
+    'schemas/tool-create-artifact-envelope-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'RunGatesToolInput',
     'schemas/tool-run-gates-params.schema.json',
   ],

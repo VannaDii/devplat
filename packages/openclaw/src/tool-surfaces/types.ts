@@ -4,6 +4,7 @@ import type {
   DiscordControlRequest,
   DiscordThreadSession,
 } from '@vannadii/devplat-discord';
+import type { ArtifactEnvelope } from '@vannadii/devplat-artifacts';
 import type { GitHubActionRequest } from '@vannadii/devplat-github';
 import type { MemoryEntry } from '@vannadii/devplat-memory';
 import type { TelemetryEvent } from '@vannadii/devplat-observability';
@@ -27,6 +28,12 @@ export type CreateResearchBriefToolInput = ResearchBrief;
 export type CreateSpecRecordToolInput = SpecRecord;
 
 export type CreateSlicePlanToolInput = SlicePlan;
+
+export interface ResolveRuntimeConfigToolInput {
+  env: Record<string, string>;
+}
+
+export type CreateArtifactEnvelopeToolInput = ArtifactEnvelope;
 
 export interface AllocateWorktreeToolInput {
   taskId: string;

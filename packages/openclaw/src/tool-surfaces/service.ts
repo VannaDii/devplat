@@ -9,6 +9,7 @@ import {
   ArtifactEnvelopeService,
 } from '@vannadii/devplat-artifacts';
 import { decodeWithCodec } from '@vannadii/devplat-core';
+import { RuntimeConfigService } from '@vannadii/devplat-config';
 import {
   DiscordChannelBindingService,
   DiscordControlPlaneService,
@@ -40,6 +41,7 @@ import {
   CreateResearchBriefToolInputCodec,
   CreateReviewFindingToolInputCodec,
   CreateSlicePlanToolInputCodec,
+  CreateArtifactEnvelopeToolInputCodec,
   CreateSpecRecordToolInputCodec,
   EvaluatePolicyActionToolInputCodec,
   EvaluateSonarQualityGateToolInputCodec,
@@ -51,6 +53,7 @@ import {
   ReadStoredRecordToolInputCodec,
   RecordTelemetryEventToolInputCodec,
   RememberMemoryEntryToolInputCodec,
+  ResolveRuntimeConfigToolInputCodec,
   RunGatesToolInputCodec,
   RunSupervisorStepToolInputCodec,
   SubmitGitHubActionToolInputCodec,
@@ -189,6 +192,64 @@ export function createSlicePlanTool(): AnyAgentTool {
 
       const plan = new SlicePlanService().plan(decoded.value);
       return Promise.resolve(createTextResult(plan));
+    },
+  };
+
+  return tool;
+}
+
+export function createResolveRuntimeConfigTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'resolve_runtime_config',
+    label: 'Resolve Runtime Config',
+    description:
+      'Resolve a normalized DevPlat runtime config from an environment-style input map.',
+    parameters: readSchema(
+      'tool-resolve-runtime-config-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        ResolveRuntimeConfigToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const config = new RuntimeConfigService().fromEnvironment(
+        decoded.value.env,
+      );
+      return Promise.resolve(createTextResult(config));
+    },
+  };
+
+  return tool;
+}
+
+export function createArtifactEnvelopeTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_artifact_envelope',
+    label: 'Create Artifact Envelope',
+    description:
+      'Normalize a generic artifact envelope against the shared artifact contract.',
+    parameters: readSchema(
+      'tool-create-artifact-envelope-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateArtifactEnvelopeToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new ArtifactEnvelopeService().execute(decoded.value);
+      return Promise.resolve(createTextResult(artifact));
     },
   };
 

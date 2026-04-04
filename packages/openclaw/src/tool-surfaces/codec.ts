@@ -6,6 +6,7 @@ import {
   DiscordControlRequestCodec,
   DiscordThreadSessionCodec,
 } from '@vannadii/devplat-discord';
+import { ArtifactEnvelopeCodec } from '@vannadii/devplat-artifacts';
 import { RebasePlanCodec } from '@vannadii/devplat-branching';
 import { GitHubActionRequestCodec } from '@vannadii/devplat-github';
 import { MemoryEntryCodec } from '@vannadii/devplat-memory';
@@ -27,6 +28,7 @@ import type {
   CreateResearchBriefToolInput,
   CreateReviewFindingToolInput,
   CreateSlicePlanToolInput,
+  CreateArtifactEnvelopeToolInput,
   CreateSpecRecordToolInput,
   EvaluateSonarQualityGateToolInput,
   EvaluatePolicyActionToolInput,
@@ -38,6 +40,7 @@ import type {
   ReadStoredRecordToolInput,
   RecordTelemetryEventToolInput,
   RememberMemoryEntryToolInput,
+  ResolveRuntimeConfigToolInput,
   RunGatesToolInput,
   RunSupervisorStepToolInput,
   SubmitGitHubActionToolInput,
@@ -59,6 +62,14 @@ export const CreateSpecRecordToolInputCodec: t.Type<CreateSpecRecordToolInput> =
 
 export const CreateSlicePlanToolInputCodec: t.Type<CreateSlicePlanToolInput> =
   SlicePlanCodec as t.Type<CreateSlicePlanToolInput>;
+
+export const ResolveRuntimeConfigToolInputCodec: t.Type<ResolveRuntimeConfigToolInput> =
+  t.type({
+    env: t.record(t.string, t.string),
+  });
+
+export const CreateArtifactEnvelopeToolInputCodec: t.Type<CreateArtifactEnvelopeToolInput> =
+  ArtifactEnvelopeCodec as t.Type<CreateArtifactEnvelopeToolInput>;
 
 export const AllocateWorktreeToolInputCodec: t.Type<AllocateWorktreeToolInput> =
   t.type({

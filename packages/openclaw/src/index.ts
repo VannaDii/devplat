@@ -14,6 +14,7 @@ import {
 } from './plugin-config/index.js';
 import {
   createAllocateWorktreeTool,
+  createArtifactEnvelopeTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
   createEvaluatePolicyActionTool,
@@ -27,6 +28,7 @@ import {
   createHandleDiscordControlTool,
   createListStoredRecordsTool,
   createOpenDiscordThreadTool,
+  createResolveRuntimeConfigTool,
   createResearchBriefTool,
   createRunGatesTool,
   createRunSupervisorStepTool,
@@ -87,6 +89,8 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createResearchBriefTool());
     api.registerTool(createSpecRecordTool());
     api.registerTool(createSlicePlanTool());
+    api.registerTool(createResolveRuntimeConfigTool());
+    api.registerTool(createArtifactEnvelopeTool());
     api.registerTool(createRunGatesTool());
     api.registerTool(createAllocateWorktreeTool());
     api.registerTool(createBindDiscordThreadTool());

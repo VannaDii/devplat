@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createAllocateWorktreeTool,
+  createArtifactEnvelopeTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
   createEvaluatePolicyActionTool,
@@ -15,6 +16,7 @@ import {
   createHandleDiscordControlTool,
   createListStoredRecordsTool,
   createOpenDiscordThreadTool,
+  createResolveRuntimeConfigTool,
   createPlanRebaseDependentsTool,
   createResearchBriefTool,
   createRunGatesTool,
@@ -111,6 +113,81 @@ describe('tool surface service', () => {
   it('returns decode failures for invalid slice plan input', async () => {
     const result = await createSlicePlanTool().execute('tool-call-sl2', {
       sliceId: 'slice-1',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('resolves runtime config from valid tool input', async () => {
+    const result = await createResolveRuntimeConfigTool().execute(
+      'tool-call-cfg1',
+      {
+        env: {
+          GITHUB_OWNER: 'VannaDii',
+          GITHUB_REPO: 'devplat',
+          DISCORD_DEFAULT_GUILD_ID: 'guild-1',
+          DISCORD_SPEC_CHANNEL_ID: 'spec-1',
+          DISCORD_IMPLEMENTATION_CHANNEL_ID: 'impl-1',
+          DISCORD_AUDIT_CHANNEL_ID: 'audit-1',
+          OPENCLAW_PLUGIN_ID: '@vannadii/devplat-openclaw',
+          SONAR_ORGANIZATION: 'VannaDii',
+          SONAR_PROJECT_KEY: 'VannaDii_devplat',
+        },
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      githubOwner: 'VannaDii',
+      githubRepo: 'devplat',
+      discord: {
+        defaultGuildId: 'guild-1',
+        specChannelId: 'spec-1',
+      },
+      sonar: {
+        projectKey: 'VannaDii_devplat',
+        minimumCoverage: 90,
+      },
+    });
+  });
+
+  it('returns decode failures for invalid runtime config input', async () => {
+    const result = await createResolveRuntimeConfigTool().execute(
+      'tool-call-cfg2',
+      {
+        env: {
+          GITHUB_OWNER: 42,
+        },
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('creates artifact envelopes from valid tool input', async () => {
+    const result = await createArtifactEnvelopeTool().execute('tool-call-ae1', {
+      id: 'artifact-generic-1',
+      artifactType: 'audit-log',
+      version: 1,
+      summary: ' Generic audit artifact ',
+      status: 'approved',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      payload: {
+        actorId: 'operator-1',
+      },
+    });
+
+    expect(result.details).toMatchObject({
+      id: 'artifact-generic-1',
+      artifactType: 'audit-log',
+      summary: 'Generic audit artifact',
+      trace: ['artifact:audit-log'],
+    });
+  });
+
+  it('returns decode failures for invalid artifact envelope input', async () => {
+    const result = await createArtifactEnvelopeTool().execute('tool-call-ae2', {
+      id: 'artifact-generic-1',
     });
 
     expect(result.details).toMatchObject({ status: 'failed' });
