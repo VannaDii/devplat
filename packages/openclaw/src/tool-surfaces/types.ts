@@ -38,6 +38,8 @@ export type CreateResearchBriefToolInput = ResearchBrief;
 
 export type CreateSpecRecordToolInput = SpecRecord;
 
+export type ApproveSpecRecordToolInput = SpecRecord;
+
 export type CreateSlicePlanToolInput = SlicePlan;
 
 export interface ResolveRuntimeConfigToolInput {

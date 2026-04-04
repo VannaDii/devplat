@@ -13,6 +13,7 @@ import {
   PluginConfigService,
 } from './plugin-config/index.js';
 import {
+  createApproveSpecRecordTool,
   createAllocateWorktreeTool,
   createApprovalRecordTool,
   createArtifactEnvelopeTool,
@@ -97,6 +98,7 @@ const devplatOpenClawPlugin = definePluginEntry({
   register(api) {
     api.registerTool(createResearchBriefTool());
     api.registerTool(createSpecRecordTool());
+    api.registerTool(createApproveSpecRecordTool());
     api.registerTool(createSlicePlanTool());
     api.registerTool(createResolveRuntimeConfigTool());
     api.registerTool(createArtifactEnvelopeTool());

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  createApproveSpecRecordTool,
   createAllocateWorktreeTool,
   createApprovalRecordTool,
   createArtifactEnvelopeTool,
@@ -114,6 +115,36 @@ describe('tool surface service', () => {
 
   it('returns decode failures for invalid spec record input', async () => {
     const result = await createSpecRecordTool().execute('tool-call-s2', {
+      specId: 'spec-1',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('approves spec record artifacts from valid tool input', async () => {
+    const result = await createApproveSpecRecordTool().execute('tool-call-s3', {
+      specId: 'spec-1',
+      researchId: 'research-1',
+      title: ' Discord approval flow ',
+      objective: 'Add explicit approval routing.',
+      acceptanceCriteria: ['policy check', 'audit artifact'],
+      approvalState: 'review',
+      version: 1,
+      updatedAt: '2026-04-04T00:00:00.000Z',
+    });
+
+    expect(result.details).toMatchObject({
+      artifactType: 'spec-record',
+      status: 'approved',
+      payload: {
+        title: 'Discord approval flow',
+        approvalState: 'approved',
+      },
+    });
+  });
+
+  it('returns decode failures for invalid spec approval input', async () => {
+    const result = await createApproveSpecRecordTool().execute('tool-call-s4', {
       specId: 'spec-1',
     });
 

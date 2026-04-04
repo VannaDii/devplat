@@ -31,6 +31,7 @@ import { TaskRecordCodec } from '@vannadii/devplat-queue';
 import { StoredRecordCodec } from '@vannadii/devplat-storage';
 
 import type {
+  ApproveSpecRecordToolInput,
   AllocateWorktreeToolInput,
   BindDiscordThreadToolInput,
   ClaimTaskToolInput,
@@ -78,6 +79,9 @@ export const CreateResearchBriefToolInputCodec: t.Type<CreateResearchBriefToolIn
 
 export const CreateSpecRecordToolInputCodec: t.Type<CreateSpecRecordToolInput> =
   SpecRecordCodec as t.Type<CreateSpecRecordToolInput>;
+
+export const ApproveSpecRecordToolInputCodec: t.Type<ApproveSpecRecordToolInput> =
+  SpecRecordCodec as t.Type<ApproveSpecRecordToolInput>;
 
 export const CreateSlicePlanToolInputCodec: t.Type<CreateSlicePlanToolInput> =
   SlicePlanCodec as t.Type<CreateSlicePlanToolInput>;

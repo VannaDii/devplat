@@ -174,6 +174,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'ApproveSpecRecordToolInput',
+    'schemas/tool-approve-spec-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'CreateSlicePlanToolInput',
     'schemas/tool-create-slice-plan-params.schema.json',
   ],

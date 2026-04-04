@@ -42,6 +42,7 @@ import { SupervisorCycleService } from '@vannadii/devplat-supervisor';
 import { WorktreeAllocationService } from '@vannadii/devplat-worktrees';
 
 import {
+  ApproveSpecRecordToolInputCodec,
   AllocateWorktreeToolInputCodec,
   BindDiscordThreadToolInputCodec,
   ClaimTaskToolInputCodec,
@@ -223,6 +224,32 @@ export function createSpecRecordTool(): AnyAgentTool {
       }
 
       const artifact = new SpecRecordService().toArtifact(decoded.value);
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createApproveSpecRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'approve_spec_record',
+    label: 'Approve Spec Record',
+    description:
+      'Approve a spec record and return it as a structured DevPlat artifact.',
+    parameters: readSchema(
+      'tool-approve-spec-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(ApproveSpecRecordToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const specs = new SpecRecordService();
+      const artifact = specs.toArtifact(specs.approve(decoded.value));
       return Promise.resolve(createTextResult(artifact));
     },
   };
