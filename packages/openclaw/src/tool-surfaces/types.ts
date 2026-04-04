@@ -4,7 +4,13 @@ import type {
   DiscordControlRequest,
   DiscordThreadSession,
 } from '@vannadii/devplat-discord';
-import type { ArtifactEnvelope } from '@vannadii/devplat-artifacts';
+import type {
+  ApprovalRecordArtifact,
+  ArtifactEnvelope,
+  AuditLogArtifact,
+  MergeDecisionArtifact,
+  RebaseResultArtifact,
+} from '@vannadii/devplat-artifacts';
 import type { GitHubActionRequest } from '@vannadii/devplat-github';
 import type { MemoryEntry } from '@vannadii/devplat-memory';
 import type { TelemetryEvent } from '@vannadii/devplat-observability';
@@ -34,6 +40,14 @@ export interface ResolveRuntimeConfigToolInput {
 }
 
 export type CreateArtifactEnvelopeToolInput = ArtifactEnvelope;
+
+export type CreateApprovalRecordToolInput = ApprovalRecordArtifact;
+
+export type CreateAuditLogToolInput = AuditLogArtifact;
+
+export type CreateMergeDecisionToolInput = MergeDecisionArtifact;
+
+export type CreateRebaseResultToolInput = RebaseResultArtifact;
 
 export interface AllocateWorktreeToolInput {
   taskId: string;

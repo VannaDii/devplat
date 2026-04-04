@@ -1,12 +1,18 @@
 import * as t from 'io-ts';
 
 import {
+  ApprovalRecordArtifactCodec,
+  ArtifactEnvelopeCodec,
+  AuditLogArtifactCodec,
+  MergeDecisionArtifactCodec,
+  RebaseResultArtifactCodec,
+} from '@vannadii/devplat-artifacts';
+import {
   DiscordApprovalRequestCodec,
   DiscordChannelBindingCodec,
   DiscordControlRequestCodec,
   DiscordThreadSessionCodec,
 } from '@vannadii/devplat-discord';
-import { ArtifactEnvelopeCodec } from '@vannadii/devplat-artifacts';
 import { RebasePlanCodec } from '@vannadii/devplat-branching';
 import { GitHubActionRequestCodec } from '@vannadii/devplat-github';
 import { MemoryEntryCodec } from '@vannadii/devplat-memory';
@@ -24,11 +30,15 @@ import type {
   AllocateWorktreeToolInput,
   BindDiscordThreadToolInput,
   ClaimTaskToolInput,
+  CreateApprovalRecordToolInput,
   CreateRemediationPlanToolInput,
   CreateResearchBriefToolInput,
   CreateReviewFindingToolInput,
   CreateSlicePlanToolInput,
   CreateArtifactEnvelopeToolInput,
+  CreateAuditLogToolInput,
+  CreateMergeDecisionToolInput,
+  CreateRebaseResultToolInput,
   CreateSpecRecordToolInput,
   ExecuteCommandToolInput,
   EvaluateSonarQualityGateToolInput,
@@ -71,6 +81,18 @@ export const ResolveRuntimeConfigToolInputCodec: t.Type<ResolveRuntimeConfigTool
 
 export const CreateArtifactEnvelopeToolInputCodec: t.Type<CreateArtifactEnvelopeToolInput> =
   ArtifactEnvelopeCodec as t.Type<CreateArtifactEnvelopeToolInput>;
+
+export const CreateApprovalRecordToolInputCodec: t.Type<CreateApprovalRecordToolInput> =
+  ApprovalRecordArtifactCodec as t.Type<CreateApprovalRecordToolInput>;
+
+export const CreateAuditLogToolInputCodec: t.Type<CreateAuditLogToolInput> =
+  AuditLogArtifactCodec as t.Type<CreateAuditLogToolInput>;
+
+export const CreateMergeDecisionToolInputCodec: t.Type<CreateMergeDecisionToolInput> =
+  MergeDecisionArtifactCodec as t.Type<CreateMergeDecisionToolInput>;
+
+export const CreateRebaseResultToolInputCodec: t.Type<CreateRebaseResultToolInput> =
+  RebaseResultArtifactCodec as t.Type<CreateRebaseResultToolInput>;
 
 export const ExecuteCommandToolInputCodec: t.Type<ExecuteCommandToolInput> =
   t.intersection([

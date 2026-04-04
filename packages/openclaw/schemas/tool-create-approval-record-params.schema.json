@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/CreateApprovalRecordToolInput",
+  "definitions": {
+    "CreateApprovalRecordToolInput": {
+      "$ref": "#/definitions/ApprovalRecordArtifact"
+    },
+    "ApprovalRecordArtifact": {
+      "$ref": "#/definitions/ArtifactEnvelope%3CApprovalRecordPayload%3E"
+    },
+    "ArtifactEnvelope<ApprovalRecordPayload>": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "artifactType": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number",
+          "const": 1
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/definitions/ApprovalRecordPayload"
+        }
+      },
+      "required": [
+        "id",
+        "artifactType",
+        "version",
+        "summary",
+        "status",
+        "trace",
+        "updatedAt",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    },
+    "ApprovalRecordPayload": {
+      "type": "object",
+      "properties": {
+        "approvalId": {
+          "type": "string"
+        },
+        "subjectType": {
+          "$ref": "#/definitions/ApprovalSubjectType"
+        },
+        "subjectId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "decision": {
+          "$ref": "#/definitions/ApprovalDecision"
+        },
+        "rationale": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "approvalId",
+        "subjectType",
+        "subjectId",
+        "actorId",
+        "decision",
+        "rationale"
+      ],
+      "additionalProperties": false
+    },
+    "ApprovalSubjectType": {
+      "type": "string",
+      "enum": [
+        "spec",
+        "slice",
+        "pull-request",
+        "merge"
+      ]
+    },
+    "ApprovalDecision": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "rejected",
+        "needs-changes"
+      ]
+    }
+  }
+}

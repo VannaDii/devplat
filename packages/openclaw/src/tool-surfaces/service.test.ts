@@ -2,16 +2,20 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createAllocateWorktreeTool,
+  createApprovalRecordTool,
   createArtifactEnvelopeTool,
+  createAuditLogTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
   createExecuteCommandTool,
   createEvaluatePolicyActionTool,
   createEvaluateSonarQualityGateTool,
+  createMergeDecisionTool,
   createRemediationPlanTool,
   createRememberMemoryEntryTool,
   createRecordTelemetryEventTool,
   createReadStoredRecordTool,
+  createRebaseResultTool,
   createReviewFindingTool,
   createHandleDiscordApprovalTool,
   createHandleDiscordControlTool,
@@ -208,6 +212,160 @@ describe('tool surface service', () => {
   it('returns decode failures for invalid artifact envelope input', async () => {
     const result = await createArtifactEnvelopeTool().execute('tool-call-ae2', {
       id: 'artifact-generic-1',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('creates approval record artifacts from valid tool input', async () => {
+    const result = await createApprovalRecordTool().execute('tool-call-ap1', {
+      id: 'artifact-approval-1',
+      artifactType: 'approval-record',
+      version: 1,
+      summary: ' Approve slice ',
+      status: 'approved',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      payload: {
+        approvalId: ' approval-1 ',
+        subjectType: 'slice',
+        subjectId: ' slice-1 ',
+        actorId: ' operator-1 ',
+        decision: 'approved',
+        rationale: ' Ready to proceed ',
+      },
+    });
+
+    expect(result.details).toMatchObject({
+      artifactType: 'approval-record',
+      summary: 'Approve slice',
+      payload: {
+        approvalId: 'approval-1',
+        subjectId: 'slice-1',
+        actorId: 'operator-1',
+      },
+    });
+  });
+
+  it('creates audit log artifacts from valid tool input', async () => {
+    const result = await createAuditLogTool().execute('tool-call-al1', {
+      id: 'artifact-audit-1',
+      artifactType: 'audit-log',
+      version: 1,
+      summary: ' Retry gates ',
+      status: 'complete',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      payload: {
+        auditId: ' audit-1 ',
+        actorId: ' operator-1 ',
+        action: 'retry-gates',
+        scope: 'discord',
+        details: {
+          threadId: 'thread-1',
+        },
+      },
+    });
+
+    expect(result.details).toMatchObject({
+      artifactType: 'audit-log',
+      summary: 'Retry gates',
+      payload: {
+        auditId: 'audit-1',
+        actorId: 'operator-1',
+      },
+    });
+  });
+
+  it('creates merge decision artifacts from valid tool input', async () => {
+    const result = await createMergeDecisionTool().execute('tool-call-md1', {
+      id: 'artifact-merge-1',
+      artifactType: 'merge-decision',
+      version: 1,
+      summary: ' Merge decision ',
+      status: 'approved',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      payload: {
+        decisionId: ' merge-1 ',
+        prNumber: 42,
+        actorId: ' operator-1 ',
+        mergeStrategy: 'squash',
+        approved: true,
+        rationale: ' Ready to merge ',
+        blockingFindings: [' none '],
+      },
+    });
+
+    expect(result.details).toMatchObject({
+      artifactType: 'merge-decision',
+      summary: 'Merge decision',
+      payload: {
+        decisionId: 'merge-1',
+        actorId: 'operator-1',
+        blockingFindings: ['none'],
+      },
+    });
+  });
+
+  it('creates rebase result artifacts from valid tool input', async () => {
+    const result = await createRebaseResultTool().execute('tool-call-rb1', {
+      id: 'artifact-rebase-1',
+      artifactType: 'rebase-result',
+      version: 1,
+      summary: ' Rebase result ',
+      status: 'complete',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      payload: {
+        resultId: ' rebase-1 ',
+        mergedPrNumber: 42,
+        baseBranch: ' main ',
+        branchName: ' feature/x ',
+        rebased: true,
+        conflictsDetected: false,
+        details: ' Rebased cleanly ',
+      },
+    });
+
+    expect(result.details).toMatchObject({
+      artifactType: 'rebase-result',
+      summary: 'Rebase result',
+      payload: {
+        resultId: 'rebase-1',
+        baseBranch: 'main',
+        branchName: 'feature/x',
+      },
+    });
+  });
+
+  it('returns decode failures for invalid approval record input', async () => {
+    const result = await createApprovalRecordTool().execute('tool-call-ap2', {
+      id: 'artifact-approval-2',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('returns decode failures for invalid audit log input', async () => {
+    const result = await createAuditLogTool().execute('tool-call-al2', {
+      id: 'artifact-audit-2',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('returns decode failures for invalid merge decision input', async () => {
+    const result = await createMergeDecisionTool().execute('tool-call-md2', {
+      id: 'artifact-merge-2',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('returns decode failures for invalid rebase result input', async () => {
+    const result = await createRebaseResultTool().execute('tool-call-rb2', {
+      id: 'artifact-rebase-2',
     });
 
     expect(result.details).toMatchObject({ status: 'failed' });

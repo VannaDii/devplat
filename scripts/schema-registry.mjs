@@ -192,6 +192,30 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'CreateApprovalRecordToolInput',
+    'schemas/tool-create-approval-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateAuditLogToolInput',
+    'schemas/tool-create-audit-log-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateMergeDecisionToolInput',
+    'schemas/tool-create-merge-decision-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateRebaseResultToolInput',
+    'schemas/tool-create-rebase-result-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'ExecuteCommandToolInput',
     'schemas/tool-execute-command-params.schema.json',
   ],

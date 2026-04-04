@@ -5,8 +5,12 @@ import type { AnyAgentTool } from 'openclaw/plugin-sdk/plugin-entry';
 
 import { RebaseDependentsService } from '@vannadii/devplat-branching';
 import {
+  ApprovalRecordArtifactService,
   ArtifactEnvelopeService,
   ArtifactValidationService,
+  AuditLogArtifactService,
+  MergeDecisionArtifactService,
+  RebaseResultArtifactService,
 } from '@vannadii/devplat-artifacts';
 import { decodeWithCodec } from '@vannadii/devplat-core';
 import { CommandExecutionService } from '@vannadii/devplat-execution';
@@ -38,11 +42,15 @@ import {
   AllocateWorktreeToolInputCodec,
   BindDiscordThreadToolInputCodec,
   ClaimTaskToolInputCodec,
+  CreateApprovalRecordToolInputCodec,
   CreateRemediationPlanToolInputCodec,
   CreateResearchBriefToolInputCodec,
   CreateReviewFindingToolInputCodec,
   CreateSlicePlanToolInputCodec,
   CreateArtifactEnvelopeToolInputCodec,
+  CreateAuditLogToolInputCodec,
+  CreateMergeDecisionToolInputCodec,
+  CreateRebaseResultToolInputCodec,
   CreateSpecRecordToolInputCodec,
   ExecuteCommandToolInputCodec,
   EvaluatePolicyActionToolInputCodec,
@@ -291,6 +299,116 @@ export function createArtifactEnvelopeTool(): AnyAgentTool {
       }
 
       const artifact = new ArtifactEnvelopeService().execute(decoded.value);
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createApprovalRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_approval_record',
+    label: 'Create Approval Record',
+    description:
+      'Normalize an approval-record artifact for auditable approval decisions.',
+    parameters: readSchema(
+      'tool-create-approval-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateApprovalRecordToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new ApprovalRecordArtifactService().execute(
+        decoded.value,
+      );
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createAuditLogTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_audit_log',
+    label: 'Create Audit Log',
+    description:
+      'Normalize an audit-log artifact for operator-visible control actions.',
+    parameters: readSchema(
+      'tool-create-audit-log-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(CreateAuditLogToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new AuditLogArtifactService().execute(decoded.value);
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createMergeDecisionTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_merge_decision',
+    label: 'Create Merge Decision',
+    description:
+      'Normalize a merge-decision artifact for PR merge approval outcomes.',
+    parameters: readSchema(
+      'tool-create-merge-decision-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateMergeDecisionToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new MergeDecisionArtifactService().execute(
+        decoded.value,
+      );
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createRebaseResultTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_rebase_result',
+    label: 'Create Rebase Result',
+    description:
+      'Normalize a rebase-result artifact for downstream branch refresh outcomes.',
+    parameters: readSchema(
+      'tool-create-rebase-result-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(CreateRebaseResultToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new RebaseResultArtifactService().execute(decoded.value);
       return Promise.resolve(createTextResult(artifact));
     },
   };
