@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/SonarBootstrapVerificationResult",
+  "definitions": {
+    "SonarBootstrapVerificationResult": {
+      "type": "object",
+      "properties": {
+        "projectKey": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "failed",
+            "passed"
+          ]
+        },
+        "qualityGateStatus": {
+          "$ref": "#/definitions/SonarApiQualityGateStatus"
+        },
+        "overallCoverageThreshold": {
+          "type": "number"
+        },
+        "newCodeCoverageThreshold": {
+          "type": "number"
+        },
+        "checks": {
+          "$ref": "#/definitions/SonarBootstrapVerificationChecks"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evaluatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectKey",
+        "status",
+        "qualityGateStatus",
+        "overallCoverageThreshold",
+        "newCodeCoverageThreshold",
+        "checks",
+        "issues",
+        "evaluatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "SonarApiQualityGateStatus": {
+      "type": "string",
+      "enum": [
+        "ERROR",
+        "NONE",
+        "OK"
+      ]
+    },
+    "SonarBootstrapVerificationChecks": {
+      "type": "object",
+      "properties": {
+        "qualityGateComputed": {
+          "type": "boolean"
+        },
+        "qualityGatePassing": {
+          "type": "boolean"
+        },
+        "overallCoverageCondition": {
+          "type": "boolean"
+        },
+        "newCodeCoverageCondition": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "qualityGateComputed",
+        "qualityGatePassing",
+        "overallCoverageCondition",
+        "newCodeCoverageCondition"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

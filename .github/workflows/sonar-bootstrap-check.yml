@@ -10,15 +10,28 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
 
+      - name: Setup Node
+        uses: actions/setup-node@v6.3.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Node alignment
+        run: npm run verify:node
+
       - name: Ensure project metadata is committed
         run: |
           test -f sonar-project.properties
           grep -q '^sonar.organization=VannaDii$' sonar-project.properties
           grep -q '^sonar.projectKey=VannaDii_devplat$' sonar-project.properties
 
-      - name: Verify Sonar token exists
+      - name: Verify Sonar bootstrap requirements
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_REGION: global
         run: |
-          test -n "${SONAR_TOKEN}"
-          echo "Sonar token configured."
+          npm run verify:sonar-bootstrap

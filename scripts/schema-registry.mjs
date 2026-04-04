@@ -41,6 +41,12 @@ export const schemaRegistry = [
   ],
   [
     'sonarcloud',
+    'bootstrap-verification',
+    'SonarBootstrapVerificationResult',
+    'schemas/sonar-bootstrap-verification.schema.json',
+  ],
+  [
+    'sonarcloud',
     'quality-gate',
     'SonarQualityGateResult',
     'schemas/sonar-quality-gate-result.schema.json',

@@ -9,6 +9,7 @@ const typedFiles = [
   'packages/*/src/**/*.mts',
   'packages/*/src/**/*.cts',
 ];
+const scriptFiles = ['scripts/**/*.ts'];
 const testFiles = ['packages/*/src/**/*.test.ts', 'vitest.config.mts'];
 
 const restrictedImportPatterns = [
@@ -62,6 +63,23 @@ const testConfigs = tseslint.configs.recommended.map((config) => ({
   },
 }));
 
+const scriptConfigs = tseslint.configs.strictTypeChecked.map((config) => ({
+  ...config,
+  files: scriptFiles,
+  languageOptions: {
+    ...config.languageOptions,
+    globals: {
+      ...globals.node,
+      ...(config.languageOptions?.globals ?? {}),
+    },
+    parserOptions: {
+      ...config.languageOptions?.parserOptions,
+      project: ['./tsconfig.schemas.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+}));
+
 export default [
   {
     ignores: [
@@ -82,6 +100,7 @@ export default [
   sonarjs.configs.recommended,
   ...typedConfigs,
   ...testConfigs,
+  ...scriptConfigs,
   {
     files: typedFiles,
     ignores: testFiles,
@@ -112,6 +131,31 @@ export default [
           patterns: restrictedImportPatterns,
         },
       ],
+    },
+  },
+  {
+    files: scriptFiles,
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowExpressions: false,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: false,
+        },
+      ],
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          args: 'all',
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: false,
+        },
+      ],
+      'no-console': 'error',
     },
   },
   {
