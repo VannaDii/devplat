@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 
 import type { AnyAgentTool } from 'openclaw/plugin-sdk/plugin-entry';
 
+import { RebaseDependentsService } from '@vannadii/devplat-branching';
 import {
   ArtifactEnvelopeCodec,
   ArtifactEnvelopeService,
@@ -15,9 +16,14 @@ import {
   DiscordThreadSessionService,
 } from '@vannadii/devplat-discord';
 import { RunGatesService } from '@vannadii/devplat-gates';
+import { GitHubWorkflowService } from '@vannadii/devplat-github';
+import { PullRequestService } from '@vannadii/devplat-prs';
 import { TaskQueueService } from '@vannadii/devplat-queue';
 import { ResearchBriefService } from '@vannadii/devplat-research';
+import { RemediationPlanService } from '@vannadii/devplat-remediation';
+import { ReviewFindingsService } from '@vannadii/devplat-review';
 import { SlicePlanService } from '@vannadii/devplat-slicing';
+import { SonarQualityGateService } from '@vannadii/devplat-sonarcloud';
 import { SpecRecordService } from '@vannadii/devplat-specs';
 import { SupervisorCycleService } from '@vannadii/devplat-supervisor';
 import { WorktreeAllocationService } from '@vannadii/devplat-worktrees';
@@ -26,14 +32,20 @@ import {
   AllocateWorktreeToolInputCodec,
   BindDiscordThreadToolInputCodec,
   ClaimTaskToolInputCodec,
+  CreateRemediationPlanToolInputCodec,
   CreateResearchBriefToolInputCodec,
+  CreateReviewFindingToolInputCodec,
   CreateSlicePlanToolInputCodec,
   CreateSpecRecordToolInputCodec,
+  EvaluateSonarQualityGateToolInputCodec,
   HandleDiscordApprovalToolInputCodec,
   HandleDiscordControlToolInputCodec,
   OpenDiscordThreadToolInputCodec,
+  PlanRebaseDependentsToolInputCodec,
   RunGatesToolInputCodec,
   RunSupervisorStepToolInputCodec,
+  SubmitGitHubActionToolInputCodec,
+  SubmitPullRequestUpdateToolInputCodec,
   UpdateTaskToolInputCodec,
   ValidateArtifactToolInputCodec,
 } from './codec.js';
@@ -332,6 +344,184 @@ export function createHandleDiscordControlTool(): AnyAgentTool {
 
       const result = await new DiscordControlPlaneService().handleAction(
         decoded.value,
+      );
+      return createTextResult(result);
+    },
+  };
+
+  return tool;
+}
+
+export function createEvaluateSonarQualityGateTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'evaluate_sonar_quality_gate',
+    label: 'Evaluate Sonar Quality Gate',
+    description:
+      'Evaluate Sonar coverage and blocking-issue thresholds against DevPlat policy.',
+    parameters: readSchema(
+      'tool-evaluate-sonar-quality-gate-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        EvaluateSonarQualityGateToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const result = new SonarQualityGateService().evaluate(
+        decoded.value.projectKey,
+        decoded.value.overallCoverage,
+        decoded.value.newCodeCoverage,
+        decoded.value.blockingIssues,
+      );
+      return Promise.resolve(createTextResult(result));
+    },
+  };
+
+  return tool;
+}
+
+export function createReviewFindingTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_review_finding',
+    label: 'Create Review Finding',
+    description:
+      'Normalize a review finding and return it as a structured DevPlat artifact.',
+    parameters: readSchema(
+      'tool-create-review-finding-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateReviewFindingToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new ReviewFindingsService().toArtifact(decoded.value);
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createRemediationPlanTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_remediation_plan',
+    label: 'Create Remediation Plan',
+    description:
+      'Create a remediation plan from review findings while preserving approval rules.',
+    parameters: readSchema(
+      'tool-create-remediation-plan-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateRemediationPlanToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const plan = new RemediationPlanService().fromFindings(
+        decoded.value.findings,
+        decoded.value.autofix,
+      );
+      return Promise.resolve(createTextResult(plan));
+    },
+  };
+
+  return tool;
+}
+
+export function createSubmitPullRequestUpdateTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'submit_pull_request_update',
+    label: 'Submit Pull Request Update',
+    description:
+      'Submit a pull request update decision through the GitHub workflow adapter.',
+    parameters: readSchema(
+      'tool-submit-pull-request-update-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        SubmitPullRequestUpdateToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const result = await new PullRequestService().submitUpdate(
+        decoded.value.record,
+        decoded.value.actorId,
+      );
+      return createTextResult(result);
+    },
+  };
+
+  return tool;
+}
+
+export function createPlanRebaseDependentsTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'plan_rebase_dependents',
+    label: 'Plan Rebase Dependents',
+    description:
+      'Create a downstream rebase plan for branches that depend on a merged pull request.',
+    parameters: readSchema(
+      'tool-plan-rebase-dependents-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        PlanRebaseDependentsToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const plan = new RebaseDependentsService().createForMerge(
+        decoded.value.record,
+        decoded.value.dependentBranches,
+      );
+      return Promise.resolve(createTextResult(plan));
+    },
+  };
+
+  return tool;
+}
+
+export function createSubmitGitHubActionTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'submit_github_action',
+    label: 'Submit GitHub Action',
+    description:
+      'Submit a GitHub workflow action request through the policy- and telemetry-aware adapter.',
+    parameters: readSchema(
+      'tool-submit-github-action-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(SubmitGitHubActionToolInputCodec, params);
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const result = await new GitHubWorkflowService().submit(
+        decoded.value.request,
+        decoded.value.actorId,
       );
       return createTextResult(result);
     },

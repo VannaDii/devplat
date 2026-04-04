@@ -4,8 +4,14 @@ import type {
   DiscordControlRequest,
   DiscordThreadSession,
 } from '@vannadii/devplat-discord';
+import type { GitHubActionRequest } from '@vannadii/devplat-github';
+import type { RebasePlan } from '@vannadii/devplat-branching';
+import type { PullRequestRecord } from '@vannadii/devplat-prs';
 import type { ResearchBrief } from '@vannadii/devplat-research';
+import type { RemediationPlan } from '@vannadii/devplat-remediation';
+import type { ReviewFinding } from '@vannadii/devplat-review';
 import type { SlicePlan } from '@vannadii/devplat-slicing';
+import type { SonarQualityGateResult } from '@vannadii/devplat-sonarcloud';
 import type { SpecRecord } from '@vannadii/devplat-specs';
 
 export interface RunGatesToolInput {
@@ -37,6 +43,35 @@ export interface OpenDiscordThreadToolInput extends DiscordThreadSession {
 export type HandleDiscordApprovalToolInput = DiscordApprovalRequest;
 
 export type HandleDiscordControlToolInput = DiscordControlRequest;
+
+export interface EvaluateSonarQualityGateToolInput {
+  projectKey: SonarQualityGateResult['projectKey'];
+  overallCoverage: SonarQualityGateResult['overallCoverage'];
+  newCodeCoverage: SonarQualityGateResult['newCodeCoverage'];
+  blockingIssues: SonarQualityGateResult['blockingIssues'];
+}
+
+export type CreateReviewFindingToolInput = ReviewFinding;
+
+export interface CreateRemediationPlanToolInput {
+  findings: ReviewFinding[];
+  autofix: RemediationPlan['autofix'];
+}
+
+export interface SubmitPullRequestUpdateToolInput {
+  record: PullRequestRecord;
+  actorId: string;
+}
+
+export interface PlanRebaseDependentsToolInput {
+  record: PullRequestRecord;
+  dependentBranches: RebasePlan['dependentBranches'];
+}
+
+export interface SubmitGitHubActionToolInput {
+  request: GitHubActionRequest;
+  actorId: string;
+}
 
 export interface ClaimTaskToolInput {
   taskId: string;

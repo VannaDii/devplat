@@ -6,22 +6,34 @@ import {
   DiscordControlRequestCodec,
   DiscordThreadSessionCodec,
 } from '@vannadii/devplat-discord';
+import { RebasePlanCodec } from '@vannadii/devplat-branching';
+import { GitHubActionRequestCodec } from '@vannadii/devplat-github';
 import { ResearchBriefCodec } from '@vannadii/devplat-research';
+import { RemediationPlanCodec } from '@vannadii/devplat-remediation';
+import { ReviewFindingCodec } from '@vannadii/devplat-review';
 import { SlicePlanCodec } from '@vannadii/devplat-slicing';
+import { SonarQualityGateResultCodec } from '@vannadii/devplat-sonarcloud';
 import { SpecRecordCodec } from '@vannadii/devplat-specs';
+import { PullRequestRecordCodec } from '@vannadii/devplat-prs';
 
 import type {
   AllocateWorktreeToolInput,
   BindDiscordThreadToolInput,
   ClaimTaskToolInput,
+  CreateRemediationPlanToolInput,
   CreateResearchBriefToolInput,
+  CreateReviewFindingToolInput,
   CreateSlicePlanToolInput,
   CreateSpecRecordToolInput,
+  EvaluateSonarQualityGateToolInput,
   HandleDiscordApprovalToolInput,
   HandleDiscordControlToolInput,
   OpenDiscordThreadToolInput,
+  PlanRebaseDependentsToolInput,
   RunGatesToolInput,
   RunSupervisorStepToolInput,
+  SubmitGitHubActionToolInput,
+  SubmitPullRequestUpdateToolInput,
   UpdateTaskToolInput,
   ValidateArtifactToolInput,
 } from './types.js';
@@ -69,6 +81,41 @@ export const HandleDiscordApprovalToolInputCodec: t.Type<HandleDiscordApprovalTo
 
 export const HandleDiscordControlToolInputCodec: t.Type<HandleDiscordControlToolInput> =
   DiscordControlRequestCodec as t.Type<HandleDiscordControlToolInput>;
+
+export const EvaluateSonarQualityGateToolInputCodec: t.Type<EvaluateSonarQualityGateToolInput> =
+  t.type({
+    projectKey: SonarQualityGateResultCodec.props.projectKey,
+    overallCoverage: SonarQualityGateResultCodec.props.overallCoverage,
+    newCodeCoverage: SonarQualityGateResultCodec.props.newCodeCoverage,
+    blockingIssues: SonarQualityGateResultCodec.props.blockingIssues,
+  });
+
+export const CreateReviewFindingToolInputCodec: t.Type<CreateReviewFindingToolInput> =
+  ReviewFindingCodec as t.Type<CreateReviewFindingToolInput>;
+
+export const CreateRemediationPlanToolInputCodec: t.Type<CreateRemediationPlanToolInput> =
+  t.type({
+    findings: t.array(ReviewFindingCodec),
+    autofix: RemediationPlanCodec.props.autofix,
+  });
+
+export const SubmitPullRequestUpdateToolInputCodec: t.Type<SubmitPullRequestUpdateToolInput> =
+  t.type({
+    record: PullRequestRecordCodec,
+    actorId: t.string,
+  });
+
+export const PlanRebaseDependentsToolInputCodec: t.Type<PlanRebaseDependentsToolInput> =
+  t.type({
+    record: PullRequestRecordCodec,
+    dependentBranches: RebasePlanCodec.props.dependentBranches,
+  });
+
+export const SubmitGitHubActionToolInputCodec: t.Type<SubmitGitHubActionToolInput> =
+  t.type({
+    request: GitHubActionRequestCodec,
+    actorId: t.string,
+  });
 
 export const ClaimTaskToolInputCodec: t.Type<ClaimTaskToolInput> = t.type({
   taskId: t.string,

@@ -4,6 +4,7 @@
 - Use `nvm use` before any install, test, lint, typecheck, or build guidance.
 - Keep every unit in folder-per-unit structure with `types.ts`, `codec.ts`, `logic.ts`, `logic.test.ts`, `service.ts`, and `service.test.ts`.
 - Keep `logic.ts` pure. Put orchestration, IO, and framework glue in `service.ts`.
+- In `NodeNext` ESM source files, use explicit relative `.js` specifiers. Do not switch local imports or exports to extensionless paths.
 - Use `io-ts` for runtime codecs and committed JSON Schemas generated from exported TypeScript types.
 - Never hand-edit generated schema files.
 - Never place business logic inside decorators or inside `@vannadii/devplat-openclaw`.

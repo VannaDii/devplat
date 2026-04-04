@@ -16,6 +16,9 @@
       "path": "../artifacts"
     },
     {
+      "path": "../branching"
+    },
+    {
       "path": "../core"
     },
     {
@@ -25,7 +28,13 @@
       "path": "../gates"
     },
     {
+      "path": "../github"
+    },
+    {
       "path": "../policy"
+    },
+    {
+      "path": "../prs"
     },
     {
       "path": "../queue"
@@ -34,7 +43,16 @@
       "path": "../research"
     },
     {
+      "path": "../remediation"
+    },
+    {
+      "path": "../review"
+    },
+    {
       "path": "../slicing"
+    },
+    {
+      "path": "../sonarcloud"
     },
     {
       "path": "../specs"

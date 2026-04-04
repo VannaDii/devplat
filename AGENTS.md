@@ -14,6 +14,7 @@
 - Keep `logic.ts` pure and test it directly.
 - Keep `service.ts` as the class shell and test delegation and side-effect boundaries separately.
 - Export only through package and unit `index.ts` files.
+- In `NodeNext` ESM source, keep relative import and export specifiers explicit with emitted `.js` extensions.
 - Do not use deep imports across packages.
 
 ## Quality Bar

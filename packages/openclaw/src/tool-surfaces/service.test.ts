@@ -4,14 +4,20 @@ import {
   createAllocateWorktreeTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
+  createEvaluateSonarQualityGateTool,
+  createRemediationPlanTool,
+  createReviewFindingTool,
   createHandleDiscordApprovalTool,
   createHandleDiscordControlTool,
   createOpenDiscordThreadTool,
+  createPlanRebaseDependentsTool,
   createResearchBriefTool,
   createRunGatesTool,
   createRunSupervisorStepTool,
   createSlicePlanTool,
   createSpecRecordTool,
+  createSubmitGitHubActionTool,
+  createSubmitPullRequestUpdateTool,
   createUpdateTaskTool,
   createValidateArtifactTool,
 } from './service.js';
@@ -298,6 +304,92 @@ describe('tool surface service', () => {
     expect(result.details).toMatchObject({ status: 'failed' });
   });
 
+  it('evaluates Sonar quality gates from valid tool input', async () => {
+    const result = await createEvaluateSonarQualityGateTool().execute(
+      'tool-call-sq1',
+      {
+        projectKey: 'VannaDii_devplat',
+        overallCoverage: 91,
+        newCodeCoverage: 92,
+        blockingIssues: 0,
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      projectKey: 'VannaDii_devplat',
+      status: 'passed',
+    });
+  });
+
+  it('returns decode failures for invalid Sonar quality gate input', async () => {
+    const result = await createEvaluateSonarQualityGateTool().execute(
+      'tool-call-sq2',
+      {
+        projectKey: 'VannaDii_devplat',
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('creates review finding artifacts from valid tool input', async () => {
+    const result = await createReviewFindingTool().execute('tool-call-rf1', {
+      findingId: 'finding-1',
+      severity: 'high',
+      path: 'packages/openclaw/src/tool-surfaces/service.ts',
+      message: 'Missing policy mediation.',
+      rationale: 'Privileged actions must stay policy-aware.',
+      fixRecommendation: 'Delegate through the policy service.',
+      blocking: true,
+      updatedAt: '2026-04-04T00:00:00.000Z',
+    });
+
+    expect(result.details).toMatchObject({
+      artifactType: 'review-finding',
+      payload: { findingId: 'finding-1' },
+    });
+  });
+
+  it('returns decode failures for invalid review finding input', async () => {
+    const result = await createReviewFindingTool().execute('tool-call-rf2', {
+      findingId: 'finding-1',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('creates remediation plans from valid tool input', async () => {
+    const result = await createRemediationPlanTool().execute('tool-call-rp1', {
+      findings: [
+        {
+          findingId: 'finding-1',
+          severity: 'medium',
+          path: 'packages/openclaw/src/tool-surfaces/service.ts',
+          message: 'Add test coverage.',
+          rationale: 'The adapter needs direct surface tests.',
+          fixRecommendation: 'Add a focused service test.',
+          blocking: false,
+          updatedAt: '2026-04-04T00:00:00.000Z',
+        },
+      ],
+      autofix: true,
+    });
+
+    expect(result.details).toMatchObject({
+      findingIds: ['finding-1'],
+      autofix: true,
+    });
+  });
+
+  it('returns decode failures for invalid remediation input', async () => {
+    const result = await createRemediationPlanTool().execute('tool-call-rp2', {
+      findings: {},
+      autofix: true,
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
   it('updates task lifecycle state from valid tool input', async () => {
     const result = await createUpdateTaskTool().execute('tool-call-7', {
       taskId: 'task-1',
@@ -316,6 +408,115 @@ describe('tool surface service', () => {
       threadId: 'thread-1',
       status: 'queued',
     });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('submits pull request updates from valid tool input', async () => {
+    const result = await createSubmitPullRequestUpdateTool().execute(
+      'tool-call-pr1',
+      {
+        record: {
+          prNumber: 42,
+          branchName: 'feature/discord-tools',
+          baseBranch: 'main',
+          title: 'Expand OpenClaw tools',
+          labels: ['automation'],
+          reviewState: 'approved',
+          mergeReady: true,
+          updatedAt: '2026-04-04T00:00:00.000Z',
+        },
+        actorId: 'operator-1',
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      allowed: false,
+      request: { action: 'update-pr' },
+    });
+  });
+
+  it('returns decode failures for invalid pull request update input', async () => {
+    const result = await createSubmitPullRequestUpdateTool().execute(
+      'tool-call-pr2',
+      {
+        record: {
+          prNumber: 42,
+        },
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('plans dependent rebases from valid tool input', async () => {
+    const result = await createPlanRebaseDependentsTool().execute(
+      'tool-call-rb1',
+      {
+        record: {
+          prNumber: 42,
+          branchName: 'feature/discord-tools',
+          baseBranch: 'main',
+          title: 'Expand OpenClaw tools',
+          labels: ['automation'],
+          reviewState: 'approved',
+          mergeReady: true,
+          updatedAt: '2026-04-04T00:00:00.000Z',
+        },
+        dependentBranches: ['feature/downstream'],
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      mergedPrNumber: 42,
+      rebaseRequired: true,
+    });
+  });
+
+  it('returns decode failures for invalid rebase plan input', async () => {
+    const result = await createPlanRebaseDependentsTool().execute(
+      'tool-call-rb2',
+      {
+        record: {
+          prNumber: 42,
+        },
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('submits GitHub actions from valid tool input', async () => {
+    const result = await createSubmitGitHubActionTool().execute(
+      'tool-call-gh1',
+      {
+        request: {
+          repoFullName: 'VannaDii/devplat',
+          action: 'sync-branch',
+          summary: 'Sync downstream branch',
+          privileged: false,
+          branchName: 'feature/downstream',
+          updatedAt: '2026-04-04T00:00:00.000Z',
+        },
+        actorId: 'operator-1',
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      allowed: true,
+      request: { action: 'sync-branch' },
+    });
+  });
+
+  it('returns decode failures for invalid GitHub action input', async () => {
+    const result = await createSubmitGitHubActionTool().execute(
+      'tool-call-gh2',
+      {
+        request: {
+          repoFullName: 'VannaDii/devplat',
+        },
+      },
+    );
 
     expect(result.details).toMatchObject({ status: 'failed' });
   });

@@ -6,5 +6,6 @@
 - `@vannadii/devplat-openclaw` remains adapter-only.
 - `@vannadii/devplat-discord` is the primary human control surface.
 - `@vannadii/devplat-storage` is the only package allowed to touch `.devplat/` directly.
+- Keep relative ESM specifiers explicit with `.js` in TypeScript source because the repo compiles under `NodeNext`.
 - Prefer additive contract evolution over breaking changes to artifact and tool surfaces.
 - Keep privileged decisions observable and policy-mediated.

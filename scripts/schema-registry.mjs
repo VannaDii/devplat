@@ -192,6 +192,24 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'EvaluateSonarQualityGateToolInput',
+    'schemas/tool-evaluate-sonar-quality-gate-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateReviewFindingToolInput',
+    'schemas/tool-create-review-finding-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateRemediationPlanToolInput',
+    'schemas/tool-create-remediation-plan-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'ClaimTaskToolInput',
     'schemas/tool-claim-task-params.schema.json',
   ],
@@ -200,6 +218,24 @@ export const schemaRegistry = [
     'tool-surfaces',
     'UpdateTaskToolInput',
     'schemas/tool-update-task-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'SubmitPullRequestUpdateToolInput',
+    'schemas/tool-submit-pull-request-update-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'PlanRebaseDependentsToolInput',
+    'schemas/tool-plan-rebase-dependents-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'SubmitGitHubActionToolInput',
+    'schemas/tool-submit-github-action-params.schema.json',
   ],
   [
     'openclaw',

@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/CreateRemediationPlanToolInput",
+  "definitions": {
+    "CreateRemediationPlanToolInput": {
+      "type": "object",
+      "properties": {
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReviewFinding"
+          }
+        },
+        "autofix": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "findings",
+        "autofix"
+      ],
+      "additionalProperties": false
+    },
+    "ReviewFinding": {
+      "type": "object",
+      "properties": {
+        "findingId": {
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/ReviewSeverity"
+        },
+        "path": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "fixRecommendation": {
+          "type": "string"
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "findingId",
+        "severity",
+        "path",
+        "message",
+        "rationale",
+        "fixRecommendation",
+        "blocking",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "ReviewSeverity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    }
+  }
+}
