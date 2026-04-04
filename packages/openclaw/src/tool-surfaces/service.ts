@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { isAbsolute, normalize, resolve, sep } from 'node:path';
 
 import type { AnyAgentTool } from 'openclaw/plugin-sdk/plugin-entry';
 
@@ -9,6 +9,7 @@ import {
   ArtifactEnvelopeService,
 } from '@vannadii/devplat-artifacts';
 import { decodeWithCodec } from '@vannadii/devplat-core';
+import { CommandExecutionService } from '@vannadii/devplat-execution';
 import { RuntimeConfigService } from '@vannadii/devplat-config';
 import {
   DiscordChannelBindingService,
@@ -43,6 +44,7 @@ import {
   CreateSlicePlanToolInputCodec,
   CreateArtifactEnvelopeToolInputCodec,
   CreateSpecRecordToolInputCodec,
+  ExecuteCommandToolInputCodec,
   EvaluatePolicyActionToolInputCodec,
   EvaluateSonarQualityGateToolInputCodec,
   HandleDiscordApprovalToolInputCodec,
@@ -91,6 +93,45 @@ function createTextResult(payload: unknown): {
       },
     ],
     details: payload,
+  };
+}
+
+function normalizeExecutionCwd(cwd: string | undefined):
+  | {
+      ok: true;
+      value?: string;
+    }
+  | {
+      ok: false;
+      error: string;
+    } {
+  if (typeof cwd === 'undefined') {
+    return { ok: true };
+  }
+
+  const trimmed = cwd.trim();
+  if (trimmed.length === 0) {
+    return { ok: true };
+  }
+
+  if (isAbsolute(trimmed)) {
+    return {
+      ok: false,
+      error: 'cwd must be a relative repository path.',
+    };
+  }
+
+  const normalized = normalize(trimmed);
+  if (normalized === '..' || normalized.startsWith(`..${sep}`)) {
+    return {
+      ok: false,
+      error: 'cwd must stay within the repository root.',
+    };
+  }
+
+  return {
+    ok: true,
+    value: normalized,
   };
 }
 
@@ -250,6 +291,111 @@ export function createArtifactEnvelopeTool(): AnyAgentTool {
 
       const artifact = new ArtifactEnvelopeService().execute(decoded.value);
       return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createExecuteCommandTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'execute_command',
+    label: 'Execute Command',
+    description:
+      'Run a structured subprocess request through the DevPlat execution runtime when policy allows it.',
+    parameters: readSchema(
+      'tool-execute-command-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(ExecuteCommandToolInputCodec, params);
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const request = decoded.value;
+      const policy = new DecisionPolicyService().evaluateControlAction(
+        'execute-command',
+        request.privileged,
+      );
+
+      if (!policy.allowed) {
+        await new TelemetryEventService().record({
+          id: `telemetry:execute-command:${String(Date.now())}`,
+          summary: `Blocked command execution for ${request.command}`,
+          status: 'blocked',
+          trace: ['openclaw:execute-command'],
+          updatedAt: new Date().toISOString(),
+          actorId: request.actorId,
+          action: 'execute-command',
+          scope: 'supervisor',
+          details: {
+            command: request.command,
+            args: request.args,
+            blocked: true,
+          },
+        });
+        return createTextResult({
+          allowed: false,
+          policyDecisionId: policy.id,
+          request: {
+            command: request.command,
+            args: request.args,
+            cwd: request.cwd ?? null,
+            timeoutMs: request.timeoutMs ?? null,
+          },
+        });
+      }
+
+      const normalizedCwd = normalizeExecutionCwd(request.cwd);
+      if (!normalizedCwd.ok) {
+        return createTextResult({
+          status: 'failed',
+          error: normalizedCwd.error,
+        });
+      }
+
+      const result = await new CommandExecutionService().execute(
+        request.command,
+        request.args,
+        {
+          ...(normalizedCwd.value ? { cwd: normalizedCwd.value } : {}),
+          ...(request.env ? { env: request.env } : {}),
+          ...(typeof request.timeoutMs === 'number'
+            ? { timeoutMs: request.timeoutMs }
+            : {}),
+        },
+      );
+
+      await new TelemetryEventService().record({
+        id: `telemetry:execute-command:${String(Date.now())}`,
+        summary: `Executed ${request.command}`,
+        status:
+          result.exitCode === 0 && !result.timedOut ? 'approved' : 'failed',
+        trace: ['openclaw:execute-command'],
+        updatedAt: new Date().toISOString(),
+        actorId: request.actorId,
+        action: 'execute-command',
+        scope: 'supervisor',
+        details: {
+          command: request.command,
+          args: request.args,
+          cwd: normalizedCwd.value ?? null,
+          exitCode: result.exitCode,
+          timedOut: result.timedOut,
+        },
+      });
+
+      return createTextResult({
+        allowed: true,
+        policyDecisionId: policy.id,
+        request: {
+          command: request.command,
+          args: request.args,
+          cwd: normalizedCwd.value ?? null,
+          timeoutMs: request.timeoutMs ?? null,
+        },
+        result,
+      });
     },
   };
 

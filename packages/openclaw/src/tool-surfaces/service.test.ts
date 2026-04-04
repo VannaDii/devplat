@@ -5,6 +5,7 @@ import {
   createArtifactEnvelopeTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
+  createExecuteCommandTool,
   createEvaluatePolicyActionTool,
   createEvaluateSonarQualityGateTool,
   createRemediationPlanTool,
@@ -188,6 +189,133 @@ describe('tool surface service', () => {
   it('returns decode failures for invalid artifact envelope input', async () => {
     const result = await createArtifactEnvelopeTool().execute('tool-call-ae2', {
       id: 'artifact-generic-1',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('executes commands from valid non-privileged tool input', async () => {
+    const result = await createExecuteCommandTool().execute('tool-call-ex1', {
+      command: process.execPath,
+      args: [
+        '-e',
+        'process.stdout.write(process.env.DEVPLAT_TEST_VALUE ?? "")',
+      ],
+      actorId: 'operator-1',
+      privileged: false,
+      env: {
+        DEVPLAT_TEST_VALUE: 'ok',
+      },
+    });
+
+    expect(result.details).toMatchObject({
+      allowed: true,
+      policyDecisionId: 'policy-execute-command',
+      result: {
+        exitCode: 0,
+        stdout: 'ok',
+      },
+    });
+  });
+
+  it('blocks privileged command execution requests', async () => {
+    const result = await createExecuteCommandTool().execute('tool-call-ex2', {
+      command: process.execPath,
+      args: ['-e', 'process.stdout.write("blocked")'],
+      actorId: 'operator-1',
+      privileged: true,
+    });
+
+    expect(result.details).toMatchObject({
+      allowed: false,
+      policyDecisionId: 'policy-execute-command',
+      request: {
+        command: process.execPath,
+      },
+    });
+  });
+
+  it('rejects absolute cwd values for command execution', async () => {
+    const result = await createExecuteCommandTool().execute('tool-call-ex3', {
+      command: process.execPath,
+      args: ['-e', 'process.stdout.write("bad")'],
+      actorId: 'operator-1',
+      privileged: false,
+      cwd: process.cwd(),
+    });
+
+    expect(result.details).toMatchObject({
+      status: 'failed',
+      error: 'cwd must be a relative repository path.',
+    });
+  });
+
+  it('accepts blank cwd values for command execution', async () => {
+    const result = await createExecuteCommandTool().execute('tool-call-ex5', {
+      command: process.execPath,
+      args: ['-e', 'process.stdout.write("blank-cwd")'],
+      actorId: 'operator-1',
+      privileged: false,
+      cwd: '   ',
+    });
+
+    expect(result.details).toMatchObject({
+      allowed: true,
+      request: {
+        cwd: null,
+        timeoutMs: null,
+      },
+      result: {
+        exitCode: 0,
+        stdout: 'blank-cwd',
+        timedOut: false,
+      },
+    });
+  });
+
+  it('rejects cwd traversal outside the repository root', async () => {
+    const result = await createExecuteCommandTool().execute('tool-call-ex6', {
+      command: process.execPath,
+      args: ['-e', 'process.stdout.write("bad")'],
+      actorId: 'operator-1',
+      privileged: false,
+      cwd: '../outside',
+    });
+
+    expect(result.details).toMatchObject({
+      status: 'failed',
+      error: 'cwd must stay within the repository root.',
+    });
+  });
+
+  it('records failed command execution results when timeouts are exceeded', async () => {
+    const result = await createExecuteCommandTool().execute('tool-call-ex7', {
+      command: process.execPath,
+      args: ['-e', 'setTimeout(() => {}, 1_000)'],
+      actorId: 'operator-1',
+      privileged: false,
+      cwd: 'packages',
+      timeoutMs: 25,
+    });
+
+    expect(result.details).toMatchObject({
+      allowed: true,
+      request: {
+        cwd: 'packages',
+        timeoutMs: 25,
+      },
+      result: {
+        exitCode: 124,
+        timedOut: true,
+      },
+    });
+  });
+
+  it('returns decode failures for invalid command execution input', async () => {
+    const result = await createExecuteCommandTool().execute('tool-call-ex4', {
+      command: process.execPath,
+      args: ['-e', 'process.stdout.write("bad")'],
+      privileged: false,
     });
 
     expect(result.details).toMatchObject({ status: 'failed' });
@@ -623,6 +751,19 @@ describe('tool surface service', () => {
     });
 
     expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('returns structured failures for missing stored record reads', async () => {
+    const result = await createReadStoredRecordTool().execute('tool-call-sr3', {
+      scope: 'memory',
+      key: 'missing-memory-key',
+    });
+
+    expect(result.details).toMatchObject({
+      status: 'failed',
+      scope: 'memory',
+      key: 'missing-memory-key',
+    });
   });
 
   it('lists stored records from valid tool input', async () => {

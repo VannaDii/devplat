@@ -30,6 +30,7 @@ import type {
   CreateSlicePlanToolInput,
   CreateArtifactEnvelopeToolInput,
   CreateSpecRecordToolInput,
+  ExecuteCommandToolInput,
   EvaluateSonarQualityGateToolInput,
   EvaluatePolicyActionToolInput,
   HandleDiscordApprovalToolInput,
@@ -70,6 +71,21 @@ export const ResolveRuntimeConfigToolInputCodec: t.Type<ResolveRuntimeConfigTool
 
 export const CreateArtifactEnvelopeToolInputCodec: t.Type<CreateArtifactEnvelopeToolInput> =
   ArtifactEnvelopeCodec as t.Type<CreateArtifactEnvelopeToolInput>;
+
+export const ExecuteCommandToolInputCodec: t.Type<ExecuteCommandToolInput> =
+  t.intersection([
+    t.type({
+      command: t.string,
+      args: t.array(t.string),
+      actorId: t.string,
+      privileged: t.boolean,
+    }),
+    t.partial({
+      cwd: t.string,
+      env: t.record(t.string, t.string),
+      timeoutMs: t.number,
+    }),
+  ]) as t.Type<ExecuteCommandToolInput>;
 
 export const AllocateWorktreeToolInputCodec: t.Type<AllocateWorktreeToolInput> =
   t.type({

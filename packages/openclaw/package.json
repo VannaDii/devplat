@@ -32,6 +32,7 @@
     "@vannadii/devplat-config": "0.0.0",
     "@vannadii/devplat-core": "0.0.0",
     "@vannadii/devplat-discord": "0.0.0",
+    "@vannadii/devplat-execution": "0.0.0",
     "@vannadii/devplat-gates": "0.0.0",
     "@vannadii/devplat-github": "0.0.0",
     "@vannadii/devplat-memory": "0.0.0",

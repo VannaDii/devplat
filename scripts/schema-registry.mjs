@@ -168,6 +168,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'ExecuteCommandToolInput',
+    'schemas/tool-execute-command-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'RunGatesToolInput',
     'schemas/tool-run-gates-params.schema.json',
   ],

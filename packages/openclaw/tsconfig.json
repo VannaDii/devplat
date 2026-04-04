@@ -25,6 +25,9 @@
       "path": "../discord"
     },
     {
+      "path": "../execution"
+    },
+    {
       "path": "../gates"
     },
     {

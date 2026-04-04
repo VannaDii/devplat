@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/ExecuteCommandToolInput",
+  "definitions": {
+    "ExecuteCommandToolInput": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "privileged": {
+          "type": "boolean"
+        },
+        "cwd": {
+          "type": "string"
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "timeoutMs": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "command",
+        "args",
+        "actorId",
+        "privileged"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

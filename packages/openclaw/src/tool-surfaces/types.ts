@@ -68,6 +68,16 @@ export interface CreateRemediationPlanToolInput {
   autofix: RemediationPlan['autofix'];
 }
 
+export interface ExecuteCommandToolInput {
+  command: string;
+  args: string[];
+  actorId: string;
+  privileged: boolean;
+  cwd?: string;
+  env?: Record<string, string>;
+  timeoutMs?: number;
+}
+
 export type RememberMemoryEntryToolInput = MemoryEntry;
 
 export interface EvaluatePolicyActionToolInput {
