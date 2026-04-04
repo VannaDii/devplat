@@ -1,6 +1,8 @@
 # Testing Instructions
 
 - Every non-trivial unit needs sibling tests.
-- Test pure logic directly and stepwise.
-- Test services for orchestration, delegation, and side-effect boundaries.
-- Favor failures that identify both source and impact.
+- Test pure logic directly, step by step, and before higher-level orchestration paths.
+- Test services for orchestration, delegation, policy checks, persistence boundaries, and side-effect boundaries.
+- A test suite is insufficient if it only proves top-level success and hides which internal step failed.
+- Prefer narrow tests that make the source of failure obvious and broader tests that show the operational impact.
+- Do not trade away branch coverage or per-file coverage to avoid writing meaningful cases.

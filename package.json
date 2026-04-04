@@ -73,5 +73,6 @@
   "bugs": {
     "url": "https://github.com/VannaDii/devplat/issues"
   },
-  "homepage": "https://github.com/VannaDii/devplat#readme"
+  "homepage": "https://github.com/VannaDii/devplat#readme",
+  "license": "MIT"
 }

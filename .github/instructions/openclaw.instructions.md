@@ -4,3 +4,5 @@
 - Tool handlers should validate input, delegate, and format structured results.
 - Keep plugin config and tool schemas generated from real types.
 - Do not bypass policy or observability when exposing privileged actions.
+- Keep tool behavior deterministic and thread-aware where Discord context is involved.
+- Do not move storage, queue, gate, or supervisor logic into the adapter layer.

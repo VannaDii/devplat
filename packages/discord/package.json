@@ -41,6 +41,7 @@
   },
   "homepage": "https://github.com/VannaDii/devplat#readme",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
   }
 }
