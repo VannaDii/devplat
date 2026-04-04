@@ -31,6 +31,12 @@
       "path": "../github"
     },
     {
+      "path": "../memory"
+    },
+    {
+      "path": "../observability"
+    },
+    {
       "path": "../policy"
     },
     {
@@ -56,6 +62,9 @@
     },
     {
       "path": "../specs"
+    },
+    {
+      "path": "../storage"
     },
     {
       "path": "../supervisor"

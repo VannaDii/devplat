@@ -8,6 +8,8 @@ import {
 } from '@vannadii/devplat-discord';
 import { RebasePlanCodec } from '@vannadii/devplat-branching';
 import { GitHubActionRequestCodec } from '@vannadii/devplat-github';
+import { MemoryEntryCodec } from '@vannadii/devplat-memory';
+import { TelemetryEventCodec } from '@vannadii/devplat-observability';
 import { ResearchBriefCodec } from '@vannadii/devplat-research';
 import { RemediationPlanCodec } from '@vannadii/devplat-remediation';
 import { ReviewFindingCodec } from '@vannadii/devplat-review';
@@ -15,6 +17,7 @@ import { SlicePlanCodec } from '@vannadii/devplat-slicing';
 import { SonarQualityGateResultCodec } from '@vannadii/devplat-sonarcloud';
 import { SpecRecordCodec } from '@vannadii/devplat-specs';
 import { PullRequestRecordCodec } from '@vannadii/devplat-prs';
+import { StoredRecordCodec } from '@vannadii/devplat-storage';
 
 import type {
   AllocateWorktreeToolInput,
@@ -26,10 +29,15 @@ import type {
   CreateSlicePlanToolInput,
   CreateSpecRecordToolInput,
   EvaluateSonarQualityGateToolInput,
+  EvaluatePolicyActionToolInput,
   HandleDiscordApprovalToolInput,
   HandleDiscordControlToolInput,
+  ListStoredRecordsToolInput,
   OpenDiscordThreadToolInput,
   PlanRebaseDependentsToolInput,
+  ReadStoredRecordToolInput,
+  RecordTelemetryEventToolInput,
+  RememberMemoryEntryToolInput,
   RunGatesToolInput,
   RunSupervisorStepToolInput,
   SubmitGitHubActionToolInput,
@@ -97,6 +105,29 @@ export const CreateRemediationPlanToolInputCodec: t.Type<CreateRemediationPlanTo
   t.type({
     findings: t.array(ReviewFindingCodec),
     autofix: RemediationPlanCodec.props.autofix,
+  });
+
+export const RememberMemoryEntryToolInputCodec: t.Type<RememberMemoryEntryToolInput> =
+  MemoryEntryCodec as t.Type<RememberMemoryEntryToolInput>;
+
+export const EvaluatePolicyActionToolInputCodec: t.Type<EvaluatePolicyActionToolInput> =
+  t.type({
+    action: t.string,
+    privileged: t.boolean,
+  });
+
+export const RecordTelemetryEventToolInputCodec: t.Type<RecordTelemetryEventToolInput> =
+  TelemetryEventCodec as t.Type<RecordTelemetryEventToolInput>;
+
+export const ReadStoredRecordToolInputCodec: t.Type<ReadStoredRecordToolInput> =
+  t.type({
+    scope: StoredRecordCodec.props.scope,
+    key: t.string,
+  });
+
+export const ListStoredRecordsToolInputCodec: t.Type<ListStoredRecordsToolInput> =
+  t.type({
+    scope: StoredRecordCodec.props.scope,
   });
 
 export const SubmitPullRequestUpdateToolInputCodec: t.Type<SubmitPullRequestUpdateToolInput> =

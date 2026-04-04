@@ -16,11 +16,16 @@ import {
   createAllocateWorktreeTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
+  createEvaluatePolicyActionTool,
   createEvaluateSonarQualityGateTool,
   createRemediationPlanTool,
+  createRememberMemoryEntryTool,
+  createRecordTelemetryEventTool,
+  createReadStoredRecordTool,
   createReviewFindingTool,
   createHandleDiscordApprovalTool,
   createHandleDiscordControlTool,
+  createListStoredRecordsTool,
   createOpenDiscordThreadTool,
   createResearchBriefTool,
   createRunGatesTool,
@@ -91,8 +96,13 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createEvaluateSonarQualityGateTool());
     api.registerTool(createReviewFindingTool());
     api.registerTool(createRemediationPlanTool());
+    api.registerTool(createRememberMemoryEntryTool());
+    api.registerTool(createEvaluatePolicyActionTool());
+    api.registerTool(createRecordTelemetryEventTool());
     api.registerTool(createClaimTaskTool());
     api.registerTool(createUpdateTaskTool());
+    api.registerTool(createReadStoredRecordTool());
+    api.registerTool(createListStoredRecordsTool());
     api.registerTool(createSubmitPullRequestUpdateTool());
     api.registerTool(createPlanRebaseDependentsTool());
     api.registerTool(createSubmitGitHubActionTool());

@@ -17,6 +17,9 @@ import {
 } from '@vannadii/devplat-discord';
 import { RunGatesService } from '@vannadii/devplat-gates';
 import { GitHubWorkflowService } from '@vannadii/devplat-github';
+import { MemoryEntryService } from '@vannadii/devplat-memory';
+import { TelemetryEventService } from '@vannadii/devplat-observability';
+import { DecisionPolicyService } from '@vannadii/devplat-policy';
 import { PullRequestService } from '@vannadii/devplat-prs';
 import { TaskQueueService } from '@vannadii/devplat-queue';
 import { ResearchBriefService } from '@vannadii/devplat-research';
@@ -25,6 +28,7 @@ import { ReviewFindingsService } from '@vannadii/devplat-review';
 import { SlicePlanService } from '@vannadii/devplat-slicing';
 import { SonarQualityGateService } from '@vannadii/devplat-sonarcloud';
 import { SpecRecordService } from '@vannadii/devplat-specs';
+import { FileStoreService } from '@vannadii/devplat-storage';
 import { SupervisorCycleService } from '@vannadii/devplat-supervisor';
 import { WorktreeAllocationService } from '@vannadii/devplat-worktrees';
 
@@ -37,11 +41,16 @@ import {
   CreateReviewFindingToolInputCodec,
   CreateSlicePlanToolInputCodec,
   CreateSpecRecordToolInputCodec,
+  EvaluatePolicyActionToolInputCodec,
   EvaluateSonarQualityGateToolInputCodec,
   HandleDiscordApprovalToolInputCodec,
   HandleDiscordControlToolInputCodec,
+  ListStoredRecordsToolInputCodec,
   OpenDiscordThreadToolInputCodec,
   PlanRebaseDependentsToolInputCodec,
+  ReadStoredRecordToolInputCodec,
+  RecordTelemetryEventToolInputCodec,
+  RememberMemoryEntryToolInputCodec,
   RunGatesToolInputCodec,
   RunSupervisorStepToolInputCodec,
   SubmitGitHubActionToolInputCodec,
@@ -438,6 +447,156 @@ export function createRemediationPlanTool(): AnyAgentTool {
         decoded.value.autofix,
       );
       return Promise.resolve(createTextResult(plan));
+    },
+  };
+
+  return tool;
+}
+
+export function createRememberMemoryEntryTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'remember_memory_entry',
+    label: 'Remember Memory Entry',
+    description:
+      'Normalize and persist a long-lived project memory entry through DevPlat storage.',
+    parameters: readSchema(
+      'tool-remember-memory-entry-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        RememberMemoryEntryToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const entry = await new MemoryEntryService().execute(decoded.value);
+      return createTextResult(entry);
+    },
+  };
+
+  return tool;
+}
+
+export function createEvaluatePolicyActionTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'evaluate_policy_action',
+    label: 'Evaluate Policy Action',
+    description:
+      'Evaluate whether a proposed control action is automatically allowed or requires approval.',
+    parameters: readSchema(
+      'tool-evaluate-policy-action-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        EvaluatePolicyActionToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const decision = new DecisionPolicyService().evaluateControlAction(
+        decoded.value.action,
+        decoded.value.privileged,
+      );
+      return Promise.resolve(createTextResult(decision));
+    },
+  };
+
+  return tool;
+}
+
+export function createRecordTelemetryEventTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'record_telemetry_event',
+    label: 'Record Telemetry Event',
+    description:
+      'Normalize and persist a telemetry event for Discord, GitHub, supervisor, or storage activity.',
+    parameters: readSchema(
+      'tool-record-telemetry-event-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        RecordTelemetryEventToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const event = await new TelemetryEventService().execute(decoded.value);
+      return createTextResult(event);
+    },
+  };
+
+  return tool;
+}
+
+export function createReadStoredRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'read_stored_record',
+    label: 'Read Stored Record',
+    description:
+      'Read a stored DevPlat record from the file-backed Phase 0 storage layer.',
+    parameters: readSchema(
+      'tool-read-stored-record-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(ReadStoredRecordToolInputCodec, params);
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const result = await new FileStoreService().read(
+        decoded.value.scope,
+        decoded.value.key,
+      );
+      if (!result.ok) {
+        return createTextResult({
+          status: 'failed',
+          scope: decoded.value.scope,
+          key: decoded.value.key,
+          error: result.error,
+        });
+      }
+
+      return createTextResult({
+        status: 'ok',
+        scope: decoded.value.scope,
+        key: decoded.value.key,
+        record: result.value,
+      });
+    },
+  };
+
+  return tool;
+}
+
+export function createListStoredRecordsTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'list_stored_records',
+    label: 'List Stored Records',
+    description:
+      'List stored record keys by scope from the file-backed Phase 0 storage layer.',
+    parameters: readSchema(
+      'tool-list-stored-records-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(ListStoredRecordsToolInputCodec, params);
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const keys = await new FileStoreService().list(decoded.value.scope);
+      return createTextResult({
+        status: 'ok',
+        scope: decoded.value.scope,
+        keys,
+      });
     },
   };
 

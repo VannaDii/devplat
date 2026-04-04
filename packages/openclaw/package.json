@@ -34,6 +34,8 @@
     "@vannadii/devplat-discord": "0.0.0",
     "@vannadii/devplat-gates": "0.0.0",
     "@vannadii/devplat-github": "0.0.0",
+    "@vannadii/devplat-memory": "0.0.0",
+    "@vannadii/devplat-observability": "0.0.0",
     "@vannadii/devplat-policy": "0.0.0",
     "@vannadii/devplat-prs": "0.0.0",
     "@vannadii/devplat-queue": "0.0.0",
@@ -43,6 +45,7 @@
     "@vannadii/devplat-slicing": "0.0.0",
     "@vannadii/devplat-sonarcloud": "0.0.0",
     "@vannadii/devplat-specs": "0.0.0",
+    "@vannadii/devplat-storage": "0.0.0",
     "@vannadii/devplat-supervisor": "0.0.0",
     "@vannadii/devplat-worktrees": "0.0.0"
   },

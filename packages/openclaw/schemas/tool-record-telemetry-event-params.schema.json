@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/RecordTelemetryEventToolInput",
+  "definitions": {
+    "RecordTelemetryEventToolInput": {
+      "$ref": "#/definitions/TelemetryEvent"
+    },
+    "TelemetryEvent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "discord",
+            "github",
+            "supervisor",
+            "storage"
+          ]
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      },
+      "required": [
+        "id",
+        "summary",
+        "status",
+        "trace",
+        "updatedAt",
+        "actorId",
+        "action",
+        "scope",
+        "details"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    }
+  }
+}

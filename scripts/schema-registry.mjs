@@ -210,8 +210,38 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'RememberMemoryEntryToolInput',
+    'schemas/tool-remember-memory-entry-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'EvaluatePolicyActionToolInput',
+    'schemas/tool-evaluate-policy-action-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'RecordTelemetryEventToolInput',
+    'schemas/tool-record-telemetry-event-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'ClaimTaskToolInput',
     'schemas/tool-claim-task-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'ReadStoredRecordToolInput',
+    'schemas/tool-read-stored-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'ListStoredRecordsToolInput',
+    'schemas/tool-list-stored-records-params.schema.json',
   ],
   [
     'openclaw',

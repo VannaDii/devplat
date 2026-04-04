@@ -5,7 +5,10 @@ import type {
   DiscordThreadSession,
 } from '@vannadii/devplat-discord';
 import type { GitHubActionRequest } from '@vannadii/devplat-github';
+import type { MemoryEntry } from '@vannadii/devplat-memory';
+import type { TelemetryEvent } from '@vannadii/devplat-observability';
 import type { RebasePlan } from '@vannadii/devplat-branching';
+import type { StoreScope } from '@vannadii/devplat-storage';
 import type { PullRequestRecord } from '@vannadii/devplat-prs';
 import type { ResearchBrief } from '@vannadii/devplat-research';
 import type { RemediationPlan } from '@vannadii/devplat-remediation';
@@ -56,6 +59,24 @@ export type CreateReviewFindingToolInput = ReviewFinding;
 export interface CreateRemediationPlanToolInput {
   findings: ReviewFinding[];
   autofix: RemediationPlan['autofix'];
+}
+
+export type RememberMemoryEntryToolInput = MemoryEntry;
+
+export interface EvaluatePolicyActionToolInput {
+  action: string;
+  privileged: boolean;
+}
+
+export type RecordTelemetryEventToolInput = TelemetryEvent;
+
+export interface ReadStoredRecordToolInput {
+  scope: StoreScope;
+  key: string;
+}
+
+export interface ListStoredRecordsToolInput {
+  scope: StoreScope;
 }
 
 export interface SubmitPullRequestUpdateToolInput {

@@ -4,11 +4,16 @@ import {
   createAllocateWorktreeTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
+  createEvaluatePolicyActionTool,
   createEvaluateSonarQualityGateTool,
   createRemediationPlanTool,
+  createRememberMemoryEntryTool,
+  createRecordTelemetryEventTool,
+  createReadStoredRecordTool,
   createReviewFindingTool,
   createHandleDiscordApprovalTool,
   createHandleDiscordControlTool,
+  createListStoredRecordsTool,
   createOpenDiscordThreadTool,
   createPlanRebaseDependentsTool,
   createResearchBriefTool,
@@ -390,6 +395,102 @@ describe('tool surface service', () => {
     expect(result.details).toMatchObject({ status: 'failed' });
   });
 
+  it('persists memory entries from valid tool input', async () => {
+    const result = await createRememberMemoryEntryTool().execute(
+      'tool-call-me1',
+      {
+        memoryId: 'memory-openclaw-1',
+        kind: 'decision',
+        subject: ' Use Discord as the primary control plane ',
+        detail: ' Keep the operator flow auditable and thread-scoped. ',
+        tags: ['discord', 'discord', ' audit '],
+        status: 'active',
+        sourceArtifactId: 'artifact-1',
+        updatedAt: '2026-04-04T00:00:00.000Z',
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      memoryId: 'memory-openclaw-1',
+      subject: 'Use Discord as the primary control plane',
+      tags: ['discord', 'audit'],
+    });
+  });
+
+  it('returns decode failures for invalid memory entry input', async () => {
+    const result = await createRememberMemoryEntryTool().execute(
+      'tool-call-me2',
+      {
+        memoryId: 'memory-openclaw-1',
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('evaluates policy actions from valid tool input', async () => {
+    const result = await createEvaluatePolicyActionTool().execute(
+      'tool-call-pa1',
+      {
+        action: 'merge-now',
+        privileged: false,
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      action: 'merge-now',
+      allowed: false,
+      requiresApproval: true,
+    });
+  });
+
+  it('returns decode failures for invalid policy action input', async () => {
+    const result = await createEvaluatePolicyActionTool().execute(
+      'tool-call-pa2',
+      {
+        action: 'merge-now',
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('records telemetry events from valid tool input', async () => {
+    const result = await createRecordTelemetryEventTool().execute(
+      'tool-call-te1',
+      {
+        id: 'telemetry-openclaw-1',
+        summary: ' Sync branch telemetry ',
+        status: 'approved',
+        trace: [],
+        updatedAt: '2026-04-04T00:00:00.000Z',
+        actorId: 'operator-1',
+        action: 'sync-branch',
+        scope: 'github',
+        details: {
+          prNumber: 42,
+        },
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      id: 'telemetry-openclaw-1',
+      summary: 'Sync branch telemetry',
+      trace: ['telemetry:github:sync-branch'],
+    });
+  });
+
+  it('returns decode failures for invalid telemetry input', async () => {
+    const result = await createRecordTelemetryEventTool().execute(
+      'tool-call-te2',
+      {
+        id: 'telemetry-openclaw-1',
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
   it('updates task lifecycle state from valid tool input', async () => {
     const result = await createUpdateTaskTool().execute('tool-call-7', {
       taskId: 'task-1',
@@ -408,6 +509,77 @@ describe('tool surface service', () => {
       threadId: 'thread-1',
       status: 'queued',
     });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('reads stored records from valid tool input', async () => {
+    await createRememberMemoryEntryTool().execute('tool-call-sr0', {
+      memoryId: 'memory-openclaw-read-1',
+      kind: 'constraint',
+      subject: ' Preserve audit history ',
+      detail: 'Stored reads should expose persisted records.',
+      tags: ['audit'],
+      status: 'active',
+      updatedAt: '2026-04-04T00:00:00.000Z',
+    });
+
+    const result = await createReadStoredRecordTool().execute('tool-call-sr1', {
+      scope: 'memory',
+      key: 'memory-openclaw-read-1',
+    });
+
+    expect(result.details).toMatchObject({
+      status: 'ok',
+      scope: 'memory',
+      key: 'memory-openclaw-read-1',
+      record: {
+        id: 'memory-openclaw-read-1',
+        scope: 'memory',
+      },
+    });
+  });
+
+  it('returns decode failures for invalid stored record reads', async () => {
+    const result = await createReadStoredRecordTool().execute('tool-call-sr2', {
+      scope: 'memory',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('lists stored records from valid tool input', async () => {
+    await createRememberMemoryEntryTool().execute('tool-call-ls0', {
+      memoryId: 'memory-openclaw-list-1',
+      kind: 'preference',
+      subject: ' Prefer auditable controls ',
+      detail: 'List calls should expose known persisted keys.',
+      tags: ['controls'],
+      status: 'active',
+      updatedAt: '2026-04-04T00:00:00.000Z',
+    });
+
+    const result = await createListStoredRecordsTool().execute(
+      'tool-call-ls1',
+      {
+        scope: 'memory',
+      },
+    );
+
+    expect(result.details).toEqual(
+      expect.objectContaining({
+        status: 'ok',
+        scope: 'memory',
+        keys: expect.arrayContaining(['memory-openclaw-list-1']),
+      }),
+    );
+  });
+
+  it('returns decode failures for invalid stored record listing', async () => {
+    const result = await createListStoredRecordsTool().execute(
+      'tool-call-ls2',
+      {},
+    );
 
     expect(result.details).toMatchObject({ status: 'failed' });
   });
