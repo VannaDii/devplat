@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - '**'
 
 permissions:
   contents: read
@@ -12,9 +12,21 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
       - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Cache Sonar packages
+        if: ${{ env.SONAR_TOKEN != '' }}
+        uses: actions/cache@v4.2.4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
       - name: Setup Node
         uses: actions/setup-node@v6.3.0
@@ -88,13 +100,13 @@ jobs:
             coverage/**
 
       - name: Sonar scan
-        if: ${{ secrets.SONAR_TOKEN != '' && steps.test.outcome == 'success' && steps.build.outcome == 'success' }}
+        if: ${{ env.SONAR_TOKEN != '' && steps.test.outcome == 'success' && steps.build.outcome == 'success' }}
         uses: SonarSource/sonarqube-scan-action@v7.1.0
         with:
           args: >
             -Dsonar.qualitygate.wait=true
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
 
       - name: Fail if verification failed
         if: always()
