@@ -10,6 +10,8 @@ describe('DevplatConfig logic', () => {
     });
 
     expect(config.trace).toContain('config:load-runtime-config');
+    expect(config.discord.defaultGuildId).toBe('devplat-guild');
+    expect(config.discord.threadBindingMode).toBe('inherit-parent');
     expect(config.sonar.minimumCoverage).toBe(90);
     expect(describeDevplatConfig(config)).toContain('VannaDii/devplat');
   });

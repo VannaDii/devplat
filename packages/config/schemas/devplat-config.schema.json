@@ -104,6 +104,9 @@
     "DiscordRuntimeConfig": {
       "type": "object",
       "properties": {
+        "defaultGuildId": {
+          "type": "string"
+        },
         "specChannelId": {
           "type": "string"
         },
@@ -112,12 +115,18 @@
         },
         "auditChannelId": {
           "type": "string"
+        },
+        "threadBindingMode": {
+          "type": "string",
+          "const": "inherit-parent"
         }
       },
       "required": [
+        "defaultGuildId",
         "specChannelId",
         "implementationChannelId",
-        "auditChannelId"
+        "auditChannelId",
+        "threadBindingMode"
       ],
       "additionalProperties": false
     },

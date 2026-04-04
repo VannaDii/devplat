@@ -13,9 +13,11 @@ export const DevplatConfigCodec = t.type({
   githubOwner: t.string,
   githubRepo: t.string,
   discord: t.type({
+    defaultGuildId: t.string,
     specChannelId: t.string,
     implementationChannelId: t.string,
     auditChannelId: t.string,
+    threadBindingMode: t.literal('inherit-parent'),
   }),
   openclaw: t.type({
     pluginId: t.string,

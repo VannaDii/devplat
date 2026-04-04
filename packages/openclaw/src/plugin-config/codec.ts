@@ -14,6 +14,7 @@ export const OpenClawPluginConfigCodec = t.type({
   specChannelId: t.string,
   implementationChannelId: t.string,
   auditChannelId: t.string,
+  threadBindingMode: t.literal('inherit-parent'),
   actionGates: t.type({
     approveThis: t.boolean,
     mergeNow: t.boolean,

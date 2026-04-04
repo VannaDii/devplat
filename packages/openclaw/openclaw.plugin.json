@@ -38,6 +38,10 @@
           "auditChannelId": {
             "type": "string"
           },
+          "threadBindingMode": {
+            "type": "string",
+            "const": "inherit-parent"
+          },
           "actionGates": {
             "type": "object",
             "properties": {
@@ -73,6 +77,7 @@
           "specChannelId",
           "implementationChannelId",
           "auditChannelId",
+          "threadBindingMode",
           "actionGates"
         ],
         "additionalProperties": false

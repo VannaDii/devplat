@@ -16,6 +16,7 @@ describe('RuntimeConfigService', () => {
     const config = service.fromEnvironment({
       GITHUB_OWNER: 'AcmeOrg',
       GITHUB_REPO: 'platform',
+      DISCORD_DEFAULT_GUILD_ID: 'guild-7',
       DISCORD_SPEC_CHANNEL_ID: 'specs',
       DISCORD_IMPLEMENTATION_CHANNEL_ID: 'impl',
       DISCORD_AUDIT_CHANNEL_ID: 'audit',
@@ -26,6 +27,7 @@ describe('RuntimeConfigService', () => {
 
     expect(config.githubOwner).toBe('AcmeOrg');
     expect(config.githubRepo).toBe('platform');
+    expect(config.discord.defaultGuildId).toBe('guild-7');
     expect(config.openclaw.pluginId).toBe('@acme/platform-openclaw');
     expect(service.execute(config)).toBe(config);
   });

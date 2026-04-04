@@ -1,8 +1,17 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 import {
   definePluginEntry,
   type OpenClawPluginConfigSchema,
 } from 'openclaw/plugin-sdk/plugin-entry';
 
+import { decodeWithCodec } from '@vannadii/devplat-core';
+
+import {
+  OpenClawPluginConfigCodec,
+  PluginConfigService,
+} from './plugin-config/index.js';
 import {
   createAllocateWorktreeTool,
   createClaimTaskTool,
@@ -11,6 +20,16 @@ import {
   createUpdateTaskTool,
   createValidateArtifactTool,
 } from './tool-surfaces/service.js';
+
+function readSchema(fileName: string): Record<string, unknown> {
+  const filePath = resolve(import.meta.dirname, '..', 'schemas', fileName);
+  const parsed: unknown = JSON.parse(readFileSync(filePath, 'utf8'));
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    throw new Error(`Schema ${fileName} must contain a JSON object.`);
+  }
+
+  return parsed as Record<string, unknown>;
+}
 
 function validatePluginConfig(value: unknown):
   | {
@@ -21,25 +40,23 @@ function validatePluginConfig(value: unknown):
       ok: false;
       errors: string[];
     } {
-  if (typeof value !== 'object' || value === null) {
+  const decoded = decodeWithCodec(OpenClawPluginConfigCodec, value);
+  if (!decoded.ok) {
     return {
       ok: false,
-      errors: ['Plugin config must be an object.'],
+      errors: [decoded.error],
     };
   }
 
   return {
     ok: true,
-    value,
+    value: new PluginConfigService().execute(decoded.value),
   };
 }
 
 const configSchema: OpenClawPluginConfigSchema = {
   validate: validatePluginConfig,
-  jsonSchema: {
-    type: 'object',
-    additionalProperties: false,
-  },
+  jsonSchema: readSchema('plugin-config.schema.json'),
 };
 
 const devplatOpenClawPlugin = definePluginEntry({

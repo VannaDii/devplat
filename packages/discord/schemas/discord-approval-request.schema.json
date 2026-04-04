@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#/definitions/OpenClawPluginConfig",
+  "$ref": "#/definitions/DiscordApprovalRequest",
   "definitions": {
-    "OpenClawPluginConfig": {
+    "DiscordApprovalRequest": {
       "type": "object",
       "properties": {
         "id": {
@@ -23,45 +23,23 @@
         "updatedAt": {
           "type": "string"
         },
-        "defaultGuildId": {
+        "actorId": {
           "type": "string"
         },
-        "specChannelId": {
+        "channelId": {
           "type": "string"
         },
-        "implementationChannelId": {
+        "threadId": {
           "type": "string"
         },
-        "auditChannelId": {
+        "action": {
+          "$ref": "#/definitions/DiscordApprovalAction"
+        },
+        "artifactId": {
           "type": "string"
         },
-        "threadBindingMode": {
-          "type": "string",
-          "const": "inherit-parent"
-        },
-        "actionGates": {
-          "type": "object",
-          "properties": {
-            "approveThis": {
-              "type": "boolean"
-            },
-            "mergeNow": {
-              "type": "boolean"
-            },
-            "retryGates": {
-              "type": "boolean"
-            },
-            "rebaseAllDependents": {
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "approveThis",
-            "mergeNow",
-            "retryGates",
-            "rebaseAllDependents"
-          ],
-          "additionalProperties": false
+        "privileged": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -70,12 +48,12 @@
         "status",
         "trace",
         "updatedAt",
-        "defaultGuildId",
-        "specChannelId",
-        "implementationChannelId",
-        "auditChannelId",
-        "threadBindingMode",
-        "actionGates"
+        "actorId",
+        "channelId",
+        "threadId",
+        "action",
+        "artifactId",
+        "privileged"
       ],
       "additionalProperties": false
     },
@@ -94,6 +72,15 @@
         "failed",
         "rebasing",
         "complete"
+      ]
+    },
+    "DiscordApprovalAction": {
+      "type": "string",
+      "enum": [
+        "approve",
+        "retry",
+        "merge",
+        "escalate"
       ]
     }
   }

@@ -10,6 +10,7 @@ export interface OpenClawPluginConfig {
   specChannelId: string;
   implementationChannelId: string;
   auditChannelId: string;
+  threadBindingMode: 'inherit-parent';
   actionGates: {
     approveThis: boolean;
     mergeNow: boolean;

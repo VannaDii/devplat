@@ -25,10 +25,12 @@ export function createDefaultDevplatConfig(
     githubOwner: env['GITHUB_OWNER'] ?? 'VannaDii',
     githubRepo: env['GITHUB_REPO'] ?? 'devplat',
     discord: {
+      defaultGuildId: env['DISCORD_DEFAULT_GUILD_ID'] ?? 'devplat-guild',
       specChannelId: env['DISCORD_SPEC_CHANNEL_ID'] ?? 'spec-channel',
       implementationChannelId:
         env['DISCORD_IMPLEMENTATION_CHANNEL_ID'] ?? 'implementation-channel',
       auditChannelId: env['DISCORD_AUDIT_CHANNEL_ID'] ?? 'audit-channel',
+      threadBindingMode: 'inherit-parent',
     },
     openclaw: {
       pluginId: env['OPENCLAW_PLUGIN_ID'] ?? '@vannadii/devplat-openclaw',

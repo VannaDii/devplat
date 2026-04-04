@@ -101,9 +101,27 @@ export const schemaRegistry = [
   ],
   [
     'discord',
+    'channel-binding',
+    'DiscordChannelBinding',
+    'schemas/discord-channel-binding.schema.json',
+  ],
+  [
+    'discord',
     'discord-control-plane',
     'DiscordControlRequest',
     'schemas/discord-control-request.schema.json',
+  ],
+  [
+    'discord',
+    'interactive-approval',
+    'DiscordApprovalRequest',
+    'schemas/discord-approval-request.schema.json',
+  ],
+  [
+    'discord',
+    'thread-session',
+    'DiscordThreadSession',
+    'schemas/discord-thread-session.schema.json',
   ],
   [
     'openclaw',

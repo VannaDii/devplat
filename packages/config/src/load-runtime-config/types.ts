@@ -1,9 +1,11 @@
 import type { LifecycleStatus } from '@vannadii/devplat-core';
 
 export interface DiscordRuntimeConfig {
+  defaultGuildId: string;
   specChannelId: string;
   implementationChannelId: string;
   auditChannelId: string;
+  threadBindingMode: 'inherit-parent';
 }
 
 export interface OpenClawActionGateConfig {

@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#/definitions/OpenClawPluginConfig",
+  "$ref": "#/definitions/DiscordThreadSession",
   "definitions": {
-    "OpenClawPluginConfig": {
+    "DiscordThreadSession": {
       "type": "object",
       "properties": {
         "id": {
@@ -23,45 +23,35 @@
         "updatedAt": {
           "type": "string"
         },
-        "defaultGuildId": {
+        "guildId": {
           "type": "string"
         },
-        "specChannelId": {
+        "channelId": {
           "type": "string"
         },
-        "implementationChannelId": {
+        "parentChannelId": {
           "type": "string"
         },
-        "auditChannelId": {
+        "threadId": {
           "type": "string"
         },
-        "threadBindingMode": {
-          "type": "string",
-          "const": "inherit-parent"
+        "kind": {
+          "$ref": "#/definitions/DiscordThreadKind"
         },
-        "actionGates": {
-          "type": "object",
-          "properties": {
-            "approveThis": {
-              "type": "boolean"
-            },
-            "mergeNow": {
-              "type": "boolean"
-            },
-            "retryGates": {
-              "type": "boolean"
-            },
-            "rebaseAllDependents": {
-              "type": "boolean"
-            }
-          },
-          "required": [
-            "approveThis",
-            "mergeNow",
-            "retryGates",
-            "rebaseAllDependents"
-          ],
-          "additionalProperties": false
+        "specId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sliceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "artifactId": {
+          "type": "string"
         }
       },
       "required": [
@@ -70,12 +60,14 @@
         "status",
         "trace",
         "updatedAt",
-        "defaultGuildId",
-        "specChannelId",
-        "implementationChannelId",
-        "auditChannelId",
-        "threadBindingMode",
-        "actionGates"
+        "guildId",
+        "channelId",
+        "parentChannelId",
+        "threadId",
+        "kind",
+        "specId",
+        "sliceId",
+        "artifactId"
       ],
       "additionalProperties": false
     },
@@ -94,6 +86,13 @@
         "failed",
         "rebasing",
         "complete"
+      ]
+    },
+    "DiscordThreadKind": {
+      "type": "string",
+      "enum": [
+        "spec",
+        "implementation"
       ]
     }
   }
