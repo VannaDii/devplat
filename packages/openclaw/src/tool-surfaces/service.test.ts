@@ -32,13 +32,32 @@ import {
 
 describe('tool surface service', () => {
   it('creates OpenClaw-compatible tool definitions', async () => {
-    const tool = createRunGatesTool();
+    const tool = createRunGatesTool({
+      async run(gateNames, summary) {
+        return {
+          id: 'gate-run-report',
+          summary,
+          status: 'complete',
+          trace: ['gates:passed'],
+          updatedAt: '2026-04-04T00:00:00.000Z',
+          passed: true,
+          results: gateNames.map((gateName) => ({
+            name: gateName,
+            success: true,
+            detail: `${gateName} -> exit 0`,
+          })),
+        };
+      },
+    });
     expect(tool.name).toBe('run_gates');
     const result = await tool.execute('tool-call-1', {
       gateNames: ['lint'],
       summary: 'run lint',
     });
-    expect(result.details).toBeTruthy();
+    expect(result.details).toMatchObject({
+      passed: true,
+      results: [{ name: 'lint', success: true }],
+    });
   });
 
   it('creates research brief artifacts from valid tool input', async () => {

@@ -135,26 +135,27 @@ function normalizeExecutionCwd(cwd: string | undefined):
   };
 }
 
-export function createRunGatesTool(): AnyAgentTool {
+export function createRunGatesTool(
+  runGatesService: Pick<RunGatesService, 'run'> = new RunGatesService(),
+): AnyAgentTool {
   const tool: AnyAgentTool = {
     name: 'run_gates',
     label: 'Run Gates',
-    description: 'Run the configured DevPlat gate suite in scaffold mode.',
+    description:
+      'Run the configured DevPlat gate suite through the execution runtime.',
     parameters: readSchema('tool-run-gates-params.schema.json') as unknown,
-    execute(_toolCallId: string, params: unknown) {
+    async execute(_toolCallId: string, params: unknown) {
       const rawParams: unknown = params;
       const decoded = decodeWithCodec(RunGatesToolInputCodec, rawParams);
       if (!decoded.ok) {
-        return Promise.resolve(
-          createTextResult({ status: 'failed', error: decoded.error }),
-        );
+        return createTextResult({ status: 'failed', error: decoded.error });
       }
 
-      const report = new RunGatesService().run(
+      const report = await runGatesService.run(
         decoded.value.gateNames,
         decoded.value.summary,
       );
-      return Promise.resolve(createTextResult(report));
+      return createTextResult(report);
     },
   };
 
