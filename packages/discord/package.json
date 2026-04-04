@@ -30,5 +30,17 @@
     "@vannadii/devplat-observability": "0.0.0",
     "@vannadii/devplat-policy": "0.0.0",
     "@vannadii/devplat-storage": "0.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VannaDii/devplat.git",
+    "directory": "packages/discord"
+  },
+  "bugs": {
+    "url": "https://github.com/VannaDii/devplat/issues"
+  },
+  "homepage": "https://github.com/VannaDii/devplat#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

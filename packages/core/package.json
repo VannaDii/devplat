@@ -26,5 +26,17 @@
   "dependencies": {
     "fp-ts": "2.16.11",
     "io-ts": "2.2.22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VannaDii/devplat.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/VannaDii/devplat/issues"
+  },
+  "homepage": "https://github.com/VannaDii/devplat#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

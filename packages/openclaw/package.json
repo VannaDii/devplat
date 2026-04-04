@@ -40,5 +40,17 @@
     "extensions": [
       "./dist/index.js"
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VannaDii/devplat.git",
+    "directory": "packages/openclaw"
+  },
+  "bugs": {
+    "url": "https://github.com/VannaDii/devplat/issues"
+  },
+  "homepage": "https://github.com/VannaDii/devplat#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
