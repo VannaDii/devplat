@@ -42,7 +42,10 @@
               "$ref": "#/definitions/OpenClawActionGateConfig"
             }
           },
-          "required": ["pluginId", "actionGates"],
+          "required": [
+            "pluginId",
+            "actionGates"
+          ],
           "additionalProperties": false
         },
         "sonar": {
@@ -59,7 +62,11 @@
               "const": 90
             }
           },
-          "required": ["organization", "projectKey", "minimumCoverage"],
+          "required": [
+            "organization",
+            "projectKey",
+            "minimumCoverage"
+          ],
           "additionalProperties": false
         }
       },

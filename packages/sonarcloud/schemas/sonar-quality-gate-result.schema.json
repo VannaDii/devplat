@@ -36,7 +36,10 @@
     },
     "QualityGateStatus": {
       "type": "string",
-      "enum": ["passed", "failed"]
+      "enum": [
+        "passed",
+        "failed"
+      ]
     }
   }
 }

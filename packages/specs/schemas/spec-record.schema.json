@@ -47,7 +47,11 @@
     },
     "SpecApprovalState": {
       "type": "string",
-      "enum": ["draft", "review", "approved"]
+      "enum": [
+        "draft",
+        "review",
+        "approved"
+      ]
     }
   }
 }

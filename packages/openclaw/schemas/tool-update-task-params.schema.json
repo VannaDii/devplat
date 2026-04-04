@@ -28,7 +28,12 @@
           ]
         }
       },
-      "required": ["taskId", "sliceId", "threadId", "status"],
+      "required": [
+        "taskId",
+        "sliceId",
+        "threadId",
+        "status"
+      ],
       "additionalProperties": false
     }
   }

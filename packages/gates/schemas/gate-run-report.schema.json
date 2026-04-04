@@ -74,7 +74,11 @@
           "type": "string"
         }
       },
-      "required": ["name", "success", "detail"],
+      "required": [
+        "name",
+        "success",
+        "detail"
+      ],
       "additionalProperties": false
     }
   }

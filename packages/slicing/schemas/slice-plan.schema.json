@@ -53,7 +53,11 @@
     },
     "SliceSize": {
       "type": "string",
-      "enum": ["small", "medium", "large"]
+      "enum": [
+        "small",
+        "medium",
+        "large"
+      ]
     }
   }
 }

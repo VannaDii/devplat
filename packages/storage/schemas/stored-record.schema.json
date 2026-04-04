@@ -51,7 +51,12 @@
     },
     "StoreScope": {
       "type": "string",
-      "enum": ["artifacts", "memory", "state", "telemetry"]
+      "enum": [
+        "artifacts",
+        "memory",
+        "state",
+        "telemetry"
+      ]
     },
     "LifecycleStatus": {
       "type": "string",

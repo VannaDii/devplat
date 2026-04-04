@@ -10,7 +10,9 @@
           "additionalProperties": {}
         }
       },
-      "required": ["artifact"],
+      "required": [
+        "artifact"
+      ],
       "additionalProperties": false
     }
   }

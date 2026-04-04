@@ -47,7 +47,12 @@
     },
     "PullRequestReviewState": {
       "type": "string",
-      "enum": ["draft", "review", "approved", "changes-requested"]
+      "enum": [
+        "draft",
+        "review",
+        "approved",
+        "changes-requested"
+      ]
     }
   }
 }

@@ -44,7 +44,12 @@
     },
     "ReviewSeverity": {
       "type": "string",
-      "enum": ["low", "medium", "high", "critical"]
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
     }
   }
 }
