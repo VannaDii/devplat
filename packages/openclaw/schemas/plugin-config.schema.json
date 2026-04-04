@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/OpenClawPluginConfig",
+  "definitions": {
+    "OpenClawPluginConfig": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "defaultGuildId": {
+          "type": "string"
+        },
+        "specChannelId": {
+          "type": "string"
+        },
+        "implementationChannelId": {
+          "type": "string"
+        },
+        "auditChannelId": {
+          "type": "string"
+        },
+        "actionGates": {
+          "type": "object",
+          "properties": {
+            "approveThis": {
+              "type": "boolean"
+            },
+            "mergeNow": {
+              "type": "boolean"
+            },
+            "retryGates": {
+              "type": "boolean"
+            },
+            "rebaseAllDependents": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "approveThis",
+            "mergeNow",
+            "retryGates",
+            "rebaseAllDependents"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "summary",
+        "status",
+        "trace",
+        "updatedAt",
+        "defaultGuildId",
+        "specChannelId",
+        "implementationChannelId",
+        "auditChannelId",
+        "actionGates"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    }
+  }
+}

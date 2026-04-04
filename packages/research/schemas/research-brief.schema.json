@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/ResearchBrief",
+  "definitions": {
+    "ResearchBrief": {
+      "type": "object",
+      "properties": {
+        "researchId": {
+          "type": "string"
+        },
+        "topic": {
+          "type": "string"
+        },
+        "question": {
+          "type": "string"
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendation": {
+          "type": "string"
+        },
+        "sourceUrls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "researchId",
+        "topic",
+        "question",
+        "constraints",
+        "findings",
+        "recommendation",
+        "sourceUrls",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a correctness, reliability, policy, workflow, or tooling defect.
+title: '[Bug]: '
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: State the problem directly.
+      placeholder: What is broken?
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Explain why this matters.
+      placeholder: What behavior, package, or workflow is affected?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide exact reproduction steps.
+      placeholder: |
+        1. nvm use
+        2. npm ci
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or artifacts
+      description: Include failing command output, artifact names, or links.
+  - type: input
+    id: packages
+    attributes:
+      label: Affected packages
+      placeholder: '@vannadii/devplat-openclaw, @vannadii/devplat-discord'

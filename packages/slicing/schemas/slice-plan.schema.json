@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/SlicePlan",
+  "definitions": {
+    "SlicePlan": {
+      "type": "object",
+      "properties": {
+        "sliceId": {
+          "type": "string"
+        },
+        "specId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "acceptanceCriteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "doneConditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "size": {
+          "$ref": "#/definitions/SliceSize"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "sliceId",
+        "specId",
+        "title",
+        "dependsOn",
+        "acceptanceCriteria",
+        "doneConditions",
+        "size",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "SliceSize": {
+      "type": "string",
+      "enum": ["small", "medium", "large"]
+    }
+  }
+}

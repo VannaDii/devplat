@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+npm run verify:node
+npm run generate:schemas
+npm run generate:openclaw-manifest
+npm run check:unit-tests
+npx --no -- lint-staged
+npm run typecheck

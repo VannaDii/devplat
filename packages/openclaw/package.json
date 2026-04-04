@@ -1,0 +1,44 @@
+{
+  "name": "@vannadii/devplat-openclaw",
+  "version": "0.0.0",
+  "description": "OpenClaw adapter layer for DevPlat.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "openclaw.plugin.json"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc -b tsconfig.json --pretty false",
+    "test": "vitest run --dir src"
+  },
+  "dependencies": {
+    "io-ts": "2.2.22",
+    "openclaw": "2026.4.2",
+    "@vannadii/devplat-artifacts": "0.0.0",
+    "@vannadii/devplat-core": "0.0.0",
+    "@vannadii/devplat-discord": "0.0.0",
+    "@vannadii/devplat-gates": "0.0.0",
+    "@vannadii/devplat-policy": "0.0.0",
+    "@vannadii/devplat-queue": "0.0.0",
+    "@vannadii/devplat-supervisor": "0.0.0",
+    "@vannadii/devplat-worktrees": "0.0.0"
+  },
+  "openclaw": {
+    "extensions": [
+      "./dist/index.js"
+    ]
+  }
+}

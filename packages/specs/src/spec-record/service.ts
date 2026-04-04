@@ -1,0 +1,45 @@
+import {
+  ArtifactEnvelopeService,
+  type ArtifactEnvelope,
+} from '@vannadii/devplat-artifacts';
+
+import {
+  approveSpecRecord,
+  createSpecRecord,
+  describeSpecRecord,
+} from './logic.js';
+import type { SpecRecord } from './types.js';
+
+export class SpecRecordService {
+  private readonly artifacts = new ArtifactEnvelopeService();
+
+  public draft(input: SpecRecord): SpecRecord {
+    return createSpecRecord(input);
+  }
+
+  public approve(input: SpecRecord): SpecRecord {
+    return approveSpecRecord(input);
+  }
+
+  public execute(input: SpecRecord): SpecRecord {
+    return this.draft(input);
+  }
+
+  public toArtifact(input: SpecRecord): ArtifactEnvelope<SpecRecord> {
+    const record = createSpecRecord(input);
+    return this.artifacts.execute({
+      id: `artifact:${record.specId}`,
+      artifactType: 'spec-record',
+      version: 1,
+      summary: `Spec ${record.title}`,
+      status: record.approvalState === 'approved' ? 'approved' : 'draft',
+      trace: ['specs:artifact'],
+      updatedAt: record.updatedAt,
+      payload: record,
+    });
+  }
+
+  public explain(input: SpecRecord): string {
+    return describeSpecRecord(input);
+  }
+}

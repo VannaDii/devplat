@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/ClaimTaskToolInput",
+  "definitions": {
+    "ClaimTaskToolInput": {
+      "type": "object",
+      "properties": {
+        "taskId": {
+          "type": "string"
+        },
+        "sliceId": {
+          "type": "string"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "assigneeId": {
+          "type": "string"
+        }
+      },
+      "required": ["taskId", "sliceId", "threadId", "assigneeId"],
+      "additionalProperties": false
+    }
+  }
+}

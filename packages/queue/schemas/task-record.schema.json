@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/TaskRecord",
+  "definitions": {
+    "TaskRecord": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "sliceId": {
+          "type": "string"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "assigneeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "summary",
+        "status",
+        "trace",
+        "updatedAt",
+        "taskId",
+        "sliceId",
+        "threadId"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    }
+  }
+}

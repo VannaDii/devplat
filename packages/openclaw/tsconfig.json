@@ -1,0 +1,37 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts", "dist"],
+  "references": [
+    {
+      "path": "../artifacts"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../discord"
+    },
+    {
+      "path": "../gates"
+    },
+    {
+      "path": "../policy"
+    },
+    {
+      "path": "../queue"
+    },
+    {
+      "path": "../supervisor"
+    },
+    {
+      "path": "../worktrees"
+    }
+  ]
+}

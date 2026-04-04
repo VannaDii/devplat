@@ -1,0 +1,24 @@
+name: Sonar Bootstrap Check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify-sonar-configuration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - name: Ensure project metadata is committed
+        run: |
+          test -f sonar-project.properties
+          grep -q '^sonar.organization=VannaDii$' sonar-project.properties
+          grep -q '^sonar.projectKey=VannaDii_devplat$' sonar-project.properties
+
+      - name: Verify Sonar token exists
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          test -n "${SONAR_TOKEN}"
+          echo "Sonar token configured."

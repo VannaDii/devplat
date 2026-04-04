@@ -1,0 +1,69 @@
+{
+  "name": "devplat",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Discord-first autonomous development platform foundation.",
+  "type": "module",
+  "packageManager": "npm@11.12.1",
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.0.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "preinstall": "node scripts/verify-node-version.mjs",
+    "prepare:generated": "npm run generate:schemas && npm run generate:openclaw-manifest",
+    "build": "npm run prepare:generated && turbo run build",
+    "clean": "turbo run clean && rm -rf coverage .turbo",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "turbo run typecheck",
+    "test": "npm run prepare:generated && turbo run test",
+    "test:coverage": "npm run prepare:generated && vitest run --coverage",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "verify:node": "node scripts/verify-node-version.mjs",
+    "generate:schemas": "node scripts/generate-schemas.mjs",
+    "check:schemas": "node scripts/check-schemas.mjs",
+    "generate:openclaw-manifest": "node scripts/generate-openclaw-manifest.mjs",
+    "check:unit-tests": "node scripts/check-unit-tests.mjs",
+    "check:prepush": "node scripts/check-pre-push.mjs",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "0.6.0",
+    "@changesets/cli": "2.30.0",
+    "@commitlint/cli": "20.5.0",
+    "@commitlint/config-conventional": "20.5.0",
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.12.2",
+    "@vitest/coverage-v8": "4.1.2",
+    "eslint": "10.2.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-sonarjs": "4.0.2",
+    "globals": "17.4.0",
+    "husky": "9.1.7",
+    "lint-staged": "16.4.0",
+    "prettier": "3.8.1",
+    "semver": "7.7.4",
+    "ts-json-schema-generator": "2.9.0",
+    "tsx": "4.21.0",
+    "turbo": "2.9.3",
+    "typescript": "6.0.2",
+    "typescript-eslint": "8.58.0",
+    "vite": "8.0.3",
+    "vitest": "4.1.2"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.{ts,mts,cts}": [
+      "eslint --fix --max-warnings 0"
+    ]
+  }
+}

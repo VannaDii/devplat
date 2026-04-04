@@ -1,0 +1,17 @@
+node_modules/
+coverage/
+.turbo/
+dist/
+*.tsbuildinfo
+openclaw-*.tgz
+
+.devplat/**
+!.devplat/
+!.devplat/artifacts/
+!.devplat/memory/
+!.devplat/state/
+!.devplat/telemetry/
+!.devplat/**/.gitkeep
+
+packages/**/dist/
+!packages/openclaw/openclaw.plugin.json

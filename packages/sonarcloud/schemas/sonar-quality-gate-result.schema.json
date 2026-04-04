@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/SonarQualityGateResult",
+  "definitions": {
+    "SonarQualityGateResult": {
+      "type": "object",
+      "properties": {
+        "projectKey": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/QualityGateStatus"
+        },
+        "overallCoverage": {
+          "type": "number"
+        },
+        "newCodeCoverage": {
+          "type": "number"
+        },
+        "blockingIssues": {
+          "type": "number"
+        },
+        "evaluatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectKey",
+        "status",
+        "overallCoverage",
+        "newCodeCoverage",
+        "blockingIssues",
+        "evaluatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "QualityGateStatus": {
+      "type": "string",
+      "enum": ["passed", "failed"]
+    }
+  }
+}

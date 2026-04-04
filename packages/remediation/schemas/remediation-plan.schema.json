@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/RemediationPlan",
+  "definitions": {
+    "RemediationPlan": {
+      "type": "object",
+      "properties": {
+        "planId": {
+          "type": "string"
+        },
+        "findingIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "autofix": {
+          "type": "boolean"
+        },
+        "approvalRequired": {
+          "type": "boolean"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "planId",
+        "findingIds",
+        "actions",
+        "autofix",
+        "approvalRequired",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

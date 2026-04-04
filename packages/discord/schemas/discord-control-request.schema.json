@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/DiscordControlRequest",
+  "definitions": {
+    "DiscordControlRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "threadId": {
+          "type": "string"
+        },
+        "channelId": {
+          "type": "string"
+        },
+        "action": {
+          "$ref": "#/definitions/DiscordControlAction"
+        },
+        "privileged": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "summary",
+        "status",
+        "trace",
+        "updatedAt",
+        "actorId",
+        "threadId",
+        "channelId",
+        "action",
+        "privileged"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    },
+    "DiscordControlAction": {
+      "type": "string",
+      "enum": [
+        "run-this",
+        "approve-this",
+        "pause-this",
+        "rebase-all-dependents",
+        "retry-gates",
+        "merge-now"
+      ]
+    }
+  }
+}

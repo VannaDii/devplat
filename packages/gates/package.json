@@ -1,0 +1,32 @@
+{
+  "name": "@vannadii/devplat-gates",
+  "version": "0.0.0",
+  "description": "Quality gate orchestration.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "schemas"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.json",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc -b tsconfig.json --pretty false",
+    "test": "vitest run --dir src"
+  },
+  "dependencies": {
+    "io-ts": "2.2.22",
+    "@vannadii/devplat-artifacts": "0.0.0",
+    "@vannadii/devplat-core": "0.0.0",
+    "@vannadii/devplat-execution": "0.0.0"
+  }
+}

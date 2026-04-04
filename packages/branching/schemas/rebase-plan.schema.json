@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/RebasePlan",
+  "definitions": {
+    "RebasePlan": {
+      "type": "object",
+      "properties": {
+        "mergedPrNumber": {
+          "type": "number"
+        },
+        "baseBranch": {
+          "type": "string"
+        },
+        "dependentBranches": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rebaseRequired": {
+          "type": "boolean"
+        },
+        "conflictsExpected": {
+          "type": "boolean"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mergedPrNumber",
+        "baseBranch",
+        "dependentBranches",
+        "rebaseRequired",
+        "conflictsExpected",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
