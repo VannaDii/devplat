@@ -966,6 +966,58 @@ describe('tool surface service', () => {
     expect(result.details).toMatchObject({ artifactType: 'review-finding' });
   });
 
+  it('validates and normalizes known artifact contracts', async () => {
+    const result = await createValidateArtifactTool().execute('tool-call-11b', {
+      artifact: {
+        id: 'artifact-approval-1',
+        artifactType: 'approval-record',
+        version: 1,
+        summary: ' Approve slice ',
+        status: 'approved',
+        trace: [],
+        updatedAt: '2026-04-04T00:00:00.000Z',
+        payload: {
+          approvalId: ' approval-1 ',
+          subjectType: 'slice',
+          subjectId: ' slice-1 ',
+          actorId: ' operator-1 ',
+          decision: 'approved',
+          rationale: ' Ready to proceed ',
+        },
+      },
+    });
+
+    expect(result.details).toMatchObject({
+      artifactType: 'approval-record',
+      summary: 'Approve slice',
+      payload: {
+        approvalId: 'approval-1',
+        subjectId: 'slice-1',
+        actorId: 'operator-1',
+        rationale: 'Ready to proceed',
+      },
+    });
+  });
+
+  it('rejects malformed known artifact contracts', async () => {
+    const result = await createValidateArtifactTool().execute('tool-call-11c', {
+      artifact: {
+        id: 'artifact-approval-2',
+        artifactType: 'approval-record',
+        version: 1,
+        summary: 'Approve slice',
+        status: 'approved',
+        trace: [],
+        updatedAt: '2026-04-04T00:00:00.000Z',
+        payload: {
+          approvalId: 'approval-2',
+        },
+      },
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
   it('runs supervisor steps from valid tool input', async () => {
     const result = await createRunSupervisorStepTool().execute('tool-call-12', {
       action: 'retry-gates',

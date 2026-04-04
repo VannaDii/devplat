@@ -5,8 +5,8 @@ import type { AnyAgentTool } from 'openclaw/plugin-sdk/plugin-entry';
 
 import { RebaseDependentsService } from '@vannadii/devplat-branching';
 import {
-  ArtifactEnvelopeCodec,
   ArtifactEnvelopeService,
+  ArtifactValidationService,
 } from '@vannadii/devplat-artifacts';
 import { decodeWithCodec } from '@vannadii/devplat-core';
 import { CommandExecutionService } from '@vannadii/devplat-execution';
@@ -988,8 +988,7 @@ export function createValidateArtifactTool(): AnyAgentTool {
         );
       }
 
-      const artifact = decodeWithCodec(
-        ArtifactEnvelopeCodec,
+      const artifact = new ArtifactValidationService().execute(
         decoded.value.artifact,
       );
       if (!artifact.ok) {
@@ -998,9 +997,7 @@ export function createValidateArtifactTool(): AnyAgentTool {
         );
       }
 
-      return Promise.resolve(
-        createTextResult(new ArtifactEnvelopeService().execute(artifact.value)),
-      );
+      return Promise.resolve(createTextResult(artifact.value));
     },
   };
 

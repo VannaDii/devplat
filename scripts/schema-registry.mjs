@@ -11,6 +11,30 @@ export const schemaRegistry = [
     'ArtifactEnvelopeSchema',
     'schemas/artifact-envelope.schema.json',
   ],
+  [
+    'artifacts',
+    'approval-record',
+    'ApprovalRecordArtifact',
+    'schemas/approval-record.schema.json',
+  ],
+  [
+    'artifacts',
+    'audit-log',
+    'AuditLogArtifact',
+    'schemas/audit-log.schema.json',
+  ],
+  [
+    'artifacts',
+    'merge-decision',
+    'MergeDecisionArtifact',
+    'schemas/merge-decision.schema.json',
+  ],
+  [
+    'artifacts',
+    'rebase-result',
+    'RebaseResultArtifact',
+    'schemas/rebase-result.schema.json',
+  ],
   ['memory', 'memory-entry', 'MemoryEntry', 'schemas/memory-entry.schema.json'],
   [
     'research',

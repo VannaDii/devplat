@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/RebaseResultArtifact",
+  "definitions": {
+    "RebaseResultArtifact": {
+      "$ref": "#/definitions/ArtifactEnvelope%3CRebaseResultPayload%3E"
+    },
+    "ArtifactEnvelope<RebaseResultPayload>": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "artifactType": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number",
+          "const": 1
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/definitions/RebaseResultPayload"
+        }
+      },
+      "required": [
+        "id",
+        "artifactType",
+        "version",
+        "summary",
+        "status",
+        "trace",
+        "updatedAt",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    },
+    "RebaseResultPayload": {
+      "type": "object",
+      "properties": {
+        "resultId": {
+          "type": "string"
+        },
+        "mergedPrNumber": {
+          "type": "number"
+        },
+        "baseBranch": {
+          "type": "string"
+        },
+        "branchName": {
+          "type": "string"
+        },
+        "rebased": {
+          "type": "boolean"
+        },
+        "conflictsDetected": {
+          "type": "boolean"
+        },
+        "details": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "resultId",
+        "mergedPrNumber",
+        "baseBranch",
+        "branchName",
+        "rebased",
+        "conflictsDetected",
+        "details"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
