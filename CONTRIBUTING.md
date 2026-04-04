@@ -55,4 +55,4 @@ Do not hide significant behavior changes behind formatting-only commits.
 
 ## Security
 
-Do not file public issues for vulnerabilities. Follow [`SECURITY.md`](/Users/vanna/Source/devplat/SECURITY.md).
+Do not file public issues for vulnerabilities. Follow [`SECURITY.md`](SECURITY.md).
