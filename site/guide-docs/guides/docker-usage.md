@@ -15,4 +15,4 @@ docker build \
 docker run --rm -p 18789:18789 devplat-openclaw-runtime:local
 ```
 
-The image is based on Alpine `3.23.3`, installs Node matching the repo baseline, builds the workspace, and starts the OpenClaw gateway entrypoint.
+The image is based on Alpine `3.23`, installs Node matching the repo baseline, builds the workspace, and starts the OpenClaw gateway entrypoint.
