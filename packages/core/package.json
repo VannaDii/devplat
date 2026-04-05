@@ -21,7 +21,7 @@
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint": "eslint src --max-warnings 0",
     "typecheck": "tsc -b tsconfig.json --pretty false",
-    "test": "vitest run --dir src"
+    "test": "vitest run --config ../../vitest.package.config.mts"
   },
   "dependencies": {
     "fp-ts": "2.16.11",

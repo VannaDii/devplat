@@ -1,0 +1,69 @@
+# @vannadii/devplat-openclaw
+
+`@vannadii/devplat-openclaw` is the adapter-only OpenClaw package for DevPlat. It reads generated schemas, decodes tool input with the platform codecs, and delegates to the platform packages for behavior.
+
+## Package Assets
+
+- `openclaw.plugin.json`: generated plugin manifest
+- `schemas/plugin-config.schema.json`: generated plugin config schema
+- `dist/index.js`: built plugin entrypoint
+
+## Exposed Tools
+
+- `run_gates`: execute the configured DevPlat gate suite
+- `create_research_brief`: normalize a research brief artifact
+- `create_spec_record`: normalize a spec record artifact
+- `approve_spec_record`: approve a spec record artifact
+- `create_slice_plan`: create a slice plan
+- `evaluate_slice_plan_readiness`: evaluate slice dependencies against completed slices
+- `resolve_runtime_config`: normalize runtime configuration
+- `create_openclaw_plugin_config`: generate OpenClaw plugin configuration payload
+- `create_artifact_envelope`: create a generic artifact envelope
+- `create_approval_record`: create an approval record artifact
+- `create_audit_log`: create an audit log artifact
+- `create_merge_decision`: create a merge decision artifact
+- `create_rebase_result`: create a rebase result artifact
+- `execute_command`: run a repository command through the execution service
+- `allocate_worktree`: allocate a tracked worktree
+- `bind_discord_thread`: persist Discord thread bindings
+- `open_discord_thread`: normalize Discord thread session state
+- `handle_discord_approval`: process Discord approval input
+- `handle_discord_control`: process Discord control-plane input
+- `verify_sonar_bootstrap`: validate Sonar bootstrap requirements
+- `evaluate_sonar_quality_gate`: interpret Sonar quality gate results
+- `create_review_finding`: create a review finding artifact
+- `create_remediation_plan`: create a remediation plan artifact
+- `remember_memory_entry`: normalize and persist memory entry state
+- `evaluate_policy_action`: evaluate privileged action policy
+- `record_telemetry_event`: create telemetry records
+- `create_task_record`: create a queue task record
+- `claim_task`: claim a queued task
+- `update_task`: update task lifecycle state
+- `read_stored_record`: fetch a record from the storage adapter
+- `list_stored_records`: enumerate storage records
+- `store_record`: persist a record through the storage adapter
+- `create_pull_request_record`: create a pull request record
+- `submit_pull_request_update`: update a pull request record
+- `plan_rebase_dependents`: plan dependent rebases
+- `create_github_action_request`: create a GitHub action request
+- `submit_github_action`: submit a GitHub action request result
+- `validate_artifact`: validate artifact payloads against platform contracts
+- `run_supervisor_step`: run a supervisor orchestration step
+
+## Deterministic Generation
+
+The OpenClaw manifest is generated from committed package metadata and the generated plugin config schema:
+
+```bash
+npm run generate:openclaw-manifest
+npm run check:openclaw-manifest
+```
+
+## Development
+
+```bash
+nvm use
+npm ci
+npm run prepare:generated
+npm run build
+```

@@ -1,0 +1,26 @@
+# Helm and k3s Deployment
+
+## Package
+
+```bash
+helm lint deploy/helm/devplat
+helm package deploy/helm/devplat --destination .artifacts/helm
+```
+
+## Install on k3s
+
+```bash
+helm upgrade --install devplat deploy/helm/devplat \
+  --namespace devplat \
+  --create-namespace \
+  --set image.repository=ghcr.io/vannadii/devplat-openclaw-runtime \
+  --set image.tag=latest
+```
+
+## Values Coverage
+
+- Configurable image repository, tag, and pull policy
+- ConfigMap-backed config injection
+- Secret and ConfigMap environment references
+- Optional PVC for OpenClaw state
+- Optional Ingress for gateway exposure

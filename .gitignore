@@ -15,3 +15,6 @@ openclaw-*.tgz
 
 packages/**/dist/
 !packages/openclaw/openclaw.plugin.json
+site/guide-docs/.vitepress/dist/
+site/guide-docs/.vitepress/.temp/
+.artifacts/

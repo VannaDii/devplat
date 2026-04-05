@@ -10,7 +10,8 @@
     "npm": ">=11.0.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "site/guide-docs"
   ],
   "scripts": {
     "preinstall": "node scripts/verify-node-version.mjs",
@@ -31,10 +32,18 @@
     "generate:schemas": "node scripts/generate-schemas.mjs",
     "check:schemas": "node scripts/check-schemas.mjs",
     "generate:openclaw-manifest": "node scripts/generate-openclaw-manifest.mjs",
+    "check:openclaw-manifest": "node scripts/check-openclaw-manifest.mjs",
     "check:unit-tests": "node scripts/check-unit-tests.mjs",
-    "check:precommit": "node scripts/check-pre-commit.mjs",
+    "check:pre-commit": "node scripts/check-pre-commit.mjs",
     "verify:sonar-bootstrap": "tsx scripts/verify-sonar-bootstrap.ts",
-    "check:prepush": "node scripts/check-pre-push.mjs",
+    "check:packages": "node scripts/check-packages.mjs",
+    "check:exports": "node scripts/check-exports.mjs",
+    "check:dependency-graph": "node scripts/check-dependency-graph.mjs",
+    "check:repo": "npm run check:packages && npm run check:exports && npm run check:dependency-graph && npm run check:schemas && npm run check:openclaw-manifest && npm run check:unit-tests",
+    "check:pre-push": "node scripts/check-pre-push.mjs",
+    "docs:dev": "vitepress dev site/guide-docs",
+    "docs:build": "vitepress build site/guide-docs",
+    "docs:preview": "vitepress preview site/guide-docs",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "changeset publish",
@@ -62,6 +71,7 @@
     "typescript": "6.0.2",
     "typescript-eslint": "8.58.0",
     "vite": "8.0.3",
+    "vitepress": "1.6.4",
     "vitest": "4.1.2"
   },
   "lint-staged": {
@@ -69,7 +79,7 @@
       "prettier --write"
     ],
     "*.{ts,mts,cts}": [
-      "eslint --fix --max-warnings 0"
+      "eslint --fix --max-warnings 0 --no-warn-ignored"
     ]
   },
   "repository": {

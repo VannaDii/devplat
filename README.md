@@ -48,8 +48,10 @@ npm run lint
 npm run typecheck
 npm run test:coverage
 npm run build
+npm run docs:build
 npm run generate:schemas
 npm run check:schemas
+npm run check:repo
 ```
 
 ## Engineering Guardrails
@@ -58,3 +60,9 @@ npm run check:schemas
 - Keep runtime contracts aligned across TypeScript types, `io-ts` codecs, and generated JSON Schemas.
 - Tests live sibling to the units they verify and must isolate both failure source and downstream impact.
 - OpenClaw code stays adapter-only. Business logic belongs in the platform packages.
+
+## Distribution Surfaces
+
+- `docker/openclaw-runtime`: Alpine-based OpenClaw gateway runtime image
+- `deploy/helm/devplat`: Helm chart for Kubernetes and k3s deployment
+- `site/guide-docs`: VitePress documentation site published through GitHub Pages

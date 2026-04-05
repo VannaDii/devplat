@@ -61,6 +61,11 @@ jobs:
         continue-on-error: true
         run: npm run prepare:generated
 
+      - name: Verify repository structure
+        id: repo
+        continue-on-error: true
+        run: npm run check:repo
+
       - name: Lint
         id: lint
         continue-on-error: true
@@ -81,15 +86,10 @@ jobs:
         continue-on-error: true
         run: npm run build:workspace
 
-      - name: Check schemas
-        id: check_schemas
+      - name: Build docs
+        id: docs
         continue-on-error: true
-        run: npm run check:schemas
-
-      - name: Check unit tests
-        id: check_unit_tests
-        continue-on-error: true
-        run: npm run check:unit-tests
+        run: npm run docs:build
 
       - name: Upload build artifacts
         if: always()
@@ -101,6 +101,15 @@ jobs:
             packages/*/dist/**
             packages/*/schemas/*.schema.json
             packages/openclaw/openclaw.plugin.json
+
+      - name: Upload docs artifact
+        if: always()
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: docs-artifacts-${{ steps.artifact_meta.outputs.safe_workflow_name }}-${{ steps.artifact_meta.outputs.safe_ref_name }}-${{ steps.artifact_meta.outputs.short_sha }}
+          retention-days: 14
+          path: |
+            site/guide-docs/.vitepress/dist/**
 
       - name: Upload coverage artifacts
         if: always()
@@ -130,12 +139,12 @@ jobs:
           failures=0
           for outcome in \
             "${{ steps.generated.outcome }}" \
+            "${{ steps.repo.outcome }}" \
             "${{ steps.lint.outcome }}" \
             "${{ steps.typecheck.outcome }}" \
             "${{ steps.test.outcome }}" \
             "${{ steps.build.outcome }}" \
-            "${{ steps.check_schemas.outcome }}" \
-            "${{ steps.check_unit_tests.outcome }}"; do
+            "${{ steps.docs.outcome }}"; do
             if [[ "$outcome" != "success" ]]; then
               failures=1
             fi
