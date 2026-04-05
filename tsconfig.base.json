@@ -29,6 +29,7 @@
     "moduleDetection": "force",
     "useDefineForClassFields": true,
     "types": ["node"],
+    "baseUrl": ".",
     "paths": {
       "@vannadii/devplat-core": ["./packages/core/src/index.ts"],
       "@vannadii/devplat-config": ["./packages/config/src/index.ts"],
