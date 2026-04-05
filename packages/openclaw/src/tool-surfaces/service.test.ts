@@ -231,7 +231,7 @@ describe('tool surface service', () => {
           DISCORD_AUDIT_CHANNEL_ID: 'audit-1',
           OPENCLAW_PLUGIN_ID: '@vannadii/devplat-openclaw',
           SONAR_ORGANIZATION: 'VannaDii',
-          SONAR_PROJECT_KEY: 'VannaDii_devplat',
+          SONAR_PROJECT_KEY: 'vannadii_devplat',
         },
       },
     );
@@ -244,7 +244,7 @@ describe('tool surface service', () => {
         specChannelId: 'spec-1',
       },
       sonar: {
-        projectKey: 'VannaDii_devplat',
+        projectKey: 'vannadii_devplat',
         minimumCoverage: 90,
       },
     });
@@ -292,7 +292,7 @@ describe('tool surface service', () => {
         },
         sonar: {
           organization: 'VannaDii',
-          projectKey: 'VannaDii_devplat',
+          projectKey: 'vannadii_devplat',
           minimumCoverage: 90,
         },
       },
@@ -832,7 +832,7 @@ describe('tool surface service', () => {
     const result = await createVerifySonarBootstrapTool().execute(
       'tool-call-sb1',
       {
-        projectKey: 'VannaDii_devplat',
+        projectKey: 'vannadii_devplat',
         qualityGateStatus: 'OK',
         conditions: [
           {
@@ -853,7 +853,7 @@ describe('tool surface service', () => {
     );
 
     expect(result.details).toMatchObject({
-      projectKey: 'VannaDii_devplat',
+      projectKey: 'vannadii_devplat',
       status: 'passed',
       checks: {
         qualityGateComputed: true,
@@ -868,7 +868,7 @@ describe('tool surface service', () => {
     const result = await createVerifySonarBootstrapTool().execute(
       'tool-call-sb2',
       {
-        projectKey: 'VannaDii_devplat',
+        projectKey: 'vannadii_devplat',
       },
     );
 
@@ -879,7 +879,7 @@ describe('tool surface service', () => {
     const result = await createEvaluateSonarQualityGateTool().execute(
       'tool-call-sq1',
       {
-        projectKey: 'VannaDii_devplat',
+        projectKey: 'vannadii_devplat',
         overallCoverage: 91,
         newCodeCoverage: 92,
         blockingIssues: 0,
@@ -887,7 +887,7 @@ describe('tool surface service', () => {
     );
 
     expect(result.details).toMatchObject({
-      projectKey: 'VannaDii_devplat',
+      projectKey: 'vannadii_devplat',
       status: 'passed',
     });
   });
@@ -896,7 +896,7 @@ describe('tool surface service', () => {
     const result = await createEvaluateSonarQualityGateTool().execute(
       'tool-call-sq2',
       {
-        projectKey: 'VannaDii_devplat',
+        projectKey: 'vannadii_devplat',
       },
     );
 
