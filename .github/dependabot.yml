@@ -1,0 +1,50 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 5
+    rebase-strategy: auto
+    versioning-strategy: increase-if-necessary
+    commit-message:
+      prefix: chore
+      include: scope
+    pull-request-branch-name:
+      separator: '-'
+    labels:
+      - dependencies
+    groups:
+      prod:
+        dependency-type: production
+        patterns:
+          - '*'
+      dev:
+        dependency-type: development
+        patterns:
+          - '*'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:15'
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 5
+    rebase-strategy: auto
+    commit-message:
+      prefix: chore
+      include: scope
+    pull-request-branch-name:
+      separator: '-'
+    labels:
+      - dependencies
+      - ci
+    groups:
+      gha:
+        patterns:
+          - '*'
