@@ -204,6 +204,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'CreateGitHubActionRequestToolInput',
+    'schemas/tool-create-github-action-request-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'CreateArtifactEnvelopeToolInput',
     'schemas/tool-create-artifact-envelope-params.schema.json',
   ],

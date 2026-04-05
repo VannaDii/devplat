@@ -163,6 +163,8 @@ export interface SubmitGitHubActionToolInput {
   actorId: string;
 }
 
+export type CreateGitHubActionRequestToolInput = GitHubActionRequest;
+
 export interface ClaimTaskToolInput {
   taskId: string;
   sliceId: string;

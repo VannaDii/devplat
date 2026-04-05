@@ -43,6 +43,7 @@ import type {
   CreateSlicePlanToolInput,
   CreateArtifactEnvelopeToolInput,
   CreateAuditLogToolInput,
+  CreateGitHubActionRequestToolInput,
   CreateMergeDecisionToolInput,
   CreateOpenClawPluginConfigToolInput,
   CreatePullRequestRecordToolInput,
@@ -235,6 +236,9 @@ export const SubmitGitHubActionToolInputCodec: t.Type<SubmitGitHubActionToolInpu
     request: GitHubActionRequestCodec,
     actorId: t.string,
   });
+
+export const CreateGitHubActionRequestToolInputCodec: t.Type<CreateGitHubActionRequestToolInput> =
+  GitHubActionRequestCodec as t.Type<CreateGitHubActionRequestToolInput>;
 
 export const ClaimTaskToolInputCodec: t.Type<ClaimTaskToolInput> = t.type({
   taskId: t.string,

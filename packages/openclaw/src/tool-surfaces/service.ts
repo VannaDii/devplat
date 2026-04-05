@@ -54,6 +54,7 @@ import {
   CreateSlicePlanToolInputCodec,
   CreateArtifactEnvelopeToolInputCodec,
   CreateAuditLogToolInputCodec,
+  CreateGitHubActionRequestToolInputCodec,
   CreateMergeDecisionToolInputCodec,
   CreateOpenClawPluginConfigToolInputCodec,
   CreatePullRequestRecordToolInputCodec,
@@ -1267,6 +1268,34 @@ export function createSubmitGitHubActionTool(): AnyAgentTool {
         decoded.value.actorId,
       );
       return createTextResult(result);
+    },
+  };
+
+  return tool;
+}
+
+export function createGitHubActionRequestTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_github_action_request',
+    label: 'Create GitHub Action Request',
+    description:
+      'Normalize a GitHub workflow action request before submission.',
+    parameters: readSchema(
+      'tool-create-github-action-request-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateGitHubActionRequestToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const request = new GitHubWorkflowService().prepare(decoded.value);
+      return Promise.resolve(createTextResult(request));
     },
   };
 

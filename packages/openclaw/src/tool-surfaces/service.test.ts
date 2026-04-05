@@ -33,6 +33,7 @@ import {
   createSlicePlanTool,
   createSpecRecordTool,
   createStoreRecordTool,
+  createGitHubActionRequestTool,
   createSubmitGitHubActionTool,
   createSubmitPullRequestUpdateTool,
   createTaskRecordTool,
@@ -1362,6 +1363,38 @@ describe('tool surface service', () => {
         record: {
           prNumber: 42,
         },
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('creates GitHub action requests from valid tool input', async () => {
+    const result = await createGitHubActionRequestTool().execute(
+      'tool-call-gh0',
+      {
+        repoFullName: ' VannaDii/devplat ',
+        action: 'sync-branch',
+        summary: ' Sync downstream branch ',
+        privileged: false,
+        branchName: ' feature/downstream ',
+        updatedAt: '2026-04-04T00:00:00.000Z',
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      repoFullName: 'VannaDii/devplat',
+      action: 'sync-branch',
+      summary: 'Sync downstream branch',
+      branchName: 'feature/downstream',
+    });
+  });
+
+  it('returns decode failures for invalid GitHub action request input', async () => {
+    const result = await createGitHubActionRequestTool().execute(
+      'tool-call-gh0b',
+      {
+        repoFullName: 'VannaDii/devplat',
       },
     );
 

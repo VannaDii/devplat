@@ -24,6 +24,7 @@ import {
   createExecuteCommandTool,
   createEvaluatePolicyActionTool,
   createEvaluateSonarQualityGateTool,
+  createGitHubActionRequestTool,
   createMergeDecisionTool,
   createRemediationPlanTool,
   createRememberMemoryEntryTool,
@@ -133,6 +134,7 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createPullRequestRecordTool());
     api.registerTool(createSubmitPullRequestUpdateTool());
     api.registerTool(createPlanRebaseDependentsTool());
+    api.registerTool(createGitHubActionRequestTool());
     api.registerTool(createSubmitGitHubActionTool());
     api.registerTool(createValidateArtifactTool());
     api.registerTool(createRunSupervisorStepTool());
