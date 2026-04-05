@@ -1,10 +1,9 @@
 import { readdir, readFile } from 'node:fs/promises';
-import { basename, resolve } from 'node:path';
+import { basename, dirname, relative, resolve } from 'node:path';
 
 const rootDirectory = resolve(import.meta.dirname, '..');
 const packagesDirectory = resolve(rootDirectory, 'packages');
-const importPattern =
-  /from\s+['"](@vannadii\/devplat-[^/'"]+|(?:\.\.\/)+(?:packages\/)[^'"]+)['"]/gu;
+const importPattern = /(?:from\s+|import\s+)['"]([^'"]+)['"]/gu;
 
 const packageDirectories = (
   await readdir(packagesDirectory, {
@@ -59,6 +58,27 @@ for (const [packageName, entry] of packageEntries) {
       const specifier = match[1];
       if (specifier.startsWith('@vannadii/devplat-')) {
         importedPackages.add(specifier);
+        continue;
+      }
+
+      if (!specifier.startsWith('.')) {
+        continue;
+      }
+
+      const resolvedSpecifierPath = resolve(dirname(filePath), specifier);
+      const relativeToPackage = relative(
+        entry.directory,
+        resolvedSpecifierPath,
+      );
+      if (!relativeToPackage.startsWith('..') && relativeToPackage !== '') {
+        continue;
+      }
+
+      const relativeToPackages = relative(
+        packagesDirectory,
+        resolvedSpecifierPath,
+      );
+      if (relativeToPackages.startsWith('..')) {
         continue;
       }
 
