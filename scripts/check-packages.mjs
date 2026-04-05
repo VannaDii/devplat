@@ -87,7 +87,17 @@ for (const packageDirectoryName of packageDirectories) {
     }
   }
 
-  const tsconfig = JSON.parse(await readFile(tsconfigPath, 'utf8'));
+  let tsconfig;
+
+  try {
+    tsconfig = JSON.parse(await readFile(tsconfigPath, 'utf8'));
+  } catch (error) {
+    failures.push(
+      `${packageDirectoryName}: could not read tsconfig.json (${getErrorMessage(error)})`,
+    );
+    continue;
+  }
+
   if (tsconfig.extends !== '../../tsconfig.base.json') {
     failures.push(
       `${packageDirectoryName}: tsconfig.json must extend ../../tsconfig.base.json`,
