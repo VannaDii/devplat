@@ -6,7 +6,8 @@ CI runs Vitest coverage with LCOV output at `coverage/lcov.info` and waits for t
 
 - Sources: `packages`
 - Tests: `packages/*/src/**/*.test.ts`
-- Exclusions: distribution output, coverage artifacts, `.devplat`, and generated schemas
+- `sonar.exclusions`: `packages/*/dist/**`, `coverage/**`, `.devplat/**`, `packages/*/schemas/*.schema.json`, `site/**`, `deploy/**`, `docker/**`
+- `sonar.coverage.exclusions`: `packages/*/src/**/*.test.ts`
 
 ## Operator Notes
 

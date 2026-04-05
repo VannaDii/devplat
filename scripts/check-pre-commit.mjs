@@ -1,9 +1,25 @@
 import { spawn } from 'node:child_process';
+import { dirname } from 'node:path';
+
+const safeChildPath = [
+  dirname(process.execPath),
+  '/opt/homebrew/bin',
+  '/usr/local/bin',
+  '/usr/bin',
+  '/bin',
+  '/usr/sbin',
+  '/sbin',
+].join(':');
+
+const safeChildEnv = {
+  ...process.env,
+  PATH: safeChildPath,
+};
 
 function runCommand(label, command, args) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
-      env: process.env,
+    const child = spawn('/usr/bin/env', [command, ...args], {
+      env: safeChildEnv,
       stdio: 'inherit',
     });
 

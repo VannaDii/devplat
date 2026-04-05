@@ -1,28 +1,14 @@
-ARG ALPINE_VERSION=3.23.3
-FROM alpine:${ALPINE_VERSION} AS node-base
-
 ARG NODE_VERSION=24.14.1
+ARG ALPINE_VERSION=3.23
+
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS node-base
 
 RUN apk add --no-cache \
     bash \
     ca-certificates \
     curl \
     git \
-    libstdc++ \
-    tar \
-    xz
-
-RUN arch="$(apk --print-arch)" \
-    && case "${arch}" in \
-      x86_64) node_arch='x64' ;; \
-      aarch64) node_arch='arm64' ;; \
-      *) echo "Unsupported Alpine architecture: ${arch}" >&2; exit 1 ;; \
-    esac \
-    && curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${node_arch}.tar.xz" -o /tmp/node.tar.xz \
-    && tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 \
-    && rm /tmp/node.tar.xz \
-    && node --version \
-    && npm --version
+    libstdc++
 
 FROM node-base AS build
 

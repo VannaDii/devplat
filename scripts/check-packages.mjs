@@ -1,6 +1,6 @@
 import { access, readdir, readFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
-import { resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 
 const rootDirectory = resolve(import.meta.dirname, '..');
 const packagesDirectory = resolve(rootDirectory, 'packages');
@@ -28,7 +28,9 @@ for (const packageDirectoryName of packageDirectories) {
     try {
       await access(filePath, constants.F_OK);
     } catch {
-      failures.push(`${packageDirectoryName}: missing ${filePath}`);
+      failures.push(
+        `${packageDirectoryName}: missing ${relative(rootDirectory, filePath)}`,
+      );
     }
   }
 
