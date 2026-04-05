@@ -125,7 +125,7 @@ function normalizeExecutionCwd(cwd: string | undefined):
       ok: false;
       error: string;
     } {
-  if (typeof cwd === 'undefined') {
+  if (cwd === undefined) {
     return { ok: true };
   }
 

@@ -49,7 +49,7 @@ RUN addgroup -S devplat && adduser -S -G devplat devplat \
 COPY --from=build /workspace/package.json /workspace/package-lock.json ./
 COPY --from=build /workspace/node_modules ./node_modules
 COPY --from=build /workspace/packages ./packages
-COPY /docker/openclaw-runtime/entrypoint.sh /usr/local/bin/devplat-openclaw-entrypoint
+COPY docker/openclaw-runtime/entrypoint.sh /usr/local/bin/devplat-openclaw-entrypoint
 
 RUN chmod +x /usr/local/bin/devplat-openclaw-entrypoint \
     && chown -R devplat:devplat /app

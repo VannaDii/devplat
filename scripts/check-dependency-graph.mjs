@@ -1,5 +1,5 @@
 import { readdir, readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { basename, resolve } from 'node:path';
 
 const rootDirectory = resolve(import.meta.dirname, '..');
 const packagesDirectory = resolve(rootDirectory, 'packages');
@@ -69,7 +69,7 @@ for (const [packageName, entry] of packageEntries) {
   const referencedPackages = new Set(
     (entry.tsconfig.references ?? []).map((reference) => {
       const normalizedPath = String(reference.path).replaceAll('\\', '/');
-      const referencedDirectoryName = normalizedPath.replace('../', '');
+      const referencedDirectoryName = basename(normalizedPath);
       return `@vannadii/devplat-${referencedDirectoryName}`;
     }),
   );

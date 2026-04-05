@@ -1,3 +1,5 @@
+import rcompare from 'semver/functions/rcompare.js';
+
 const majorVersion = process.argv[2];
 
 if (!/^\d+$/.test(majorVersion ?? '')) {
@@ -32,7 +34,8 @@ const resolvedVersion = versions
       version.startsWith(`${majorVersion}.`) &&
       !version.includes('-'),
   )
-  .at(-1);
+  .sort(rcompare)
+  .at(0);
 
 if (typeof resolvedVersion !== 'string') {
   throw new Error(
