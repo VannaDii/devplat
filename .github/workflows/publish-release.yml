@@ -50,17 +50,35 @@ jobs:
           registry-url: https://npm.pkg.github.com
           scope: '@vannadii'
 
+      - name: Derive artifact metadata
+        id: artifact_meta
+        shell: bash
+        env:
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref || '' }}
+        run: |
+          ref_name="${PR_HEAD_REF:-$GITHUB_REF_NAME}"
+          safe_ref_name="$(printf '%s' "$ref_name" | sed 's#[\"/:<>|*?\\]#-#g' | tr -s '-')"
+          safe_workflow_name="$(printf '%s' "$GITHUB_WORKFLOW" | sed 's#[\"/:<>|*?\\]#-#g' | tr -s '-')"
+          short_sha="$(git rev-parse --short=12 HEAD)"
+
+          echo "safe_ref_name=${safe_ref_name}" >> "$GITHUB_OUTPUT"
+          echo "safe_workflow_name=${safe_workflow_name}" >> "$GITHUB_OUTPUT"
+          echo "short_sha=${short_sha}" >> "$GITHUB_OUTPUT"
+
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
       - name: Verify Node alignment
         run: npm run verify:node
 
+      - name: Generate committed artifacts
+        run: npm run prepare:generated
+
       - name: Test with coverage
-        run: npm run test:coverage
+        run: npm run test:coverage:workspace
 
       - name: Build
-        run: npm run build
+        run: npm run build:workspace
 
       - name: Publish stable packages
         run: npm run release
@@ -71,7 +89,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7.0.0
         with:
-          name: stable-coverage-artifacts-${{ github.workflow }}-${{ github.ref_name }}-${{ github.sha }}
+          name: stable-coverage-artifacts-${{ steps.artifact_meta.outputs.safe_workflow_name }}-${{ steps.artifact_meta.outputs.safe_ref_name }}-${{ steps.artifact_meta.outputs.short_sha }}
           retention-days: 14
           path: |
             coverage/lcov.info
@@ -83,7 +101,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7.0.0
         with:
-          name: stable-build-artifacts-${{ github.workflow }}-${{ github.ref_name }}-${{ github.sha }}
+          name: stable-build-artifacts-${{ steps.artifact_meta.outputs.safe_workflow_name }}-${{ steps.artifact_meta.outputs.safe_ref_name }}-${{ steps.artifact_meta.outputs.short_sha }}
           retention-days: 14
           path: |
             packages/*/dist/**
@@ -111,6 +129,32 @@ jobs:
           ref: ${{ steps.resolved.outputs.ref }}
           fetch-depth: 0
 
+      - name: Derive artifact metadata
+        id: artifact_meta
+        shell: bash
+        env:
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref || '' }}
+          INPUT_REF: ${{ github.event.inputs.ref || '' }}
+        run: |
+          if [[ -n "$PR_HEAD_REF" ]]; then
+            ref_name="$PR_HEAD_REF"
+          elif [[ -n "$INPUT_REF" ]]; then
+            ref_name="$INPUT_REF"
+          else
+            ref_name="$GITHUB_REF_NAME"
+          fi
+
+          ref_name="${ref_name#refs/heads/}"
+          ref_name="${ref_name#refs/tags/}"
+
+          safe_ref_name="$(printf '%s' "$ref_name" | sed 's#[\"/:<>|*?\\]#-#g' | tr -s '-')"
+          safe_workflow_name="$(printf '%s' "$GITHUB_WORKFLOW" | sed 's#[\"/:<>|*?\\]#-#g' | tr -s '-')"
+          short_sha="$(git rev-parse --short=12 HEAD)"
+
+          echo "safe_ref_name=${safe_ref_name}" >> "$GITHUB_OUTPUT"
+          echo "safe_workflow_name=${safe_workflow_name}" >> "$GITHUB_OUTPUT"
+          echo "short_sha=${short_sha}" >> "$GITHUB_OUTPUT"
+
       - name: Detect release impact
         id: detect-impact
         if: github.event_name == 'pull_request'
@@ -134,13 +178,17 @@ jobs:
         if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
         run: npm run verify:node
 
+      - name: Generate committed artifacts
+        if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
+        run: npm run prepare:generated
+
       - name: Test with coverage
         if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
-        run: npm run test:coverage
+        run: npm run test:coverage:workspace
 
       - name: Build
         if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
-        run: npm run build
+        run: npm run build:workspace
 
       - name: Prepare dev publish
         id: prepare
@@ -168,7 +216,7 @@ jobs:
         if: always() && (github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true')
         uses: actions/upload-artifact@v7.0.0
         with:
-          name: dev-coverage-artifacts-${{ github.workflow }}-${{ github.ref_name }}-${{ github.sha }}
+          name: dev-coverage-artifacts-${{ steps.artifact_meta.outputs.safe_workflow_name }}-${{ steps.artifact_meta.outputs.safe_ref_name }}-${{ steps.artifact_meta.outputs.short_sha }}
           retention-days: 14
           path: |
             coverage/lcov.info
@@ -180,7 +228,7 @@ jobs:
         if: always() && (github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true')
         uses: actions/upload-artifact@v7.0.0
         with:
-          name: dev-publish-artifacts-${{ github.workflow }}-${{ github.ref_name }}-${{ github.sha }}
+          name: dev-publish-artifacts-${{ steps.artifact_meta.outputs.safe_workflow_name }}-${{ steps.artifact_meta.outputs.safe_ref_name }}-${{ steps.artifact_meta.outputs.short_sha }}
           retention-days: 14
           path: |
             ${{ runner.temp }}/dev-publish/**

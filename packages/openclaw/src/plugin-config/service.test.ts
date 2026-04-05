@@ -56,7 +56,7 @@ describe('PluginConfigService', () => {
       },
       sonar: {
         organization: 'VannaDii',
-        projectKey: 'VannaDii_devplat',
+        projectKey: 'vannadii_devplat',
         minimumCoverage: 90,
       },
     });

@@ -5,8 +5,12 @@ import type { AnyAgentTool } from 'openclaw/plugin-sdk/plugin-entry';
 
 import { RebaseDependentsService } from '@vannadii/devplat-branching';
 import {
-  ArtifactEnvelopeCodec,
+  ApprovalRecordArtifactService,
   ArtifactEnvelopeService,
+  ArtifactValidationService,
+  AuditLogArtifactService,
+  MergeDecisionArtifactService,
+  RebaseResultArtifactService,
 } from '@vannadii/devplat-artifacts';
 import { decodeWithCodec } from '@vannadii/devplat-core';
 import { CommandExecutionService } from '@vannadii/devplat-execution';
@@ -28,22 +32,36 @@ import { ResearchBriefService } from '@vannadii/devplat-research';
 import { RemediationPlanService } from '@vannadii/devplat-remediation';
 import { ReviewFindingsService } from '@vannadii/devplat-review';
 import { SlicePlanService } from '@vannadii/devplat-slicing';
-import { SonarQualityGateService } from '@vannadii/devplat-sonarcloud';
+import {
+  SonarBootstrapVerificationService,
+  SonarQualityGateService,
+} from '@vannadii/devplat-sonarcloud';
 import { SpecRecordService } from '@vannadii/devplat-specs';
 import { FileStoreService } from '@vannadii/devplat-storage';
 import { SupervisorCycleService } from '@vannadii/devplat-supervisor';
 import { WorktreeAllocationService } from '@vannadii/devplat-worktrees';
 
+import { PluginConfigService } from '../plugin-config/index.js';
 import {
+  ApproveSpecRecordToolInputCodec,
   AllocateWorktreeToolInputCodec,
   BindDiscordThreadToolInputCodec,
   ClaimTaskToolInputCodec,
+  CreateApprovalRecordToolInputCodec,
   CreateRemediationPlanToolInputCodec,
   CreateResearchBriefToolInputCodec,
   CreateReviewFindingToolInputCodec,
   CreateSlicePlanToolInputCodec,
   CreateArtifactEnvelopeToolInputCodec,
+  CreateAuditLogToolInputCodec,
+  CreateGitHubActionRequestToolInputCodec,
+  CreateMergeDecisionToolInputCodec,
+  CreateOpenClawPluginConfigToolInputCodec,
+  CreatePullRequestRecordToolInputCodec,
+  CreateRebaseResultToolInputCodec,
+  CreateTaskRecordToolInputCodec,
   CreateSpecRecordToolInputCodec,
+  EvaluateSlicePlanReadinessToolInputCodec,
   ExecuteCommandToolInputCodec,
   EvaluatePolicyActionToolInputCodec,
   EvaluateSonarQualityGateToolInputCodec,
@@ -58,10 +76,12 @@ import {
   ResolveRuntimeConfigToolInputCodec,
   RunGatesToolInputCodec,
   RunSupervisorStepToolInputCodec,
+  StoreRecordToolInputCodec,
   SubmitGitHubActionToolInputCodec,
   SubmitPullRequestUpdateToolInputCodec,
   UpdateTaskToolInputCodec,
   ValidateArtifactToolInputCodec,
+  VerifySonarBootstrapToolInputCodec,
 } from './codec.js';
 import { createToolPayloadText } from './logic.js';
 
@@ -215,6 +235,32 @@ export function createSpecRecordTool(): AnyAgentTool {
   return tool;
 }
 
+export function createApproveSpecRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'approve_spec_record',
+    label: 'Approve Spec Record',
+    description:
+      'Approve a spec record and return it as a structured DevPlat artifact.',
+    parameters: readSchema(
+      'tool-approve-spec-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(ApproveSpecRecordToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const specs = new SpecRecordService();
+      const artifact = specs.toArtifact(specs.approve(decoded.value));
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
 export function createSlicePlanTool(): AnyAgentTool {
   const tool: AnyAgentTool = {
     name: 'create_slice_plan',
@@ -234,6 +280,45 @@ export function createSlicePlanTool(): AnyAgentTool {
 
       const plan = new SlicePlanService().plan(decoded.value);
       return Promise.resolve(createTextResult(plan));
+    },
+  };
+
+  return tool;
+}
+
+export function createEvaluateSlicePlanReadinessTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'evaluate_slice_plan_readiness',
+    label: 'Evaluate Slice Plan Readiness',
+    description:
+      'Evaluate whether a slice plan is ready for execution given completed dependencies.',
+    parameters: readSchema(
+      'tool-evaluate-slice-plan-readiness-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        EvaluateSlicePlanReadinessToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const slicing = new SlicePlanService();
+      const plan = slicing.plan(decoded.value.plan);
+      const ready = slicing.readyForExecution(
+        plan,
+        decoded.value.completedSliceIds,
+      );
+      return Promise.resolve(
+        createTextResult({
+          plan,
+          completedSliceIds: decoded.value.completedSliceIds,
+          ready,
+        }),
+      );
     },
   };
 
@@ -270,6 +355,34 @@ export function createResolveRuntimeConfigTool(): AnyAgentTool {
   return tool;
 }
 
+export function createOpenClawPluginConfigTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_openclaw_plugin_config',
+    label: 'Create OpenClaw Plugin Config',
+    description:
+      'Translate a normalized DevPlat runtime config into an OpenClaw plugin config.',
+    parameters: readSchema(
+      'tool-create-openclaw-plugin-config-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateOpenClawPluginConfigToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const config = new PluginConfigService().fromRuntimeConfig(decoded.value);
+      return Promise.resolve(createTextResult(config));
+    },
+  };
+
+  return tool;
+}
+
 export function createArtifactEnvelopeTool(): AnyAgentTool {
   const tool: AnyAgentTool = {
     name: 'create_artifact_envelope',
@@ -291,6 +404,116 @@ export function createArtifactEnvelopeTool(): AnyAgentTool {
       }
 
       const artifact = new ArtifactEnvelopeService().execute(decoded.value);
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createApprovalRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_approval_record',
+    label: 'Create Approval Record',
+    description:
+      'Normalize an approval-record artifact for auditable approval decisions.',
+    parameters: readSchema(
+      'tool-create-approval-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateApprovalRecordToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new ApprovalRecordArtifactService().execute(
+        decoded.value,
+      );
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createAuditLogTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_audit_log',
+    label: 'Create Audit Log',
+    description:
+      'Normalize an audit-log artifact for operator-visible control actions.',
+    parameters: readSchema(
+      'tool-create-audit-log-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(CreateAuditLogToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new AuditLogArtifactService().execute(decoded.value);
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createMergeDecisionTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_merge_decision',
+    label: 'Create Merge Decision',
+    description:
+      'Normalize a merge-decision artifact for PR merge approval outcomes.',
+    parameters: readSchema(
+      'tool-create-merge-decision-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateMergeDecisionToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new MergeDecisionArtifactService().execute(
+        decoded.value,
+      );
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createRebaseResultTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_rebase_result',
+    label: 'Create Rebase Result',
+    description:
+      'Normalize a rebase-result artifact for downstream branch refresh outcomes.',
+    parameters: readSchema(
+      'tool-create-rebase-result-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(CreateRebaseResultToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const artifact = new RebaseResultArtifactService().execute(decoded.value);
       return Promise.resolve(createTextResult(artifact));
     },
   };
@@ -569,6 +792,36 @@ export function createHandleDiscordControlTool(): AnyAgentTool {
   return tool;
 }
 
+export function createVerifySonarBootstrapTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'verify_sonar_bootstrap',
+    label: 'Verify Sonar Bootstrap',
+    description:
+      'Verify that the configured Sonar project has a computed, passing quality gate with 90% overall and new-code coverage thresholds.',
+    parameters: readSchema(
+      'tool-verify-sonar-bootstrap-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        VerifySonarBootstrapToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const result = new SonarBootstrapVerificationService().execute(
+        decoded.value,
+      );
+      return Promise.resolve(createTextResult(result));
+    },
+  };
+
+  return tool;
+}
+
 export function createEvaluateSonarQualityGateTool(): AnyAgentTool {
   const tool: AnyAgentTool = {
     name: 'evaluate_sonar_quality_gate',
@@ -744,6 +997,31 @@ export function createRecordTelemetryEventTool(): AnyAgentTool {
   return tool;
 }
 
+export function createTaskRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_task_record',
+    label: 'Create Task Record',
+    description:
+      'Normalize a queue task record before claim, execution, review, and merge lifecycle updates.',
+    parameters: readSchema(
+      'tool-create-task-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(CreateTaskRecordToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const record = new TaskQueueService().execute(decoded.value);
+      return Promise.resolve(createTextResult(record));
+    },
+  };
+
+  return tool;
+}
+
 export function createReadStoredRecordTool(): AnyAgentTool {
   const tool: AnyAgentTool = {
     name: 'read_stored_record',
@@ -805,6 +1083,105 @@ export function createListStoredRecordsTool(): AnyAgentTool {
         scope: decoded.value.scope,
         keys,
       });
+    },
+  };
+
+  return tool;
+}
+
+export function createStoreRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'store_record',
+    label: 'Store Record',
+    description:
+      'Persist a structured DevPlat record through the file-backed Phase 0 storage layer when policy allows it.',
+    parameters: readSchema('tool-store-record-params.schema.json') as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(StoreRecordToolInputCodec, params);
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const request = decoded.value;
+      const policy = new DecisionPolicyService().evaluateControlAction(
+        'store-record',
+        request.privileged,
+      );
+
+      if (!policy.allowed) {
+        await new TelemetryEventService().record({
+          id: `telemetry:store-record:${String(Date.now())}`,
+          summary: `Blocked record storage for ${request.record.scope}/${request.record.key}`,
+          status: 'blocked',
+          trace: ['openclaw:store-record'],
+          updatedAt: new Date().toISOString(),
+          actorId: request.actorId,
+          action: 'store-record',
+          scope: 'storage',
+          details: {
+            scope: request.record.scope,
+            key: request.record.key,
+            blocked: true,
+          },
+        });
+        return createTextResult({
+          allowed: false,
+          policyDecisionId: policy.id,
+          scope: request.record.scope,
+          key: request.record.key,
+        });
+      }
+
+      const record = await new FileStoreService().store(request.record);
+      await new TelemetryEventService().record({
+        id: `telemetry:store-record:${String(Date.now())}`,
+        summary: `Stored record ${record.scope}/${record.key}`,
+        status: 'approved',
+        trace: ['openclaw:store-record'],
+        updatedAt: new Date().toISOString(),
+        actorId: request.actorId,
+        action: 'store-record',
+        scope: 'storage',
+        details: {
+          scope: record.scope,
+          key: record.key,
+          status: record.status,
+        },
+      });
+
+      return createTextResult({
+        allowed: true,
+        policyDecisionId: policy.id,
+        record,
+      });
+    },
+  };
+
+  return tool;
+}
+
+export function createPullRequestRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_pull_request_record',
+    label: 'Create Pull Request Record',
+    description:
+      'Normalize a pull request record before review, merge-readiness, and GitHub update decisions.',
+    parameters: readSchema(
+      'tool-create-pull-request-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreatePullRequestRecordToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const record = new PullRequestService().create(decoded.value);
+      return Promise.resolve(createTextResult(record));
     },
   };
 
@@ -891,6 +1268,34 @@ export function createSubmitGitHubActionTool(): AnyAgentTool {
         decoded.value.actorId,
       );
       return createTextResult(result);
+    },
+  };
+
+  return tool;
+}
+
+export function createGitHubActionRequestTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_github_action_request',
+    label: 'Create GitHub Action Request',
+    description:
+      'Normalize a GitHub workflow action request before submission.',
+    parameters: readSchema(
+      'tool-create-github-action-request-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateGitHubActionRequestToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const request = new GitHubWorkflowService().prepare(decoded.value);
+      return Promise.resolve(createTextResult(request));
     },
   };
 
@@ -988,8 +1393,7 @@ export function createValidateArtifactTool(): AnyAgentTool {
         );
       }
 
-      const artifact = decodeWithCodec(
-        ArtifactEnvelopeCodec,
+      const artifact = new ArtifactValidationService().execute(
         decoded.value.artifact,
       );
       if (!artifact.ok) {
@@ -998,9 +1402,7 @@ export function createValidateArtifactTool(): AnyAgentTool {
         );
       }
 
-      return Promise.resolve(
-        createTextResult(new ArtifactEnvelopeService().execute(artifact.value)),
-      );
+      return Promise.resolve(createTextResult(artifact.value));
     },
   };
 

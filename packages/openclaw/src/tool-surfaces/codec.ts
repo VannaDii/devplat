@@ -1,12 +1,18 @@
 import * as t from 'io-ts';
 
 import {
+  ApprovalRecordArtifactCodec,
+  ArtifactEnvelopeCodec,
+  AuditLogArtifactCodec,
+  MergeDecisionArtifactCodec,
+  RebaseResultArtifactCodec,
+} from '@vannadii/devplat-artifacts';
+import {
   DiscordApprovalRequestCodec,
   DiscordChannelBindingCodec,
   DiscordControlRequestCodec,
   DiscordThreadSessionCodec,
 } from '@vannadii/devplat-discord';
-import { ArtifactEnvelopeCodec } from '@vannadii/devplat-artifacts';
 import { RebasePlanCodec } from '@vannadii/devplat-branching';
 import { GitHubActionRequestCodec } from '@vannadii/devplat-github';
 import { MemoryEntryCodec } from '@vannadii/devplat-memory';
@@ -15,21 +21,36 @@ import { ResearchBriefCodec } from '@vannadii/devplat-research';
 import { RemediationPlanCodec } from '@vannadii/devplat-remediation';
 import { ReviewFindingCodec } from '@vannadii/devplat-review';
 import { SlicePlanCodec } from '@vannadii/devplat-slicing';
-import { SonarQualityGateResultCodec } from '@vannadii/devplat-sonarcloud';
+import { DevplatConfigCodec } from '@vannadii/devplat-config';
+import {
+  SonarBootstrapVerificationInputCodec,
+  SonarQualityGateResultCodec,
+} from '@vannadii/devplat-sonarcloud';
 import { SpecRecordCodec } from '@vannadii/devplat-specs';
 import { PullRequestRecordCodec } from '@vannadii/devplat-prs';
+import { TaskRecordCodec } from '@vannadii/devplat-queue';
 import { StoredRecordCodec } from '@vannadii/devplat-storage';
 
 import type {
+  ApproveSpecRecordToolInput,
   AllocateWorktreeToolInput,
   BindDiscordThreadToolInput,
   ClaimTaskToolInput,
+  CreateApprovalRecordToolInput,
   CreateRemediationPlanToolInput,
   CreateResearchBriefToolInput,
   CreateReviewFindingToolInput,
   CreateSlicePlanToolInput,
   CreateArtifactEnvelopeToolInput,
+  CreateAuditLogToolInput,
+  CreateGitHubActionRequestToolInput,
+  CreateMergeDecisionToolInput,
+  CreateOpenClawPluginConfigToolInput,
+  CreatePullRequestRecordToolInput,
+  CreateRebaseResultToolInput,
+  CreateTaskRecordToolInput,
   CreateSpecRecordToolInput,
+  EvaluateSlicePlanReadinessToolInput,
   ExecuteCommandToolInput,
   EvaluateSonarQualityGateToolInput,
   EvaluatePolicyActionToolInput,
@@ -44,10 +65,12 @@ import type {
   ResolveRuntimeConfigToolInput,
   RunGatesToolInput,
   RunSupervisorStepToolInput,
+  StoreRecordToolInput,
   SubmitGitHubActionToolInput,
   SubmitPullRequestUpdateToolInput,
   UpdateTaskToolInput,
   ValidateArtifactToolInput,
+  VerifySonarBootstrapToolInput,
 } from './types.js';
 
 export const RunGatesToolInputCodec: t.Type<RunGatesToolInput> = t.type({
@@ -61,16 +84,40 @@ export const CreateResearchBriefToolInputCodec: t.Type<CreateResearchBriefToolIn
 export const CreateSpecRecordToolInputCodec: t.Type<CreateSpecRecordToolInput> =
   SpecRecordCodec as t.Type<CreateSpecRecordToolInput>;
 
+export const ApproveSpecRecordToolInputCodec: t.Type<ApproveSpecRecordToolInput> =
+  SpecRecordCodec as t.Type<ApproveSpecRecordToolInput>;
+
 export const CreateSlicePlanToolInputCodec: t.Type<CreateSlicePlanToolInput> =
   SlicePlanCodec as t.Type<CreateSlicePlanToolInput>;
+
+export const EvaluateSlicePlanReadinessToolInputCodec: t.Type<EvaluateSlicePlanReadinessToolInput> =
+  t.type({
+    plan: SlicePlanCodec,
+    completedSliceIds: t.array(t.string),
+  });
 
 export const ResolveRuntimeConfigToolInputCodec: t.Type<ResolveRuntimeConfigToolInput> =
   t.type({
     env: t.record(t.string, t.string),
   });
 
+export const CreateOpenClawPluginConfigToolInputCodec: t.Type<CreateOpenClawPluginConfigToolInput> =
+  DevplatConfigCodec as t.Type<CreateOpenClawPluginConfigToolInput>;
+
 export const CreateArtifactEnvelopeToolInputCodec: t.Type<CreateArtifactEnvelopeToolInput> =
   ArtifactEnvelopeCodec as t.Type<CreateArtifactEnvelopeToolInput>;
+
+export const CreateApprovalRecordToolInputCodec: t.Type<CreateApprovalRecordToolInput> =
+  ApprovalRecordArtifactCodec as t.Type<CreateApprovalRecordToolInput>;
+
+export const CreateAuditLogToolInputCodec: t.Type<CreateAuditLogToolInput> =
+  AuditLogArtifactCodec as t.Type<CreateAuditLogToolInput>;
+
+export const CreateMergeDecisionToolInputCodec: t.Type<CreateMergeDecisionToolInput> =
+  MergeDecisionArtifactCodec as t.Type<CreateMergeDecisionToolInput>;
+
+export const CreateRebaseResultToolInputCodec: t.Type<CreateRebaseResultToolInput> =
+  RebaseResultArtifactCodec as t.Type<CreateRebaseResultToolInput>;
 
 export const ExecuteCommandToolInputCodec: t.Type<ExecuteCommandToolInput> =
   t.intersection([
@@ -117,6 +164,9 @@ export const HandleDiscordApprovalToolInputCodec: t.Type<HandleDiscordApprovalTo
 export const HandleDiscordControlToolInputCodec: t.Type<HandleDiscordControlToolInput> =
   DiscordControlRequestCodec as t.Type<HandleDiscordControlToolInput>;
 
+export const VerifySonarBootstrapToolInputCodec: t.Type<VerifySonarBootstrapToolInput> =
+  SonarBootstrapVerificationInputCodec as t.Type<VerifySonarBootstrapToolInput>;
+
 export const EvaluateSonarQualityGateToolInputCodec: t.Type<EvaluateSonarQualityGateToolInput> =
   t.type({
     projectKey: SonarQualityGateResultCodec.props.projectKey,
@@ -146,6 +196,9 @@ export const EvaluatePolicyActionToolInputCodec: t.Type<EvaluatePolicyActionTool
 export const RecordTelemetryEventToolInputCodec: t.Type<RecordTelemetryEventToolInput> =
   TelemetryEventCodec as t.Type<RecordTelemetryEventToolInput>;
 
+export const CreateTaskRecordToolInputCodec: t.Type<CreateTaskRecordToolInput> =
+  TaskRecordCodec as t.Type<CreateTaskRecordToolInput>;
+
 export const ReadStoredRecordToolInputCodec: t.Type<ReadStoredRecordToolInput> =
   t.type({
     scope: StoredRecordCodec.props.scope,
@@ -156,6 +209,15 @@ export const ListStoredRecordsToolInputCodec: t.Type<ListStoredRecordsToolInput>
   t.type({
     scope: StoredRecordCodec.props.scope,
   });
+
+export const StoreRecordToolInputCodec: t.Type<StoreRecordToolInput> = t.type({
+  record: StoredRecordCodec,
+  actorId: t.string,
+  privileged: t.boolean,
+});
+
+export const CreatePullRequestRecordToolInputCodec: t.Type<CreatePullRequestRecordToolInput> =
+  PullRequestRecordCodec as t.Type<CreatePullRequestRecordToolInput>;
 
 export const SubmitPullRequestUpdateToolInputCodec: t.Type<SubmitPullRequestUpdateToolInput> =
   t.type({
@@ -174,6 +236,9 @@ export const SubmitGitHubActionToolInputCodec: t.Type<SubmitGitHubActionToolInpu
     request: GitHubActionRequestCodec,
     actorId: t.string,
   });
+
+export const CreateGitHubActionRequestToolInputCodec: t.Type<CreateGitHubActionRequestToolInput> =
+  GitHubActionRequestCodec as t.Type<CreateGitHubActionRequestToolInput>;
 
 export const ClaimTaskToolInputCodec: t.Type<ClaimTaskToolInput> = t.type({
   taskId: t.string,

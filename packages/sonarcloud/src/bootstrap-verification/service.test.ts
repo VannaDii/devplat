@@ -6,7 +6,7 @@ describe('SonarBootstrapVerificationService', () => {
   it('evaluates bootstrap verification snapshots', () => {
     const service = new SonarBootstrapVerificationService();
     const result = service.execute({
-      projectKey: 'VannaDii_devplat',
+      projectKey: 'vannadii_devplat',
       qualityGateStatus: 'OK',
       conditions: [
         {
@@ -32,7 +32,7 @@ describe('SonarBootstrapVerificationService', () => {
   it('reports failed bootstrap verification snapshots', () => {
     const service = new SonarBootstrapVerificationService();
     const result = service.execute({
-      projectKey: 'VannaDii_devplat',
+      projectKey: 'vannadii_devplat',
       qualityGateStatus: 'ERROR',
       conditions: [
         {

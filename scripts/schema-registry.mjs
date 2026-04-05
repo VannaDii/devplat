@@ -11,6 +11,30 @@ export const schemaRegistry = [
     'ArtifactEnvelopeSchema',
     'schemas/artifact-envelope.schema.json',
   ],
+  [
+    'artifacts',
+    'approval-record',
+    'ApprovalRecordArtifact',
+    'schemas/approval-record.schema.json',
+  ],
+  [
+    'artifacts',
+    'audit-log',
+    'AuditLogArtifact',
+    'schemas/audit-log.schema.json',
+  ],
+  [
+    'artifacts',
+    'merge-decision',
+    'MergeDecisionArtifact',
+    'schemas/merge-decision.schema.json',
+  ],
+  [
+    'artifacts',
+    'rebase-result',
+    'RebaseResultArtifact',
+    'schemas/rebase-result.schema.json',
+  ],
   ['memory', 'memory-entry', 'MemoryEntry', 'schemas/memory-entry.schema.json'],
   [
     'research',
@@ -150,8 +174,20 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'ApproveSpecRecordToolInput',
+    'schemas/tool-approve-spec-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'CreateSlicePlanToolInput',
     'schemas/tool-create-slice-plan-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'EvaluateSlicePlanReadinessToolInput',
+    'schemas/tool-evaluate-slice-plan-readiness-params.schema.json',
   ],
   [
     'openclaw',
@@ -162,8 +198,44 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'CreateOpenClawPluginConfigToolInput',
+    'schemas/tool-create-openclaw-plugin-config-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateGitHubActionRequestToolInput',
+    'schemas/tool-create-github-action-request-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'CreateArtifactEnvelopeToolInput',
     'schemas/tool-create-artifact-envelope-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateApprovalRecordToolInput',
+    'schemas/tool-create-approval-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateAuditLogToolInput',
+    'schemas/tool-create-audit-log-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateMergeDecisionToolInput',
+    'schemas/tool-create-merge-decision-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreateRebaseResultToolInput',
+    'schemas/tool-create-rebase-result-params.schema.json',
   ],
   [
     'openclaw',
@@ -210,6 +282,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'VerifySonarBootstrapToolInput',
+    'schemas/tool-verify-sonar-bootstrap-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'EvaluateSonarQualityGateToolInput',
     'schemas/tool-evaluate-sonar-quality-gate-params.schema.json',
   ],
@@ -252,6 +330,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'CreateTaskRecordToolInput',
+    'schemas/tool-create-task-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'ReadStoredRecordToolInput',
     'schemas/tool-read-stored-record-params.schema.json',
   ],
@@ -264,8 +348,20 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'StoreRecordToolInput',
+    'schemas/tool-store-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'UpdateTaskToolInput',
     'schemas/tool-update-task-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'CreatePullRequestRecordToolInput',
+    'schemas/tool-create-pull-request-record-params.schema.json',
   ],
   [
     'openclaw',

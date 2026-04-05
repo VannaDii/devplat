@@ -9,7 +9,7 @@ import {
 describe('Sonar bootstrap verification logic', () => {
   it('passes when the quality gate is computed, green, and coverage thresholds are at least 90', () => {
     const result = createSonarBootstrapVerificationResult({
-      projectKey: 'VannaDii_devplat',
+      projectKey: 'vannadii_devplat',
       qualityGateStatus: 'OK',
       conditions: [
         {
@@ -32,13 +32,13 @@ describe('Sonar bootstrap verification logic', () => {
     expect(result.checks.qualityGatePassing).toBe(true);
     expect(isSonarBootstrapVerificationPassing(result)).toBe(true);
     expect(describeSonarBootstrapVerificationResult(result)).toContain(
-      'VannaDii_devplat -> passed',
+      'vannadii_devplat -> passed',
     );
   });
 
   it('fails when the configured thresholds are weaker than required', () => {
     const result = createSonarBootstrapVerificationResult({
-      projectKey: 'VannaDii_devplat',
+      projectKey: 'vannadii_devplat',
       qualityGateStatus: 'OK',
       conditions: [
         {
@@ -68,7 +68,7 @@ describe('Sonar bootstrap verification logic', () => {
 
   it('fails when the quality gate has not been computed or is not green', () => {
     const result = createSonarBootstrapVerificationResult({
-      projectKey: 'VannaDii_devplat',
+      projectKey: 'vannadii_devplat',
       qualityGateStatus: 'NONE',
       conditions: [],
       evaluatedAt: '2026-04-04T00:00:00.000Z',

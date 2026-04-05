@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/AuditLogArtifact",
+  "definitions": {
+    "AuditLogArtifact": {
+      "$ref": "#/definitions/ArtifactEnvelope%3CAuditLogPayload%3E"
+    },
+    "ArtifactEnvelope<AuditLogPayload>": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "artifactType": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number",
+          "const": 1
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "payload": {
+          "$ref": "#/definitions/AuditLogPayload"
+        }
+      },
+      "required": [
+        "id",
+        "artifactType",
+        "version",
+        "summary",
+        "status",
+        "trace",
+        "updatedAt",
+        "payload"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    },
+    "AuditLogPayload": {
+      "type": "object",
+      "properties": {
+        "auditId": {
+          "type": "string"
+        },
+        "actorId": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      },
+      "required": [
+        "auditId",
+        "actorId",
+        "action",
+        "scope",
+        "details"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

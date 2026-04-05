@@ -13,33 +13,45 @@ import {
   PluginConfigService,
 } from './plugin-config/index.js';
 import {
+  createApproveSpecRecordTool,
   createAllocateWorktreeTool,
+  createApprovalRecordTool,
   createArtifactEnvelopeTool,
+  createAuditLogTool,
   createBindDiscordThreadTool,
   createClaimTaskTool,
+  createEvaluateSlicePlanReadinessTool,
   createExecuteCommandTool,
   createEvaluatePolicyActionTool,
   createEvaluateSonarQualityGateTool,
+  createGitHubActionRequestTool,
+  createMergeDecisionTool,
   createRemediationPlanTool,
   createRememberMemoryEntryTool,
   createRecordTelemetryEventTool,
+  createTaskRecordTool,
   createReadStoredRecordTool,
+  createRebaseResultTool,
   createReviewFindingTool,
   createHandleDiscordApprovalTool,
   createHandleDiscordControlTool,
   createListStoredRecordsTool,
   createOpenDiscordThreadTool,
   createResolveRuntimeConfigTool,
+  createOpenClawPluginConfigTool,
   createResearchBriefTool,
   createRunGatesTool,
   createRunSupervisorStepTool,
   createPlanRebaseDependentsTool,
+  createPullRequestRecordTool,
   createSlicePlanTool,
   createSpecRecordTool,
+  createStoreRecordTool,
   createSubmitGitHubActionTool,
   createSubmitPullRequestUpdateTool,
   createUpdateTaskTool,
   createValidateArtifactTool,
+  createVerifySonarBootstrapTool,
 } from './tool-surfaces/service.js';
 
 function readSchema(fileName: string): Record<string, unknown> {
@@ -89,9 +101,16 @@ const devplatOpenClawPlugin = definePluginEntry({
   register(api) {
     api.registerTool(createResearchBriefTool());
     api.registerTool(createSpecRecordTool());
+    api.registerTool(createApproveSpecRecordTool());
     api.registerTool(createSlicePlanTool());
+    api.registerTool(createEvaluateSlicePlanReadinessTool());
     api.registerTool(createResolveRuntimeConfigTool());
+    api.registerTool(createOpenClawPluginConfigTool());
     api.registerTool(createArtifactEnvelopeTool());
+    api.registerTool(createApprovalRecordTool());
+    api.registerTool(createAuditLogTool());
+    api.registerTool(createMergeDecisionTool());
+    api.registerTool(createRebaseResultTool());
     api.registerTool(createExecuteCommandTool());
     api.registerTool(createRunGatesTool());
     api.registerTool(createAllocateWorktreeTool());
@@ -99,18 +118,23 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createOpenDiscordThreadTool());
     api.registerTool(createHandleDiscordApprovalTool());
     api.registerTool(createHandleDiscordControlTool());
+    api.registerTool(createVerifySonarBootstrapTool());
     api.registerTool(createEvaluateSonarQualityGateTool());
     api.registerTool(createReviewFindingTool());
     api.registerTool(createRemediationPlanTool());
     api.registerTool(createRememberMemoryEntryTool());
     api.registerTool(createEvaluatePolicyActionTool());
     api.registerTool(createRecordTelemetryEventTool());
+    api.registerTool(createTaskRecordTool());
     api.registerTool(createClaimTaskTool());
     api.registerTool(createUpdateTaskTool());
     api.registerTool(createReadStoredRecordTool());
     api.registerTool(createListStoredRecordsTool());
+    api.registerTool(createStoreRecordTool());
+    api.registerTool(createPullRequestRecordTool());
     api.registerTool(createSubmitPullRequestUpdateTool());
     api.registerTool(createPlanRebaseDependentsTool());
+    api.registerTool(createGitHubActionRequestTool());
     api.registerTool(createSubmitGitHubActionTool());
     api.registerTool(createValidateArtifactTool());
     api.registerTool(createRunSupervisorStepTool());

@@ -26,8 +26,8 @@ jobs:
       - name: Ensure project metadata is committed
         run: |
           test -f sonar-project.properties
-          grep -q '^sonar.organization=VannaDii$' sonar-project.properties
-          grep -q '^sonar.projectKey=VannaDii_devplat$' sonar-project.properties
+          grep -q '^sonar.organization=vannadii$' sonar-project.properties
+          grep -q '^sonar.projectKey=vannadii_devplat$' sonar-project.properties
 
       - name: Verify Sonar bootstrap requirements
         env:

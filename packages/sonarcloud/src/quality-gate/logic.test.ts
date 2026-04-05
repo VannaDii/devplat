@@ -9,7 +9,7 @@ import {
 describe('SonarQualityGateResult logic', () => {
   it('evaluates coverage thresholds and blocking issues', () => {
     const snapshot = createSonarQualityGateResult({
-      projectKey: 'VannaDii_devplat',
+      projectKey: 'vannadii_devplat',
       status: 'failed',
       overallCoverage: 92,
       newCodeCoverage: 91,
