@@ -19,7 +19,9 @@ try {
   });
 } catch (error) {
   if (error instanceof Error && error.name === 'AbortError') {
-    throw new Error('Timed out while resolving TypeScript versions from npm.');
+    throw new Error('Timed out while resolving TypeScript versions from npm.', {
+      cause: error,
+    });
   }
 
   throw error;
