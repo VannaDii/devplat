@@ -1,13 +1,8 @@
 #!/usr/bin/env sh
 
 npm run verify:node
-npm run generate:schemas
-npm run generate:openclaw-manifest
-git add packages/*/schemas/*.schema.json packages/openclaw/openclaw.plugin.json
 npm run check:unit-tests
 npx --no -- lint-staged
-npm run generate:schemas
-npm run generate:openclaw-manifest
+npm run prepare:generated
 git add packages/*/schemas/*.schema.json packages/openclaw/openclaw.plugin.json
-npm run typecheck
-npm run check:schemas
+npm run typecheck:workspace
