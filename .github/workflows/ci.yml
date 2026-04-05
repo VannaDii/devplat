@@ -69,17 +69,17 @@ jobs:
       - name: Typecheck
         id: typecheck
         continue-on-error: true
-        run: npm run typecheck
+        run: npm run typecheck:workspace
 
       - name: Test with coverage
         id: test
         continue-on-error: true
-        run: npm run test:coverage
+        run: npm run test:coverage:workspace
 
       - name: Build
         id: build
         continue-on-error: true
-        run: npm run build
+        run: npm run build:workspace
 
       - name: Check schemas
         id: check_schemas
