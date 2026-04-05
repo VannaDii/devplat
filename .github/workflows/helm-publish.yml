@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   publish:
+    name: Publish Helm Chart
     runs-on: ubuntu-latest
 
     steps:
