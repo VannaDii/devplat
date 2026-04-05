@@ -13,6 +13,7 @@ import {
   createEvaluatePolicyActionTool,
   createEvaluateSonarQualityGateTool,
   createMergeDecisionTool,
+  createOpenClawPluginConfigTool,
   createRemediationPlanTool,
   createRememberMemoryEntryTool,
   createRecordTelemetryEventTool,
@@ -255,6 +256,67 @@ describe('tool surface service', () => {
         env: {
           GITHUB_OWNER: 42,
         },
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
+  it('creates OpenClaw plugin config from valid runtime config', async () => {
+    const result = await createOpenClawPluginConfigTool().execute(
+      'tool-call-cfg3',
+      {
+        id: 'devplat-config',
+        summary: 'Runtime config',
+        status: 'approved',
+        trace: ['config:resolved'],
+        updatedAt: '2026-04-04T00:00:00.000Z',
+        githubOwner: 'VannaDii',
+        githubRepo: 'devplat',
+        discord: {
+          defaultGuildId: 'guild-1',
+          specChannelId: 'spec-1',
+          implementationChannelId: 'impl-1',
+          auditChannelId: 'audit-1',
+          threadBindingMode: 'inherit-parent',
+        },
+        openclaw: {
+          pluginId: '@vannadii/devplat-openclaw',
+          actionGates: {
+            approveThis: true,
+            mergeNow: false,
+            retryGates: true,
+            rebaseAllDependents: true,
+          },
+        },
+        sonar: {
+          organization: 'VannaDii',
+          projectKey: 'VannaDii_devplat',
+          minimumCoverage: 90,
+        },
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      id: '@vannadii/devplat-openclaw:config',
+      defaultGuildId: 'guild-1',
+      specChannelId: 'spec-1',
+      implementationChannelId: 'impl-1',
+      auditChannelId: 'audit-1',
+      actionGates: {
+        approveThis: true,
+        mergeNow: false,
+        retryGates: true,
+        rebaseAllDependents: true,
+      },
+    });
+  });
+
+  it('returns decode failures for invalid OpenClaw plugin config input', async () => {
+    const result = await createOpenClawPluginConfigTool().execute(
+      'tool-call-cfg4',
+      {
+        id: 'devplat-config',
       },
     );
 

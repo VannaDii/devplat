@@ -21,6 +21,7 @@ import { ResearchBriefCodec } from '@vannadii/devplat-research';
 import { RemediationPlanCodec } from '@vannadii/devplat-remediation';
 import { ReviewFindingCodec } from '@vannadii/devplat-review';
 import { SlicePlanCodec } from '@vannadii/devplat-slicing';
+import { DevplatConfigCodec } from '@vannadii/devplat-config';
 import {
   SonarBootstrapVerificationInputCodec,
   SonarQualityGateResultCodec,
@@ -43,6 +44,7 @@ import type {
   CreateArtifactEnvelopeToolInput,
   CreateAuditLogToolInput,
   CreateMergeDecisionToolInput,
+  CreateOpenClawPluginConfigToolInput,
   CreatePullRequestRecordToolInput,
   CreateRebaseResultToolInput,
   CreateTaskRecordToolInput,
@@ -97,6 +99,9 @@ export const ResolveRuntimeConfigToolInputCodec: t.Type<ResolveRuntimeConfigTool
   t.type({
     env: t.record(t.string, t.string),
   });
+
+export const CreateOpenClawPluginConfigToolInputCodec: t.Type<CreateOpenClawPluginConfigToolInput> =
+  DevplatConfigCodec as t.Type<CreateOpenClawPluginConfigToolInput>;
 
 export const CreateArtifactEnvelopeToolInputCodec: t.Type<CreateArtifactEnvelopeToolInput> =
   ArtifactEnvelopeCodec as t.Type<CreateArtifactEnvelopeToolInput>;

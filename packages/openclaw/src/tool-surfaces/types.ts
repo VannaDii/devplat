@@ -28,6 +28,7 @@ import type {
   SonarQualityGateResult,
 } from '@vannadii/devplat-sonarcloud';
 import type { SpecRecord } from '@vannadii/devplat-specs';
+import type { DevplatConfig } from '@vannadii/devplat-config';
 
 export interface RunGatesToolInput {
   gateNames: string[];
@@ -50,6 +51,8 @@ export interface EvaluateSlicePlanReadinessToolInput {
 export interface ResolveRuntimeConfigToolInput {
   env: Record<string, string>;
 }
+
+export type CreateOpenClawPluginConfigToolInput = DevplatConfig;
 
 export type CreateArtifactEnvelopeToolInput = ArtifactEnvelope;
 

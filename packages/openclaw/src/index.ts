@@ -37,6 +37,7 @@ import {
   createListStoredRecordsTool,
   createOpenDiscordThreadTool,
   createResolveRuntimeConfigTool,
+  createOpenClawPluginConfigTool,
   createResearchBriefTool,
   createRunGatesTool,
   createRunSupervisorStepTool,
@@ -103,6 +104,7 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createSlicePlanTool());
     api.registerTool(createEvaluateSlicePlanReadinessTool());
     api.registerTool(createResolveRuntimeConfigTool());
+    api.registerTool(createOpenClawPluginConfigTool());
     api.registerTool(createArtifactEnvelopeTool());
     api.registerTool(createApprovalRecordTool());
     api.registerTool(createAuditLogTool());

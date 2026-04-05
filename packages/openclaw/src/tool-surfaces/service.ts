@@ -41,6 +41,7 @@ import { FileStoreService } from '@vannadii/devplat-storage';
 import { SupervisorCycleService } from '@vannadii/devplat-supervisor';
 import { WorktreeAllocationService } from '@vannadii/devplat-worktrees';
 
+import { PluginConfigService } from '../plugin-config/index.js';
 import {
   ApproveSpecRecordToolInputCodec,
   AllocateWorktreeToolInputCodec,
@@ -54,6 +55,7 @@ import {
   CreateArtifactEnvelopeToolInputCodec,
   CreateAuditLogToolInputCodec,
   CreateMergeDecisionToolInputCodec,
+  CreateOpenClawPluginConfigToolInputCodec,
   CreatePullRequestRecordToolInputCodec,
   CreateRebaseResultToolInputCodec,
   CreateTaskRecordToolInputCodec,
@@ -345,6 +347,34 @@ export function createResolveRuntimeConfigTool(): AnyAgentTool {
       const config = new RuntimeConfigService().fromEnvironment(
         decoded.value.env,
       );
+      return Promise.resolve(createTextResult(config));
+    },
+  };
+
+  return tool;
+}
+
+export function createOpenClawPluginConfigTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'create_openclaw_plugin_config',
+    label: 'Create OpenClaw Plugin Config',
+    description:
+      'Translate a normalized DevPlat runtime config into an OpenClaw plugin config.',
+    parameters: readSchema(
+      'tool-create-openclaw-plugin-config-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        CreateOpenClawPluginConfigToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const config = new PluginConfigService().fromRuntimeConfig(decoded.value);
       return Promise.resolve(createTextResult(config));
     },
   };

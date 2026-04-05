@@ -198,6 +198,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'CreateOpenClawPluginConfigToolInput',
+    'schemas/tool-create-openclaw-plugin-config-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'CreateArtifactEnvelopeToolInput',
     'schemas/tool-create-artifact-envelope-params.schema.json',
   ],

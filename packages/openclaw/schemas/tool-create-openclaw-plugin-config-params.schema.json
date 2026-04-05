@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/CreateOpenClawPluginConfigToolInput",
+  "definitions": {
+    "CreateOpenClawPluginConfigToolInput": {
+      "$ref": "#/definitions/DevplatConfig"
+    },
+    "DevplatConfig": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/LifecycleStatus"
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "githubOwner": {
+          "type": "string"
+        },
+        "githubRepo": {
+          "type": "string"
+        },
+        "discord": {
+          "$ref": "#/definitions/DiscordRuntimeConfig"
+        },
+        "openclaw": {
+          "type": "object",
+          "properties": {
+            "pluginId": {
+              "type": "string"
+            },
+            "actionGates": {
+              "$ref": "#/definitions/OpenClawActionGateConfig"
+            }
+          },
+          "required": [
+            "pluginId",
+            "actionGates"
+          ],
+          "additionalProperties": false
+        },
+        "sonar": {
+          "type": "object",
+          "properties": {
+            "organization": {
+              "type": "string"
+            },
+            "projectKey": {
+              "type": "string"
+            },
+            "minimumCoverage": {
+              "type": "number",
+              "const": 90
+            }
+          },
+          "required": [
+            "organization",
+            "projectKey",
+            "minimumCoverage"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "summary",
+        "status",
+        "trace",
+        "updatedAt",
+        "githubOwner",
+        "githubRepo",
+        "discord",
+        "openclaw",
+        "sonar"
+      ],
+      "additionalProperties": false
+    },
+    "LifecycleStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "claimed",
+        "running",
+        "review",
+        "blocked",
+        "approved",
+        "merge-ready",
+        "merged",
+        "failed",
+        "rebasing",
+        "complete"
+      ]
+    },
+    "DiscordRuntimeConfig": {
+      "type": "object",
+      "properties": {
+        "defaultGuildId": {
+          "type": "string"
+        },
+        "specChannelId": {
+          "type": "string"
+        },
+        "implementationChannelId": {
+          "type": "string"
+        },
+        "auditChannelId": {
+          "type": "string"
+        },
+        "threadBindingMode": {
+          "type": "string",
+          "const": "inherit-parent"
+        }
+      },
+      "required": [
+        "defaultGuildId",
+        "specChannelId",
+        "implementationChannelId",
+        "auditChannelId",
+        "threadBindingMode"
+      ],
+      "additionalProperties": false
+    },
+    "OpenClawActionGateConfig": {
+      "type": "object",
+      "properties": {
+        "approveThis": {
+          "type": "boolean"
+        },
+        "mergeNow": {
+          "type": "boolean"
+        },
+        "retryGates": {
+          "type": "boolean"
+        },
+        "rebaseAllDependents": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "approveThis",
+        "mergeNow",
+        "retryGates",
+        "rebaseAllDependents"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
