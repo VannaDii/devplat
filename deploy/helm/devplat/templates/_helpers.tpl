@@ -35,3 +35,12 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- default "default" .Values.serviceAccount.name -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "devplat.requireOpenClawConfig" -}}
+{{- if .Values.config.enabled -}}
+{{- $configData := .Values.config.data | default dict -}}
+{{- if not (hasKey $configData "openclaw.json") -}}
+{{- fail "config.data.openclaw.json is required when config.enabled is true" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
