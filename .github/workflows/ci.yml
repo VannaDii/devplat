@@ -182,11 +182,7 @@ jobs:
         with:
           name: coverage-${{ github.run_id }}-${{ github.run_attempt }}
           retention-days: 14
-          path: |
-            coverage/lcov.info
-            coverage/coverage-summary.json
-            coverage/index.html
-            coverage/**
+          path: coverage
 
   build:
     name: Build and upload artifacts
@@ -294,7 +290,26 @@ jobs:
         uses: actions/download-artifact@v5.0.0
         with:
           name: coverage-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .
+          path: .artifacts/coverage
+
+      - name: Restore coverage directory
+        if: ${{ env.SONAR_TOKEN != '' }}
+        shell: bash
+        run: |
+          rm -rf coverage
+
+          if [[ -f .artifacts/coverage/coverage/lcov.info ]]; then
+            cp -R .artifacts/coverage/coverage ./coverage
+          elif [[ -f .artifacts/coverage/lcov.info ]]; then
+            mkdir -p coverage
+            cp -R .artifacts/coverage/. ./coverage/
+          else
+            echo "Expected LCOV report was not found in downloaded coverage artifact." >&2
+            find .artifacts/coverage -maxdepth 3 -type f | sort >&2 || true
+            exit 1
+          fi
+
+          test -f coverage/lcov.info
 
       - name: Sonar scan
         if: ${{ env.SONAR_TOKEN != '' }}
