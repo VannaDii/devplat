@@ -140,9 +140,9 @@ const result = new SonarBootstrapVerificationService().execute({
   evaluatedAt: new Date().toISOString(),
 });
 
-if (organization !== 'VannaDii') {
+if (organization !== 'vannadii') {
   throw new Error(
-    `Sonar organization is ${organization}, expected VannaDii for this repository.`,
+    `Sonar organization is ${organization}, expected vannadii for this repository.`,
   );
 }
 

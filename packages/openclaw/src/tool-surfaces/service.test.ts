@@ -230,7 +230,7 @@ describe('tool surface service', () => {
           DISCORD_IMPLEMENTATION_CHANNEL_ID: 'impl-1',
           DISCORD_AUDIT_CHANNEL_ID: 'audit-1',
           OPENCLAW_PLUGIN_ID: '@vannadii/devplat-openclaw',
-          SONAR_ORGANIZATION: 'VannaDii',
+          SONAR_ORGANIZATION: 'vannadii',
           SONAR_PROJECT_KEY: 'vannadii_devplat',
         },
       },
@@ -291,7 +291,7 @@ describe('tool surface service', () => {
           },
         },
         sonar: {
-          organization: 'VannaDii',
+          organization: 'vannadii',
           projectKey: 'vannadii_devplat',
           minimumCoverage: 90,
         },

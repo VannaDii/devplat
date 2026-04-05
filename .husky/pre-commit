@@ -3,6 +3,4 @@
 npm run verify:node
 npm run check:unit-tests
 npx --no -- lint-staged
-npm run prepare:generated
-git add packages/*/schemas/*.schema.json packages/openclaw/openclaw.plugin.json
-npm run typecheck:workspace
+npm run check:precommit

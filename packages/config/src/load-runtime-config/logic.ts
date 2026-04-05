@@ -42,7 +42,7 @@ export function createDefaultDevplatConfig(
       },
     },
     sonar: {
-      organization: env['SONAR_ORGANIZATION'] ?? 'VannaDii',
+      organization: env['SONAR_ORGANIZATION'] ?? 'vannadii',
       projectKey: env['SONAR_PROJECT_KEY'] ?? 'vannadii_devplat',
       minimumCoverage: 90,
     },
