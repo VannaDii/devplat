@@ -22,9 +22,9 @@ for (const packageDirectoryName of packageDirectories) {
   const packageJsonPath = resolve(packageDirectory, 'package.json');
   const tsconfigPath = resolve(packageDirectory, 'tsconfig.json');
   const srcIndexPath = resolve(packageDirectory, 'src/index.ts');
-  const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+  let packageJson;
 
-  for (const filePath of [tsconfigPath, srcIndexPath]) {
+  for (const filePath of [packageJsonPath, tsconfigPath, srcIndexPath]) {
     try {
       await access(filePath, constants.F_OK);
     } catch {
@@ -32,6 +32,15 @@ for (const packageDirectoryName of packageDirectories) {
         `${packageDirectoryName}: missing ${relative(rootDirectory, filePath)}`,
       );
     }
+  }
+
+  try {
+    packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+  } catch (error) {
+    failures.push(
+      `${packageDirectoryName}: could not read package.json (${getErrorMessage(error)})`,
+    );
+    continue;
   }
 
   if (typeof packageJson.name !== 'string' || packageJson.name.length === 0) {
@@ -91,3 +100,7 @@ if (failures.length > 0) {
 }
 
 console.log(`Validated ${packageDirectories.length} package directories.`);
+
+function getErrorMessage(error) {
+  return error instanceof Error ? error.message : String(error);
+}

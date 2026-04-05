@@ -20,7 +20,17 @@ for (const packageDirectoryName of packageDirectories) {
     packageDirectoryName,
     'package.json',
   );
-  const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+  let packageJson;
+
+  try {
+    packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+  } catch (error) {
+    failures.push(
+      `${packageDirectoryName}: could not read package.json (${getErrorMessage(error)})`,
+    );
+    continue;
+  }
+
   const rootExport = packageJson.exports?.['.'];
 
   if (
@@ -57,3 +67,7 @@ if (failures.length > 0) {
 }
 
 console.log(`Validated exports for ${packageDirectories.length} packages.`);
+
+function getErrorMessage(error) {
+  return error instanceof Error ? error.message : String(error);
+}

@@ -1,16 +1,31 @@
 import rcompare from 'semver/functions/rcompare.js';
 
 const majorVersion = process.argv[2];
+const controller = new AbortController();
+const timeout = setTimeout(() => controller.abort(), 10_000);
 
 if (!/^\d+$/.test(majorVersion ?? '')) {
   throw new Error('Usage: node scripts/resolve-typescript-version.mjs <major>');
 }
 
-const response = await fetch('https://registry.npmjs.org/typescript', {
-  headers: {
-    accept: 'application/json',
-  },
-});
+let response;
+
+try {
+  response = await fetch('https://registry.npmjs.org/typescript', {
+    headers: {
+      accept: 'application/json',
+    },
+    signal: controller.signal,
+  });
+} catch (error) {
+  if (error instanceof Error && error.name === 'AbortError') {
+    throw new Error('Timed out while resolving TypeScript versions from npm.');
+  }
+
+  throw error;
+} finally {
+  clearTimeout(timeout);
+}
 
 if (!response.ok) {
   throw new Error(

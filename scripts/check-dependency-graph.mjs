@@ -16,15 +16,24 @@ const packageDirectories = (
   .toSorted((left, right) => left.localeCompare(right));
 
 const packageEntries = new Map();
+const failures = [];
 
 for (const packageDirectoryName of packageDirectories) {
   const packageDirectory = resolve(packagesDirectory, packageDirectoryName);
-  const packageJson = JSON.parse(
-    await readFile(resolve(packageDirectory, 'package.json'), 'utf8'),
+  const packageJson = await readJsonFile(
+    resolve(packageDirectory, 'package.json'),
+    `${packageDirectoryName}: could not read package.json`,
+    failures,
   );
-  const tsconfig = JSON.parse(
-    await readFile(resolve(packageDirectory, 'tsconfig.json'), 'utf8'),
+  const tsconfig = await readJsonFile(
+    resolve(packageDirectory, 'tsconfig.json'),
+    `${packageDirectoryName}: could not read tsconfig.json`,
+    failures,
   );
+
+  if (packageJson === null || tsconfig === null) {
+    continue;
+  }
 
   packageEntries.set(packageJson.name, {
     directoryName: packageDirectoryName,
@@ -37,7 +46,6 @@ for (const packageDirectoryName of packageDirectories) {
 const graph = new Map(
   [...packageEntries.keys()].map((packageName) => [packageName, new Set()]),
 );
-const failures = [];
 
 for (const [packageName, entry] of packageEntries) {
   const srcFiles = await collectTypeScriptFiles(
@@ -117,6 +125,15 @@ if (failures.length > 0) {
 
 console.log(`Validated dependency graph for ${packageEntries.size} packages.`);
 
+async function readJsonFile(filePath, failurePrefix, failures) {
+  try {
+    return JSON.parse(await readFile(filePath, 'utf8'));
+  } catch (error) {
+    failures.push(`${failurePrefix} (${getErrorMessage(error)})`);
+    return null;
+  }
+}
+
 async function collectTypeScriptFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const filePaths = [];
@@ -138,6 +155,10 @@ async function collectTypeScriptFiles(directory) {
   }
 
   return filePaths;
+}
+
+function getErrorMessage(error) {
+  return error instanceof Error ? error.message : String(error);
 }
 
 function findCycle(graph) {
