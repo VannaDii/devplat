@@ -17,10 +17,10 @@
     "schemas"
   ],
   "scripts": {
-    "build": "node ../../scripts/run-tsc.mjs -b tsconfig.json",
+    "build": "node ../../scripts/run-tsc.mjs -p tsconfig.json",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "lint": "eslint src --max-warnings 0",
-    "typecheck": "node ../../scripts/run-tsc.mjs -b tsconfig.json --pretty false",
+    "typecheck": "node ../../scripts/run-tsc.mjs -p tsconfig.json --noEmit --pretty false",
     "test": "vitest run --config ../../vitest.package.config.mts"
   },
   "dependencies": {

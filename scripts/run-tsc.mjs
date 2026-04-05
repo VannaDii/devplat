@@ -12,8 +12,7 @@ const majorVersion = Number.parseInt(
 const args = [...process.argv.slice(2)];
 
 if (majorVersion >= 6 && !args.includes('--ignoreDeprecations')) {
-  args.unshift('6.0');
-  args.unshift('--ignoreDeprecations');
+  args.push('--ignoreDeprecations', '6.0');
 }
 
 const child = spawn(process.execPath, [tscBinPath, ...args], {
