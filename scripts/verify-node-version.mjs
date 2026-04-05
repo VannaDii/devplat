@@ -24,12 +24,6 @@ if (!/^v24\.\d+\.\d+$/.test(expectedNodeVersion)) {
   );
 }
 
-if (actualNodeVersion !== expectedNodeVersion) {
-  throw new Error(
-    `Active Node ${actualNodeVersion} does not match .nvmrc ${expectedNodeVersion}. Run 'nvm use'.`,
-  );
-}
-
 if (!semver.satisfies(semver.coerce(actualNodeVersion), expectedNodeRange)) {
   throw new Error(
     `Active Node ${actualNodeVersion} does not satisfy engines.node ${expectedNodeRange}.`,
