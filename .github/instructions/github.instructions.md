@@ -13,6 +13,7 @@
 - Branch names and pull request titles must describe intent, not reuse any registered tool name.
 - Treat `codex` as a reserved tool name and keep it out of branch names and pull request titles.
 - Pull request titles must use conventional commit format.
+- Pull request bodies must use the repository template at `.github/pull_request_template.md` and fill every section with concrete change data.
 - Reviews, approvals, rebases, retries, and merges must leave an auditable GitHub trail.
 
 ## Review and Merge

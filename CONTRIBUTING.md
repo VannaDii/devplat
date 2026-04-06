@@ -55,6 +55,7 @@ That gate covers:
 - Pull request titles must also use conventional commit format.
 - Add a changeset for any publishable package change or release-facing behavior change.
 - Pull requests must describe behavior change, risk, schema and artifact impact, operator impact, performance impact, release impact, rollback notes, and exact validation performed.
+- Pull request bodies must use `.github/pull_request_template.md` and populate every section rather than replacing it with an ad hoc summary.
 - Pull request titles must describe the change outcome and must not repeat any registered tool name.
 - Treat `codex` as a reserved tool name here too; it must not appear in branch names or pull request titles.
 - Do not hide significant behavior changes behind formatting-only commits.
