@@ -5,6 +5,7 @@ on:
 
 jobs:
   verify-sonar-configuration:
+    name: Verify SonarCloud Config
     runs-on: ubuntu-latest
 
     steps:

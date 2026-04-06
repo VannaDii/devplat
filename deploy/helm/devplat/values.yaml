@@ -1,0 +1,62 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/vannadii/devplat-openclaw-runtime
+  tag: latest
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+  name: ''
+
+podAnnotations: {}
+podLabels: {}
+
+service:
+  type: ClusterIP
+  port: 18789
+  annotations: {}
+
+containerPort: 18789
+
+command: []
+args: []
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+env: []
+envFrom: []
+
+config:
+  enabled: false
+  mountPath: /config/openclaw.json
+  data: {}
+
+secretRefs: []
+configMapRefs: []
+
+persistence:
+  enabled: false
+  accessModes:
+    - ReadWriteOnce
+  size: 5Gi
+  storageClassName: ''
+  mountPath: /var/lib/devplat
+
+extraVolumeMounts: []
+extraVolumes: []
+
+ingress:
+  enabled: false
+  className: ''
+  annotations: {}
+  hosts:
+    - host: devplat.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []

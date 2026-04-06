@@ -125,7 +125,7 @@ function normalizeExecutionCwd(cwd: string | undefined):
       ok: false;
       error: string;
     } {
-  if (typeof cwd === 'undefined') {
+  if (cwd === undefined) {
     return { ok: true };
   }
 
@@ -521,7 +521,23 @@ export function createRebaseResultTool(): AnyAgentTool {
   return tool;
 }
 
-export function createExecuteCommandTool(): AnyAgentTool {
+export function createExecuteCommandTool(
+  dependencies: {
+    commandExecutionService?: Pick<CommandExecutionService, 'execute'>;
+    decisionPolicyService?: Pick<
+      DecisionPolicyService,
+      'evaluateControlAction'
+    >;
+    telemetryEventService?: Pick<TelemetryEventService, 'record'>;
+  } = {},
+): AnyAgentTool {
+  const commandExecutionService =
+    dependencies.commandExecutionService ?? new CommandExecutionService();
+  const decisionPolicyService =
+    dependencies.decisionPolicyService ?? new DecisionPolicyService();
+  const telemetryEventService =
+    dependencies.telemetryEventService ?? new TelemetryEventService();
+
   const tool: AnyAgentTool = {
     name: 'execute_command',
     label: 'Execute Command',
@@ -537,13 +553,13 @@ export function createExecuteCommandTool(): AnyAgentTool {
       }
 
       const request = decoded.value;
-      const policy = new DecisionPolicyService().evaluateControlAction(
+      const policy = decisionPolicyService.evaluateControlAction(
         'execute-command',
         request.privileged,
       );
 
       if (!policy.allowed) {
-        await new TelemetryEventService().record({
+        await telemetryEventService.record({
           id: `telemetry:execute-command:${String(Date.now())}`,
           summary: `Blocked command execution for ${request.command}`,
           status: 'blocked',
@@ -578,7 +594,7 @@ export function createExecuteCommandTool(): AnyAgentTool {
         });
       }
 
-      const result = await new CommandExecutionService().execute(
+      const result = await commandExecutionService.execute(
         request.command,
         request.args,
         {
@@ -590,7 +606,7 @@ export function createExecuteCommandTool(): AnyAgentTool {
         },
       );
 
-      await new TelemetryEventService().record({
+      await telemetryEventService.record({
         id: `telemetry:execute-command:${String(Date.now())}`,
         summary: `Executed ${request.command}`,
         status:

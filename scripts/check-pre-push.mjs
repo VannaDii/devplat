@@ -81,7 +81,7 @@ async function runConcurrent(commands) {
 
 await runCommand('verify:node', 'npm', ['run', 'verify:node']);
 await runCommand('prepare:generated', 'npm', ['run', 'prepare:generated']);
-await runCommand('check:unit-tests', 'npm', ['run', 'check:unit-tests']);
+await runCommand('check:repo', 'npm', ['run', 'check:repo']);
 await runConcurrent([
   {
     label: 'build:workspace',
@@ -92,5 +92,10 @@ await runConcurrent([
     label: 'test:coverage:workspace',
     command: 'npm',
     args: ['run', 'test:coverage:workspace'],
+  },
+  {
+    label: 'docs:build',
+    command: 'npm',
+    args: ['run', 'docs:build'],
   },
 ]);

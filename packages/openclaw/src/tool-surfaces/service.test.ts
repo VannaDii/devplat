@@ -603,7 +603,38 @@ describe('tool surface service', () => {
   });
 
   it('records failed command execution results when timeouts are exceeded', async () => {
-    const result = await createExecuteCommandTool().execute('tool-call-ex7', {
+    const result = await createExecuteCommandTool({
+      commandExecutionService: {
+        async execute() {
+          return {
+            command: process.execPath,
+            args: ['-e', 'setTimeout(() => {}, 1_000)'],
+            cwd: 'packages',
+            exitCode: 124,
+            stdout: '',
+            stderr: '',
+            timedOut: true,
+          };
+        },
+      },
+      telemetryEventService: {
+        async record() {
+          return {
+            id: 'telemetry-1',
+            summary: 'Executed timeout command',
+            status: 'failed',
+            trace: ['openclaw:execute-command'],
+            updatedAt: '2026-04-05T00:00:00.000Z',
+            actorId: 'operator-1',
+            action: 'execute-command',
+            scope: 'supervisor',
+            details: {
+              timedOut: true,
+            },
+          };
+        },
+      },
+    }).execute('tool-call-ex7', {
       command: process.execPath,
       args: ['-e', 'setTimeout(() => {}, 1_000)'],
       actorId: 'operator-1',

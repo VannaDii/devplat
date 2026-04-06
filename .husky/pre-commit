@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
 
 npm run verify:node
-npm run check:unit-tests
-npx --no -- lint-staged
-npm run check:precommit
+npm run check:pre-commit

@@ -1,0 +1,12 @@
+coverage
+.git
+.github
+.turbo
+.vscode
+.artifacts
+.devplat
+node_modules
+site/guide-docs/.vitepress/dist
+packages/*/dist
+packages/*/tsconfig.tsbuildinfo
+openclaw-*.tgz

@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   version:
+    name: Version Packages
     runs-on: ubuntu-latest
 
     steps:
@@ -32,8 +33,8 @@ jobs:
       - name: Create or update release PR
         uses: changesets/action@v1.7.0
         with:
-          title: 'chore(release): version packages'
-          commit: 'chore(release): version packages'
+          title: "chore(release): version packages"
+          commit: "chore(release): version packages"
           version: npm run version-packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

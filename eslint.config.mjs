@@ -86,6 +86,8 @@ export default [
       'coverage/**',
       'node_modules/**',
       'packages/*/dist/**',
+      'site/guide-docs/.vitepress/dist/**',
+      'site/guide-docs/.vitepress/.temp/**',
       '.turbo/**',
       'openclaw-*.tgz',
     ],
