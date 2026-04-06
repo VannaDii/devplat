@@ -14,6 +14,7 @@
 - `create_research_brief`: normalize a research brief artifact
 - `create_spec_record`: normalize a spec record artifact
 - `approve_spec_record`: approve a spec record artifact
+- `update_spec_record`: create a revised spec artifact with an incremented version
 - `create_slice_plan`: create a slice plan
 - `evaluate_slice_plan_readiness`: evaluate slice dependencies against completed slices
 - `resolve_runtime_config`: normalize runtime configuration
@@ -25,6 +26,8 @@
 - `create_rebase_result`: create a rebase result artifact
 - `execute_command`: run a repository command through the execution service
 - `allocate_worktree`: allocate a tracked worktree
+- `sync_worktree`: sync an allocated worktree against its base branch
+- `release_worktree`: release an allocated worktree with an explicit cleanup strategy
 - `bind_discord_thread`: persist Discord thread bindings
 - `open_discord_thread`: normalize Discord thread session state
 - `handle_discord_approval`: process Discord approval input
@@ -44,7 +47,9 @@
 - `store_record`: persist a record through the storage adapter
 - `create_pull_request_record`: create a pull request record
 - `submit_pull_request_update`: update a pull request record
+- `submit_pull_request_merge`: submit a merge-ready pull request decision
 - `plan_rebase_dependents`: plan dependent rebases
+- `execute_rebase_dependents`: execute dependent branch refreshes through worktree sync flows
 - `create_github_action_request`: create a GitHub action request
 - `submit_github_action`: submit a GitHub action request result
 - `validate_artifact`: validate artifact payloads against platform contracts

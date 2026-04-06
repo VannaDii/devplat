@@ -29,6 +29,10 @@ import type {
 } from '@vannadii/devplat-sonarcloud';
 import type { SpecRecord } from '@vannadii/devplat-specs';
 import type { DevplatConfig } from '@vannadii/devplat-config';
+import type {
+  WorktreeAllocation,
+  WorktreeSyncMode,
+} from '@vannadii/devplat-worktrees';
 
 export interface RunGatesToolInput {
   gateNames: string[];
@@ -40,6 +44,8 @@ export type CreateResearchBriefToolInput = ResearchBrief;
 export type CreateSpecRecordToolInput = SpecRecord;
 
 export type ApproveSpecRecordToolInput = SpecRecord;
+
+export type UpdateSpecRecordToolInput = SpecRecord;
 
 export type CreateSlicePlanToolInput = SlicePlan;
 
@@ -67,6 +73,17 @@ export type CreateRebaseResultToolInput = RebaseResultArtifact;
 export interface AllocateWorktreeToolInput {
   taskId: string;
   branchName: string;
+}
+
+export interface SyncWorktreeToolInput {
+  allocation: WorktreeAllocation;
+  baseBranch: string;
+  syncMode?: WorktreeSyncMode;
+}
+
+export interface ReleaseWorktreeToolInput {
+  allocation: WorktreeAllocation;
+  releaseMode?: 'archive' | 'delete';
 }
 
 export interface BindDiscordThreadToolInput extends DiscordChannelBinding {
@@ -153,9 +170,20 @@ export interface SubmitPullRequestUpdateToolInput {
   actorId: string;
 }
 
+export interface SubmitPullRequestMergeToolInput {
+  record: PullRequestRecord;
+  actorId: string;
+}
+
 export interface PlanRebaseDependentsToolInput {
   record: PullRequestRecord;
   dependentBranches: RebasePlan['dependentBranches'];
+}
+
+export interface ExecuteRebaseDependentsToolInput {
+  record: PullRequestRecord;
+  dependentBranches: RebasePlan['dependentBranches'];
+  syncMode?: WorktreeSyncMode;
 }
 
 export interface SubmitGitHubActionToolInput {

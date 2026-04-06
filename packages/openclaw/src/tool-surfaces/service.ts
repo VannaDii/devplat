@@ -61,6 +61,7 @@ import {
   CreateRebaseResultToolInputCodec,
   CreateTaskRecordToolInputCodec,
   CreateSpecRecordToolInputCodec,
+  ExecuteRebaseDependentsToolInputCodec,
   EvaluateSlicePlanReadinessToolInputCodec,
   ExecuteCommandToolInputCodec,
   EvaluatePolicyActionToolInputCodec,
@@ -72,14 +73,18 @@ import {
   PlanRebaseDependentsToolInputCodec,
   ReadStoredRecordToolInputCodec,
   RecordTelemetryEventToolInputCodec,
+  ReleaseWorktreeToolInputCodec,
   RememberMemoryEntryToolInputCodec,
   ResolveRuntimeConfigToolInputCodec,
   RunGatesToolInputCodec,
   RunSupervisorStepToolInputCodec,
   StoreRecordToolInputCodec,
   SubmitGitHubActionToolInputCodec,
+  SubmitPullRequestMergeToolInputCodec,
   SubmitPullRequestUpdateToolInputCodec,
+  SyncWorktreeToolInputCodec,
   UpdateTaskToolInputCodec,
+  UpdateSpecRecordToolInputCodec,
   ValidateArtifactToolInputCodec,
   VerifySonarBootstrapToolInputCodec,
 } from './codec.js';
@@ -254,6 +259,32 @@ export function createApproveSpecRecordTool(): AnyAgentTool {
 
       const specs = new SpecRecordService();
       const artifact = specs.toArtifact(specs.approve(decoded.value));
+      return Promise.resolve(createTextResult(artifact));
+    },
+  };
+
+  return tool;
+}
+
+export function createUpdateSpecRecordTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'update_spec_record',
+    label: 'Update Spec Record',
+    description:
+      'Create a revised spec record, increment its version, and return the updated artifact.',
+    parameters: readSchema(
+      'tool-update-spec-record-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(UpdateSpecRecordToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const specs = new SpecRecordService();
+      const artifact = specs.toArtifact(specs.update(decoded.value));
       return Promise.resolve(createTextResult(artifact));
     },
   };
@@ -667,6 +698,61 @@ export function createAllocateWorktreeTool(): AnyAgentTool {
         decoded.value.branchName,
       );
       return Promise.resolve(createTextResult(allocation));
+    },
+  };
+
+  return tool;
+}
+
+export function createSyncWorktreeTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'sync_worktree',
+    label: 'Sync Worktree',
+    description:
+      'Synchronize an allocated worktree with its base branch using an explicit sync mode.',
+    parameters: readSchema('tool-sync-worktree-params.schema.json') as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(SyncWorktreeToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const result = new WorktreeAllocationService().sync(
+        decoded.value.allocation,
+        decoded.value.baseBranch,
+        decoded.value.syncMode,
+      );
+      return Promise.resolve(createTextResult(result));
+    },
+  };
+
+  return tool;
+}
+
+export function createReleaseWorktreeTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'release_worktree',
+    label: 'Release Worktree',
+    description:
+      'Release an allocated worktree using an explicit cleanup strategy.',
+    parameters: readSchema(
+      'tool-release-worktree-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(ReleaseWorktreeToolInputCodec, params);
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const result = new WorktreeAllocationService().release(
+        decoded.value.allocation,
+        decoded.value.releaseMode,
+      );
+      return Promise.resolve(createTextResult(result));
     },
   };
 
@@ -1233,6 +1319,35 @@ export function createSubmitPullRequestUpdateTool(): AnyAgentTool {
   return tool;
 }
 
+export function createSubmitPullRequestMergeTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'submit_pull_request_merge',
+    label: 'Submit Pull Request Merge',
+    description:
+      'Submit a merge-ready pull request through the GitHub workflow adapter.',
+    parameters: readSchema(
+      'tool-submit-pull-request-merge-params.schema.json',
+    ) as unknown,
+    async execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        SubmitPullRequestMergeToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return createTextResult({ status: 'failed', error: decoded.error });
+      }
+
+      const result = await new PullRequestService().submitMerge(
+        decoded.value.record,
+        decoded.value.actorId,
+      );
+      return createTextResult(result);
+    },
+  };
+
+  return tool;
+}
+
 export function createPlanRebaseDependentsTool(): AnyAgentTool {
   const tool: AnyAgentTool = {
     name: 'plan_rebase_dependents',
@@ -1258,6 +1373,58 @@ export function createPlanRebaseDependentsTool(): AnyAgentTool {
         decoded.value.dependentBranches,
       );
       return Promise.resolve(createTextResult(plan));
+    },
+  };
+
+  return tool;
+}
+
+export function createExecuteRebaseDependentsTool(): AnyAgentTool {
+  const tool: AnyAgentTool = {
+    name: 'execute_rebase_dependents',
+    label: 'Execute Rebase Dependents',
+    description:
+      'Plan and execute dependent branch refreshes through explicit worktree sync operations.',
+    parameters: readSchema(
+      'tool-execute-rebase-dependents-params.schema.json',
+    ) as unknown,
+    execute(_toolCallId: string, params: unknown) {
+      const decoded = decodeWithCodec(
+        ExecuteRebaseDependentsToolInputCodec,
+        params,
+      );
+      if (!decoded.ok) {
+        return Promise.resolve(
+          createTextResult({ status: 'failed', error: decoded.error }),
+        );
+      }
+
+      const branching = new RebaseDependentsService();
+      const worktrees = new WorktreeAllocationService();
+      const plan = branching.createForMerge(
+        decoded.value.record,
+        decoded.value.dependentBranches,
+      );
+      const syncMode = decoded.value.syncMode ?? 'rebase';
+      const syncResults = plan.dependentBranches.map((branchName, index) => {
+        const allocation = worktrees.allocate(
+          `pr-${String(decoded.value.record.prNumber)}-dependent-${String(index + 1)}`,
+          branchName,
+        );
+        return worktrees.sync(allocation, plan.baseBranch, syncMode);
+      });
+
+      return Promise.resolve(
+        createTextResult({
+          plan,
+          syncMode,
+          syncResults,
+          executed: syncResults.length > 0,
+          conflictsDetected: syncResults.some(
+            (result) => result.conflictsDetected,
+          ),
+        }),
+      );
     },
   };
 

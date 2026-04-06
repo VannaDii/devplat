@@ -37,6 +37,7 @@ Use the root `PLATFORM.md` file as the authoritative foundation-scope document. 
 - `.github/instructions/release.instructions.md`: publication and rollback rules
 - `guides/platform-lifecycle.md`: end-to-end execution flow
 - `guides/quality-performance-policy.md`: quality, completeness, and benchmark policy
+- `guides/publishing-release.md`: release, publication, and rollback surfaces
 
 ## Package Contract
 
@@ -44,6 +45,7 @@ Use the root `PLATFORM.md` file as the authoritative foundation-scope document. 
 - For package normalization work, add or preserve `package.json`, `tsconfig.json`, `src/index.ts`, strict exports, and repo-standard scripts.
 - Use public package entrypoints only and keep adapter packages out of domain-logic ownership.
 - Treat package `README.md` coverage as part of package completion when publishability or operator-facing behavior changes.
+- Keep package `README.md` coverage on the remaining normalization backlog until every publishable package has one.
 
 ## Complete Change Standard
 

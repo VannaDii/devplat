@@ -64,4 +64,30 @@ describe('DiscordControlPlaneService', () => {
     expect(result.allowed).toBe(false);
     expect(await store.list('state')).toContain('discord-002');
   });
+
+  it('records thread-aware diagnostic actions without privileged overrides', async () => {
+    const rootDirectory = await mkdtemp(join(tmpdir(), 'devplat-discord-'));
+    const store = new FileStoreService(rootDirectory);
+    const service = new DiscordControlPlaneService(
+      new DecisionPolicyService(),
+      new TelemetryEventService(store),
+      store,
+    );
+
+    const result = await service.handleAction({
+      id: 'discord-003',
+      summary: 'show status',
+      status: 'review',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      actorId: 'user-3',
+      threadId: 'thread-3',
+      channelId: 'channel-3',
+      action: 'show-status',
+      privileged: false,
+    });
+
+    expect(result.allowed).toBe(true);
+    expect(await store.list('telemetry')).toContain('discord-003');
+  });
 });

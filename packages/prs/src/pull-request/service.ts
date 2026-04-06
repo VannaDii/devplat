@@ -40,6 +40,25 @@ export class PullRequestService {
     );
   }
 
+  public async submitMerge(
+    input: PullRequestRecord,
+    actorId = 'prs-service',
+  ): Promise<Awaited<ReturnType<GitHubWorkflowService['submit']>>> {
+    const record = createPullRequestRecord(input);
+    return this.github.submit(
+      {
+        repoFullName: this.repoFullName,
+        action: 'merge-pr',
+        summary: record.title,
+        privileged: canMergePullRequest(record),
+        targetNumber: record.prNumber,
+        branchName: record.branchName,
+        updatedAt: record.updatedAt,
+      },
+      actorId,
+    );
+  }
+
   public explain(input: PullRequestRecord): string {
     return describePullRequestRecord(input);
   }

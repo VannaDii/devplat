@@ -23,6 +23,16 @@ export function approveSpecRecord(input: SpecRecord): SpecRecord {
   };
 }
 
+export function updateSpecRecord(input: SpecRecord): SpecRecord {
+  const record = createSpecRecord(input);
+  return {
+    ...record,
+    approvalState:
+      record.approvalState === 'approved' ? 'review' : record.approvalState,
+    version: record.version + 1,
+  };
+}
+
 export function describeSpecRecord(input: SpecRecord): string {
   return `Spec record -> ${input.title}`;
 }

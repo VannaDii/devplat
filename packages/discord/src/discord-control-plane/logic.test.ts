@@ -43,4 +43,22 @@ describe('DiscordControlRequest logic', () => {
       }),
     ).toThrow('thread');
   });
+
+  it('accepts diagnostic and lifecycle control actions used in daily operation', () => {
+    const request = createDiscordControlRequest({
+      id: 'discord-003',
+      summary: '  show the latest artifact  ',
+      status: 'review',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      actorId: 'user-3',
+      threadId: 'thread-3',
+      channelId: 'channel-3',
+      action: 'show-last-artifact',
+      privileged: false,
+    });
+
+    expect(request.action).toBe('show-last-artifact');
+    expect(request.trace).toContain('discord:thread-3:show-last-artifact');
+  });
 });

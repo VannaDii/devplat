@@ -7,6 +7,7 @@ import {
   approveSpecRecord,
   createSpecRecord,
   describeSpecRecord,
+  updateSpecRecord,
 } from './logic.js';
 import type { SpecRecord } from './types.js';
 
@@ -19,6 +20,10 @@ export class SpecRecordService {
 
   public approve(input: SpecRecord): SpecRecord {
     return approveSpecRecord(input);
+  }
+
+  public update(input: SpecRecord): SpecRecord {
+    return updateSpecRecord(input);
   }
 
   public execute(input: SpecRecord): SpecRecord {

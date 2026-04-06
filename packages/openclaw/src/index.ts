@@ -38,10 +38,13 @@ import {
   createListStoredRecordsTool,
   createOpenDiscordThreadTool,
   createResolveRuntimeConfigTool,
+  createReleaseWorktreeTool,
   createOpenClawPluginConfigTool,
   createResearchBriefTool,
   createRunGatesTool,
   createRunSupervisorStepTool,
+  createSubmitPullRequestMergeTool,
+  createSyncWorktreeTool,
   createPlanRebaseDependentsTool,
   createPullRequestRecordTool,
   createSlicePlanTool,
@@ -50,8 +53,10 @@ import {
   createSubmitGitHubActionTool,
   createSubmitPullRequestUpdateTool,
   createUpdateTaskTool,
+  createUpdateSpecRecordTool,
   createValidateArtifactTool,
   createVerifySonarBootstrapTool,
+  createExecuteRebaseDependentsTool,
 } from './tool-surfaces/service.js';
 
 function readSchema(fileName: string): Record<string, unknown> {
@@ -102,6 +107,7 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createResearchBriefTool());
     api.registerTool(createSpecRecordTool());
     api.registerTool(createApproveSpecRecordTool());
+    api.registerTool(createUpdateSpecRecordTool());
     api.registerTool(createSlicePlanTool());
     api.registerTool(createEvaluateSlicePlanReadinessTool());
     api.registerTool(createResolveRuntimeConfigTool());
@@ -114,6 +120,8 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createExecuteCommandTool());
     api.registerTool(createRunGatesTool());
     api.registerTool(createAllocateWorktreeTool());
+    api.registerTool(createSyncWorktreeTool());
+    api.registerTool(createReleaseWorktreeTool());
     api.registerTool(createBindDiscordThreadTool());
     api.registerTool(createOpenDiscordThreadTool());
     api.registerTool(createHandleDiscordApprovalTool());
@@ -133,7 +141,9 @@ const devplatOpenClawPlugin = definePluginEntry({
     api.registerTool(createStoreRecordTool());
     api.registerTool(createPullRequestRecordTool());
     api.registerTool(createSubmitPullRequestUpdateTool());
+    api.registerTool(createSubmitPullRequestMergeTool());
     api.registerTool(createPlanRebaseDependentsTool());
+    api.registerTool(createExecuteRebaseDependentsTool());
     api.registerTool(createGitHubActionRequestTool());
     api.registerTool(createSubmitGitHubActionTool());
     api.registerTool(createValidateArtifactTool());
