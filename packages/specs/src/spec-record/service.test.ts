@@ -58,4 +58,21 @@ describe('SpecRecordService', () => {
     expect(updated.version).toBe(4);
     expect(updated.approvalState).toBe('review');
   });
+
+  it('preserves non-approved review state when creating an updated revision', () => {
+    const service = new SpecRecordService();
+    const updated = service.update({
+      specId: 'spec-004',
+      researchId: 'research-004',
+      title: 'Review spec',
+      objective: 'Keep in-review revisions in review.',
+      acceptanceCriteria: ['retain review state'],
+      approvalState: 'review',
+      version: 1,
+      updatedAt: '2026-04-04T00:00:00.000Z',
+    });
+
+    expect(updated.version).toBe(2);
+    expect(updated.approvalState).toBe('review');
+  });
 });
