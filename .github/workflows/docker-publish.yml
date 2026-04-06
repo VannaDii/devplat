@@ -1,9 +1,9 @@
 name: Publish Docker Image
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types:
+      - closed
   workflow_dispatch:
 
 permissions:
@@ -13,10 +13,13 @@ permissions:
 jobs:
   publish:
     name: Publish Docker Image
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && startsWith(github.event.pull_request.head.ref, 'changeset-release/'))
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v6.0.2
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.pull_request.merge_commit_sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v6.3.0
