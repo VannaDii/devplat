@@ -19,6 +19,13 @@ const child = spawn(process.execPath, [tscBinPath, ...args], {
   stdio: 'inherit',
 });
 
+child.on('error', (error) => {
+  console.error(
+    `Failed to spawn TypeScript compiler at ${tscBinPath}: ${error.message}`,
+  );
+  process.exit(1);
+});
+
 child.on('exit', (code, signal) => {
   if (signal !== null) {
     process.kill(process.pid, signal);

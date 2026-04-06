@@ -1,5 +1,6 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { renderOpenClawManifest } from './generate-openclaw-manifest.mjs';
 
 const rootDirectory = resolve(import.meta.dirname, '..');
 const manifestPath = resolve(
@@ -8,14 +9,7 @@ const manifestPath = resolve(
 );
 
 const currentManifest = await readFile(manifestPath, 'utf8');
-let regeneratedManifest;
-
-try {
-  await import('./generate-openclaw-manifest.mjs');
-  regeneratedManifest = await readFile(manifestPath, 'utf8');
-} finally {
-  await writeFile(manifestPath, currentManifest, 'utf8');
-}
+const regeneratedManifest = await renderOpenClawManifest();
 
 if (currentManifest !== regeneratedManifest) {
   throw new Error(
