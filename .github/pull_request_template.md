@@ -1,6 +1,7 @@
 ## Merge Contract
 
 Pull request titles must be conventional commit messages and must not use any registered tool name.
+Treat `codex` as a reserved tool name too; do not use it in branch names or pull request titles.
 
 ### Behavioral Change
 

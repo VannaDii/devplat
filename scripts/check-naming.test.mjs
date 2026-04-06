@@ -51,6 +51,24 @@ describe('check-naming', () => {
       },
     },
     {
+      name: 'fails when a branch name includes the reserved codex tool name',
+      inputs: {
+        branchName: 'codex/operator-surface-hardening',
+        prTitle: 'chore: tighten policy enforcement',
+      },
+      mock: async () => undefined,
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes(
+                "Branch name 'codex/operator-surface-hardening'",
+              ) && error.includes("'codex'"),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
       name: 'fails when a pull request title includes a spaced tool name variant',
       inputs: {
         branchName: 'chore/instruction-governance',
@@ -64,6 +82,24 @@ describe('check-naming', () => {
               error.includes(
                 "Pull request title 'chore: refine handle discord control behavior'",
               ) && error.includes("'handle_discord_control'"),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'fails when a pull request title includes the reserved codex tool name',
+      inputs: {
+        branchName: 'chore/instruction-governance',
+        prTitle: 'chore: codex naming cleanup',
+      },
+      mock: async () => undefined,
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes(
+                "Pull request title 'chore: codex naming cleanup'",
+              ) && error.includes("'codex'"),
           ),
         ).toBe(true);
       },

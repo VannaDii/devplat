@@ -8,6 +8,7 @@ import { getRegisteredOpenClawTools } from './check-instructions.mjs';
 
 const execFileAsync = promisify(execFile);
 const defaultRootDirectory = resolve(import.meta.dirname, '..');
+const RESERVED_TOOL_NAMES = ['codex'];
 const CONVENTIONAL_COMMIT_TITLE_PATTERN =
   /^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([^)]+\))?!?: .+/u;
 
@@ -63,10 +64,15 @@ export async function collectNamingErrors({
 
 async function resolveToolNames({ rootDirectory, toolNames }) {
   if (Array.isArray(toolNames)) {
-    return toolNames;
+    return [...new Set([...toolNames, ...RESERVED_TOOL_NAMES])];
   }
 
-  return [...(await getRegisteredOpenClawTools(rootDirectory))];
+  return [
+    ...new Set([
+      ...(await getRegisteredOpenClawTools(rootDirectory)),
+      ...RESERVED_TOOL_NAMES,
+    ]),
+  ];
 }
 
 async function resolveBranchName({ branchName, rootDirectory }) {

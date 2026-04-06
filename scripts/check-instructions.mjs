@@ -458,6 +458,7 @@ function buildRequiredTextRules({
       requiredText: [
         'Use `PLATFORM.md` as the authoritative foundation-scope document for required packages, surfaces, workflows, and acceptance criteria.',
         'Branch names and pull request titles must not include any registered tool name.',
+        'Treat `codex` as a reserved tool name and never use it in branch names or pull request titles.',
         'Pull request titles must use conventional commit format.',
         'Do not put business logic inside decorators, `@vannadii/devplat-openclaw`, or `@vannadii/devplat-discord`.',
         'Do not colocate domain logic beside OpenClaw or Discord just because those packages initiate the workflow.',
@@ -474,6 +475,7 @@ function buildRequiredTextRules({
       requiredText: [
         'Use `PLATFORM.md` as the authoritative foundation-scope document for required packages, workflows, delivery surfaces, and acceptance criteria.',
         'Keep branch names and pull request titles free of registered tool names.',
+        'Treat `codex` as a reserved tool name and keep it out of branch names and pull request titles.',
         'Keep pull request titles in conventional commit form.',
         'Never place business logic inside decorators, `@vannadii/devplat-openclaw`, or `@vannadii/devplat-discord`.',
         'Use structured `const cases = [...]` test tables. Each case must declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.',
@@ -532,6 +534,7 @@ function buildRequiredTextRules({
         'Use [`PLATFORM.md`](./PLATFORM.md) as the authoritative foundation-scope document for required packages, workflows, delivery surfaces, and acceptance criteria.',
         'Keep Discord interactions thread-aware and fail closed when the thread context is missing or ambiguous.',
         'Keep branch names and pull request titles descriptive of intent and never reuse any registered tool name.',
+        'Treat `codex` as a reserved tool name and never use it in branch names or pull request titles.',
         'Keep pull request titles in conventional commit format.',
         'naming rules',
         'Pull request titles must also use conventional commit format.',
@@ -541,6 +544,7 @@ function buildRequiredTextRules({
       path: '.github/instructions/github.instructions.md',
       requiredText: [
         'Branch names and pull request titles must describe intent, not reuse any registered tool name.',
+        'Treat `codex` as a reserved tool name and keep it out of branch names and pull request titles.',
         'Pull request titles must use conventional commit format.',
       ],
     },
@@ -591,6 +595,7 @@ function buildRequiredTextRules({
       requiredText: [
         '`npm run check:naming`',
         'keep branch names and pull request titles free of registered tool names',
+        'treat `codex` as a reserved tool name and keep it out of branch names and pull request titles',
         'keep pull request titles in conventional commit format',
         'keep tests in structured `const cases = [...]` tables where each case provides `inputs`, `mock`, and `assert`, then exercises a single implementation per suite',
       ],
@@ -658,6 +663,7 @@ function buildRequiredTextRules({
       path: '.github/pull_request_template.md',
       requiredText: [
         'Pull request titles must be conventional commit messages and must not use any registered tool name.',
+        'Treat `codex` as a reserved tool name too; do not use it in branch names or pull request titles.',
         '### Performance Impact',
         '### Rollback Notes',
         '## Validation Performed',
