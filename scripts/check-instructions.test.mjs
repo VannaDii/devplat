@@ -1,10 +1,14 @@
-import { mkdtemp, cp, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { collectInstructionErrors } from './check-instructions.mjs';
+import {
+  collectInstructionErrors,
+  REQUIRED_INSTRUCTION_FILES,
+  REQUIRED_WORKFLOW_FILES,
+} from './check-instructions.mjs';
 
 const repoRootDirectory = resolve(import.meta.dirname, '..');
 const temporaryRoots = [];
@@ -186,23 +190,14 @@ async function createFixtureRoot() {
   temporaryRoots.push(rootDirectory);
 
   for (const relativePath of [
-    '.github',
-    'site/guide-docs',
-    'packages/openclaw',
-    'AGENTS.md',
-    'CONTRIBUTING.md',
-    'PLATFORM.md',
-    'README.md',
+    ...REQUIRED_INSTRUCTION_FILES,
+    ...REQUIRED_WORKFLOW_FILES,
     'package.json',
     '.nvmrc',
   ]) {
-    await cp(
-      resolve(repoRootDirectory, relativePath),
-      resolve(rootDirectory, relativePath),
-      {
-        recursive: true,
-      },
-    );
+    const targetPath = resolve(rootDirectory, relativePath);
+    await mkdir(dirname(targetPath), { recursive: true });
+    await cp(resolve(repoRootDirectory, relativePath), targetPath);
   }
 
   return rootDirectory;
