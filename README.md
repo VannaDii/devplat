@@ -1,12 +1,19 @@
 # DevPlat
 
-DevPlat is a Discord-first autonomous development platform scaffolded as a strict TypeScript monorepo. The foundation emphasizes reproducibility, auditable artifacts, OpenClaw compatibility, strict package boundaries, and quality gates from the first commit.
+DevPlat is a Discord-first autonomous software-delivery platform built as a strict native-ESM TypeScript monorepo. Platform packages own domain logic, orchestration, contracts, and persistence; `@vannadii/devplat-openclaw` exposes that platform into OpenClaw; Discord operates as the primary human control plane; GitHub remains the system of record for specs, pull requests, reviews, and merge history.
 
-## Requirements
+## Platform Model
 
-- Node.js `v24.14.1`
-- npm `>=11.0.0`
-- `nvm`
+- research -> spec PR -> human approval -> slicing -> implementation PRs
+- automated gates, review, and remediation loops
+- operator control through OpenClaw + Discord with auditable artifacts
+- publication through GitHub Packages npm packages, GHCR Docker, GHCR OCI Helm, and GitHub Pages
+
+## Runtime Baseline
+
+- Node.js `v24.14.1` from `.nvmrc`
+- `packageManager` `npm@11.12.1`
+- TypeScript `6.0.2` as the authoring baseline
 
 Always activate the pinned runtime before development:
 
@@ -15,54 +22,29 @@ nvm use
 npm ci
 ```
 
-## Workspace Layout
+Compatibility validation runs on Linux only against the latest stable TypeScript `5.x` and `6.x` releases. Primary authoring targets TypeScript `6.0.2`.
 
-- `packages/core`: shared domain primitives and exactness helpers
-- `packages/config`: runtime configuration loading and normalization
-- `packages/artifacts`: versioned artifact contracts
-- `packages/memory`: persistent project memory domain
-- `packages/research`: research-backed discovery flows
-- `packages/specs`: spec lifecycle management
-- `packages/slicing`: dependency-aware slice planning
-- `packages/queue`: task queue and lifecycle state machine
-- `packages/worktrees`: worktree allocation and synchronization
-- `packages/execution`: subprocess execution runtime
-- `packages/gates`: quality gate orchestration
-- `packages/sonarcloud`: SonarCloud integration and compliance logic
-- `packages/review`: automated review engine
-- `packages/remediation`: remediation planning
-- `packages/prs`: pull request lifecycle management
-- `packages/branching`: downstream branch coordination
-- `packages/supervisor`: orchestration brain
-- `packages/observability`: telemetry and traceability
-- `packages/github`: GitHub-native integration
-- `packages/openclaw`: OpenClaw adapter only
-- `packages/discord`: Discord control plane workflows
-- `packages/policy`: privileged action governance
-- `packages/storage`: lightweight `.devplat` persistence wrapper
-
-## Common Commands
+## Baseline Commands
 
 ```bash
-npm run lint
-npm run typecheck
-npm run test:coverage
-npm run build
-npm run docs:build
-npm run generate:schemas
-npm run check:schemas
 npm run check:repo
+npm run check:pre-push
+npm run test:coverage
+npm run docs:build
 ```
 
-## Engineering Guardrails
+## Instruction Surfaces
 
-- Use `nvm use` before every install, build, lint, typecheck, or test run.
-- Keep runtime contracts aligned across TypeScript types, `io-ts` codecs, and generated JSON Schemas.
-- Tests live sibling to the units they verify and must isolate both failure source and downstream impact.
-- OpenClaw code stays adapter-only. Business logic belongs in the platform packages.
+- [`PLATFORM.md`](./PLATFORM.md): foundation-scope objective, package responsibilities, delivery surfaces, and acceptance criteria
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md): human workflow, review, and release contract
+- [`AGENTS.md`](./AGENTS.md): terse coding-agent operating rules
+- [`.github/copilot-instructions.md`](./.github/copilot-instructions.md): AI pair-programming rules
+- [`.github/instructions/`](./.github/instructions): platform, architecture, performance, compatibility, release, testing, schema, review, and operator policies
+- [`site/guide-docs/guides/platform-lifecycle.md`](./site/guide-docs/guides/platform-lifecycle.md): end-to-end platform flow
+- [`site/guide-docs/guides/quality-performance-policy.md`](./site/guide-docs/guides/quality-performance-policy.md): complete-change and performance expectations
 
 ## Distribution Surfaces
 
-- `docker/openclaw-runtime`: Alpine-based OpenClaw gateway runtime image
-- `deploy/helm/devplat`: Helm chart for Kubernetes and k3s deployment
-- `site/guide-docs`: VitePress documentation site published through GitHub Pages
+- `docker/openclaw-runtime`: GHCR runtime image
+- `deploy/helm/devplat`: GHCR OCI Helm chart
+- `site/guide-docs`: GitHub Pages documentation site

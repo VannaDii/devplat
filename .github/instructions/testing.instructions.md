@@ -1,8 +1,19 @@
 # Testing Instructions
 
+## Unit Shape
+
 - Every non-trivial unit needs sibling tests.
 - Test pure logic directly, step by step, and before higher-level orchestration paths.
-- Test services for orchestration, delegation, policy checks, persistence boundaries, and side-effect boundaries.
+- Test services for orchestration, delegation, policy checks, persistence boundaries, side-effect boundaries, and release-surface coordination where relevant.
+- Prefer structured `const cases = [...]` tables. Each case should declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.
+
+## Failure Clarity
+
 - A test suite is insufficient if it only proves top-level success and hides which internal step failed.
-- Prefer narrow tests that make the source of failure obvious and broader tests that show the operational impact.
+- Prefer narrow tests that make the source of failure obvious and broader tests that show operational impact.
 - Do not trade away branch coverage or per-file coverage to avoid writing meaningful cases.
+
+## Complete Change Standard
+
+- Add or update tests when lifecycle, policy, operator, performance, or release behavior changes.
+- Keep repo checks for instruction drift and policy boundaries covered with unit tests.

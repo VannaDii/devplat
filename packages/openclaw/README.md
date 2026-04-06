@@ -1,6 +1,6 @@
 # @vannadii/devplat-openclaw
 
-`@vannadii/devplat-openclaw` is the adapter-only OpenClaw package for DevPlat. It reads generated schemas, decodes tool input with the platform codecs, and delegates to the platform packages for behavior.
+`@vannadii/devplat-openclaw` is the adapter-only OpenClaw package for DevPlat. It reads generated schemas, decodes tool input with platform codecs, and delegates lifecycle behavior to platform services. GitHub remains the source of truth for specs, pull requests, reviews, and merges; Discord remains the primary operator control plane through OpenClaw.
 
 ## Package Assets
 

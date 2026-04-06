@@ -9,6 +9,7 @@
 
 ## Workflow Packages
 
+- `@vannadii/devplat-memory`: persistent knowledge, constraints, and history
 - `@vannadii/devplat-research`, `@vannadii/devplat-specs`, `@vannadii/devplat-slicing`
 - `@vannadii/devplat-queue`, `@vannadii/devplat-worktrees`, `@vannadii/devplat-execution`
 - `@vannadii/devplat-gates`, `@vannadii/devplat-review`, `@vannadii/devplat-remediation`
@@ -24,4 +25,4 @@
 
 ## Adapter Package
 
-- `@vannadii/devplat-openclaw`: OpenClaw plugin entrypoint and tool registration surface
+- `@vannadii/devplat-openclaw`: OpenClaw plugin entrypoint and tool registration surface, kept adapter-only

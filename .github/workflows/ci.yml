@@ -87,6 +87,9 @@ jobs:
           path: .
 
       - name: Verify repository structure
+        env:
+          BRANCH_NAME: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+          PR_TITLE: ${{ github.event_name == 'pull_request' && github.event.pull_request.title || '' }}
         run: npm run check:repo
 
   lint:

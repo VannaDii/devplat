@@ -3,23 +3,34 @@
 ## Non-negotiable Rules
 
 - Run `nvm use` before installs or development commands.
-- Do not weaken TypeScript, ESLint, coverage, or Sonar requirements.
-- Do not bypass schema generation. Public contract changes require updated codecs, generated schemas, and tests.
-- Do not put business logic inside decorators or OpenClaw adapters.
-- Only `@vannadii/devplat-storage` may read or write `.devplat/` paths directly.
+- Do not weaken TypeScript, ESLint, coverage, schema, Sonar, policy, or audit requirements.
+- Do not bypass schema generation or the generated OpenClaw manifest workflow.
+- Use `PLATFORM.md` as the authoritative foundation-scope document for required packages, surfaces, workflows, and acceptance criteria.
+- Branch names and pull request titles must not include any registered tool name.
+- Pull request titles must use conventional commit format.
+- Keep GitHub as the source of truth for specs, pull requests, reviews, and merge history.
+- Keep Discord and OpenClaw control flows auditable.
 
-## Coding Shape
+## Boundaries
+
+- `@vannadii/devplat-openclaw` is adapter-only.
+- `@vannadii/devplat-discord` is the operator control plane, not a business-logic home.
+- Discord is the operator control plane, not the source of truth for code state.
+- Discord interactions must stay thread-aware and bound to the correct spec, slice, or pull request context.
+- Only `@vannadii/devplat-storage` may read or write `.devplat/` paths directly.
+- Do not put business logic inside decorators, `@vannadii/devplat-openclaw`, or `@vannadii/devplat-discord`.
+- Do not colocate domain logic beside OpenClaw or Discord just because those packages initiate the workflow.
+- Keep package boundaries strict and use public package entrypoints only.
+
+## Delivery Contract
 
 - Use the folder-per-unit layout.
 - Keep `logic.ts` pure and test it directly.
-- Keep `service.ts` as the class shell and test delegation and side-effect boundaries separately.
-- Export only through package and unit `index.ts` files.
-- In `NodeNext` ESM source, keep relative import and export specifiers explicit with emitted `.js` extensions.
-- Do not use deep imports across packages.
-
-## Quality Bar
-
-- Every non-trivial unit requires sibling tests.
-- Test failures must reveal source and impact, not just top-level behavior.
-- Preserve or improve coverage and artifact generation.
-- Keep OpenClaw and Discord control flows auditable.
+- Keep `service.ts` as the class shell for orchestration, delegation, and side-effect boundaries.
+- Keep relative `NodeNext` import and export specifiers explicit with emitted `.js` extensions.
+- Every non-trivial unit needs sibling tests that reveal failure source and operational impact.
+- Use structured test tables with `const cases = [...]`. Each case must declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.
+- Public contract changes require aligned types, `io-ts` codecs, generated schemas, docs, and tests.
+- Keep Discord and OpenClaw control-plane contracts aligned with auditable artifacts and generated schemas.
+- Fail closed when a Discord action lacks an unambiguous thread binding.
+- Preserve Linux-only compatibility validation against the latest stable TypeScript `5.x` and `6.x` releases while authoring against TypeScript `6.0.2`.
