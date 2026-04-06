@@ -20,124 +20,162 @@ afterEach(async () => {
 });
 
 describe('check-instructions', () => {
-  it('passes on the repository instruction surfaces', async () => {
-    await expect(
-      collectInstructionErrors({ rootDirectory: repoRootDirectory }),
-    ).resolves.toEqual([]);
-  });
+  const cases = [
+    {
+      name: 'passes on the repository instruction surfaces',
+      inputs: {
+        useFixtureRoot: false,
+      },
+      mock: async () => undefined,
+      assert: (errors) => {
+        expect(errors).toEqual([]);
+      },
+    },
+    {
+      name: 'fails when a version statement drifts',
+      inputs: {
+        useFixtureRoot: true,
+      },
+      mock: async ({ rootDirectory }) => {
+        await replaceInFile(
+          rootDirectory,
+          'README.md',
+          'Node.js `v24.14.1`',
+          'Node.js `v24.0.0`',
+        );
+      },
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('README.md') &&
+              error.includes('Node.js `v24.14.1`'),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'fails when a required heading is missing',
+      inputs: {
+        useFixtureRoot: true,
+      },
+      mock: async ({ rootDirectory }) => {
+        await replaceInFile(
+          rootDirectory,
+          'CONTRIBUTING.md',
+          '## Merge Readiness',
+          '## Readiness',
+        );
+      },
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('CONTRIBUTING.md') &&
+              error.includes('## Merge Readiness'),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'fails when docs navigation omits a first-class guide',
+      inputs: {
+        useFixtureRoot: true,
+      },
+      mock: async ({ rootDirectory }) => {
+        await replaceInFile(
+          rootDirectory,
+          'site/guide-docs/.vitepress/config.mts',
+          "{ text: 'Lifecycle', link: '/guides/platform-lifecycle' },\n",
+          '',
+        );
+      },
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('site/guide-docs/.vitepress/config.mts') &&
+              error.includes('/guides/platform-lifecycle'),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'fails when a required workflow surface is missing',
+      inputs: {
+        useFixtureRoot: true,
+      },
+      mock: async ({ rootDirectory }) => {
+        await rm(
+          resolve(rootDirectory, '.github/workflows/typescript-matrix.yml'),
+        );
+      },
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('.github/workflows/typescript-matrix.yml') &&
+              error.includes('Missing required workflow surface'),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'fails when the platform scope drifts away from thread-aware Discord control',
+      inputs: {
+        useFixtureRoot: true,
+      },
+      mock: async ({ rootDirectory }) => {
+        await replaceInFile(
+          rootDirectory,
+          'PLATFORM.md',
+          'All interactions MUST be thread-aware.',
+          'Interactions should be thread-aware.',
+        );
+      },
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('PLATFORM.md') &&
+              error.includes('All interactions MUST be thread-aware.'),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'fails when OpenClaw tool documentation drifts',
+      inputs: {
+        useFixtureRoot: true,
+      },
+      mock: async ({ rootDirectory }) => {
+        await replaceInFile(
+          rootDirectory,
+          'packages/openclaw/README.md',
+          '- `run_supervisor_step`: run a supervisor orchestration step\n',
+          '',
+        );
+      },
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('packages/openclaw/README.md') &&
+              error.includes('run_supervisor_step'),
+          ),
+        ).toBe(true);
+      },
+    },
+  ];
 
-  it('fails when a version statement drifts', async () => {
-    const rootDirectory = await createFixtureRoot();
-    await replaceInFile(
-      rootDirectory,
-      'README.md',
-      'Node.js `v24.14.1`',
-      'Node.js `v24.0.0`',
-    );
+  it.each(cases)('$name', async (testCase) => {
+    const rootDirectory = testCase.inputs.useFixtureRoot
+      ? await createFixtureRoot()
+      : repoRootDirectory;
 
-    const errors = await collectInstructionErrors({ rootDirectory });
-
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('README.md') && error.includes('Node.js `v24.14.1`'),
-      ),
-    ).toBe(true);
-  });
-
-  it('fails when a required heading is missing', async () => {
-    const rootDirectory = await createFixtureRoot();
-    await replaceInFile(
-      rootDirectory,
-      'CONTRIBUTING.md',
-      '## Merge Readiness',
-      '## Readiness',
-    );
-
-    const errors = await collectInstructionErrors({ rootDirectory });
-
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('CONTRIBUTING.md') &&
-          error.includes('## Merge Readiness'),
-      ),
-    ).toBe(true);
-  });
-
-  it('fails when docs navigation omits a first-class guide', async () => {
-    const rootDirectory = await createFixtureRoot();
-    await replaceInFile(
-      rootDirectory,
-      'site/guide-docs/.vitepress/config.mts',
-      "{ text: 'Lifecycle', link: '/guides/platform-lifecycle' },\n",
-      '',
-    );
-
-    const errors = await collectInstructionErrors({ rootDirectory });
-
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('site/guide-docs/.vitepress/config.mts') &&
-          error.includes('/guides/platform-lifecycle'),
-      ),
-    ).toBe(true);
-  });
-
-  it('fails when a required workflow surface is missing', async () => {
-    const rootDirectory = await createFixtureRoot();
-    await rm(resolve(rootDirectory, '.github/workflows/typescript-matrix.yml'));
-
-    const errors = await collectInstructionErrors({ rootDirectory });
-
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('.github/workflows/typescript-matrix.yml') &&
-          error.includes('Missing required workflow surface'),
-      ),
-    ).toBe(true);
-  });
-
-  it('fails when the platform scope drifts away from thread-aware Discord control', async () => {
-    const rootDirectory = await createFixtureRoot();
-    await replaceInFile(
-      rootDirectory,
-      'PLATFORM.md',
-      'All interactions MUST be thread-aware.',
-      'Interactions should be thread-aware.',
-    );
-
-    const errors = await collectInstructionErrors({ rootDirectory });
-
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('PLATFORM.md') &&
-          error.includes('All interactions MUST be thread-aware.'),
-      ),
-    ).toBe(true);
-  });
-
-  it('fails when OpenClaw tool documentation drifts', async () => {
-    const rootDirectory = await createFixtureRoot();
-    await replaceInFile(
-      rootDirectory,
-      'packages/openclaw/README.md',
-      '- `run_supervisor_step`: run a supervisor orchestration step\n',
-      '',
-    );
-
-    const errors = await collectInstructionErrors({ rootDirectory });
-
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('packages/openclaw/README.md') &&
-          error.includes('run_supervisor_step'),
-      ),
-    ).toBe(true);
+    await testCase.mock({ ...testCase.inputs, rootDirectory });
+    const outcome = await collectInstructionErrors({ rootDirectory });
+    testCase.assert(outcome);
   });
 });
 

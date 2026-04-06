@@ -5,6 +5,7 @@
 - Every non-trivial unit needs sibling tests.
 - Test pure logic directly, step by step, and before higher-level orchestration paths.
 - Test services for orchestration, delegation, policy checks, persistence boundaries, side-effect boundaries, and release-surface coordination where relevant.
+- Prefer structured `const cases = [...]` tables. Each case should declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.
 
 ## Failure Clarity
 

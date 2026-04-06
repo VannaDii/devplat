@@ -29,6 +29,7 @@
 - Keep `service.ts` as the class shell for orchestration, delegation, and side-effect boundaries.
 - Keep relative `NodeNext` import and export specifiers explicit with emitted `.js` extensions.
 - Every non-trivial unit needs sibling tests that reveal failure source and operational impact.
+- Use structured test tables with `const cases = [...]`. Each case must declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.
 - Public contract changes require aligned types, `io-ts` codecs, generated schemas, docs, and tests.
 - Keep Discord and OpenClaw control-plane contracts aligned with auditable artifacts and generated schemas.
 - Fail closed when a Discord action lacks an unambiguous thread binding.

@@ -414,6 +414,7 @@ function buildRequiredTextRules({
         'Keep `logic.ts` pure and test it directly.',
         'Keep `service.ts` as the class shell for orchestration, delegation, and side-effect boundaries.',
         'Keep Discord and OpenClaw control-plane contracts aligned with auditable artifacts and generated schemas.',
+        'Use structured test tables with `const cases = [...]`. Each case must declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.',
         'Fail closed when a Discord action lacks an unambiguous thread binding.',
       ],
     },
@@ -424,6 +425,7 @@ function buildRequiredTextRules({
         'Keep branch names and pull request titles free of registered tool names.',
         'Keep pull request titles in conventional commit form.',
         'Never place business logic inside decorators, `@vannadii/devplat-openclaw`, or `@vannadii/devplat-discord`.',
+        'Use structured `const cases = [...]` test tables. Each case must declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.',
         'Do not colocate domain logic next to OpenClaw or Discord entrypoints just because the workflow starts there.',
         'Fail closed when a Discord interaction cannot be resolved to a single bound thread context.',
         'Keep Discord and OpenClaw control-plane contracts aligned with generated schemas, auditable artifacts, and the platform packages that own the behavior.',
@@ -539,6 +541,13 @@ function buildRequiredTextRules({
         '`npm run check:naming`',
         'keep branch names and pull request titles free of registered tool names',
         'keep pull request titles in conventional commit format',
+        'keep tests in structured `const cases = [...]` tables where each case provides `inputs`, `mock`, and `assert`, then exercises a single implementation per suite',
+      ],
+    },
+    {
+      path: '.github/instructions/testing.instructions.md',
+      requiredText: [
+        'Prefer structured `const cases = [...]` tables. Each case should declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.',
       ],
     },
     {

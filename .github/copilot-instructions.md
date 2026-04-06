@@ -25,6 +25,7 @@
 
 - Use folder-per-unit structure with `types.ts`, `codec.ts`, `logic.ts`, `logic.test.ts`, `service.ts`, and `service.test.ts`.
 - Keep `logic.ts` pure. Keep orchestration, IO, and framework glue in `service.ts`.
+- Use structured `const cases = [...]` test tables. Each case must declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.
 - Use explicit relative `.js` specifiers in `NodeNext` TypeScript source.
 - Keep runtime contracts aligned across TypeScript types, `io-ts` codecs, generated schemas, docs, and tests.
 - Keep Discord and OpenClaw control-plane contracts aligned with generated schemas, auditable artifacts, and the platform packages that own the behavior.

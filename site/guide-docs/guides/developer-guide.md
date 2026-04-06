@@ -53,4 +53,5 @@ Use the root `PLATFORM.md` file as the authoritative foundation-scope document. 
 - keep Discord interactions thread-aware and fail closed on missing or ambiguous thread context
 - keep branch names and pull request titles free of registered tool names
 - keep pull request titles in conventional commit format
+- keep tests in structured `const cases = [...]` tables where each case provides `inputs`, `mock`, and `assert`, then exercises a single implementation per suite
 - document release, rollback, and performance impact when a change touches those surfaces
