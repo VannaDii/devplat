@@ -1,30 +1,39 @@
-## Summary
+## Merge Contract
 
-_<Provide a summary of the changes you've made, why you made them and how they benefit the project.>_
+### Behavioral Change
 
-### Behavioral Changes
+- _<Describe the behavior change, intent, and value.>_
 
-- _<list all behavioral changes, their intentions and value.>_
+### Risk
 
-### Risks
+- _<Describe the main risks, or "N/A".>_
 
-- _<list all risks the solution introduces, or "N/A".>_
+### Schema and Artifact Impact
 
-### Schema Impact
+- _<List every schema, manifest, artifact, or contract change, or "None".>_
 
-- _<list all schemas impacted, how, and why, or "None">_
+### GitHub / Discord / OpenClaw / Operator Impact
 
-### Discord/OpenClaw Impact
+- _<Describe workflow, approval, audit, or control-plane impact, or "N/A".>_
 
-- _<list all Discord and OpenClaw impacts and why they're essential, or "N/A".>_
+### Performance Impact
+
+- _<Describe latency, throughput, scan-cost, or benchmark impact, or "N/A".>_
 
 ### Release Impact
 
-- \_<list all release impacts, or "N/A".>
+- _<Describe package, Docker, Helm, or docs publication impact, or "N/A".>_
 
-## Validation
+### Rollback Notes
 
-- [ ] `npm run lint`
-- [ ] `npm run typecheck`
+- _<Describe how to back out the change safely, or "N/A".>_
+
+## Validation Performed
+
+- _<List the exact commands and checks you ran.>_
+
+### Validation Checklist
+
+- [ ] `npm run check:repo`
 - [ ] `npm run test:coverage`
-- [ ] `npm run build`
+- [ ] `npm run docs:build`

@@ -1,23 +1,39 @@
 # Architecture
 
-The platform is split into contract packages, orchestration packages, adapter packages, and distribution surfaces.
+DevPlat is a platform core plus adapters, not one giant OpenClaw plugin.
 
-## Layers
+## Platform Model
 
-- `core`, `artifacts`, `config`, `policy`: shared primitives and normalized contracts
-- `research`, `specs`, `slicing`, `queue`, `worktrees`, `execution`, `gates`, `review`, `remediation`, `prs`, `branching`, `supervisor`: platform workflows and lifecycle services
-- `observability`, `storage`, `github`, `discord`, `sonarcloud`: infrastructure-facing platform packages
-- `openclaw`: thin adapter that registers platform services as OpenClaw tools
+- platform packages own domain logic, orchestration, contracts, and persistence
+- `@vannadii/devplat-openclaw` exposes the platform into OpenClaw
+- Discord is the primary operator control plane through OpenClaw
+- OpenClaw and Discord may initiate workflows, but they do not own domain logic or public contracts
+- GitHub is the system of record for specs, pull requests, reviews, and merge history
+- SonarCloud provides quality and compliance signals
+- Docker, Helm, and GitHub Pages are delivery surfaces
+
+The authoritative foundation scope, package responsibilities, and acceptance criteria live in the root `PLATFORM.md`. This guide focuses on the structural boundaries that keep implementation clean.
+
+## Lifecycle Boundaries
+
+- research produces a brief
+- specs turn that brief into a spec PR and approval-ready record
+- approved specs are sliced into implementation units
+- implementation PRs run gates, review, and remediation loops
+- operator actions remain auditable through Discord, OpenClaw, artifacts, and GitHub history
+- Discord interactions stay thread-aware so thread context remains the unit of work for specs, slices, and pull requests
 
 ## Enforcement
 
-- Cross-package relative imports are forbidden
+- cross-package relative imports are forbidden
 - `package.json` dependencies, `tsconfig.json` references, and actual imports are validated together
-- Circular workspace dependencies fail validation
-- Generated schemas and the OpenClaw manifest are treated as committed artifacts
+- circular workspace dependencies fail validation
+- generated schemas and the OpenClaw manifest are treated as committed artifacts
+- domain logic stays in platform packages, with pure `logic.ts` units and thin `service.ts` shells
+- instruction drift and policy boundaries are validated with repo checks
 
-## Delivery
+## Delivery Surfaces
 
-- GitHub Actions provides strict CI, compatibility CI, release PR automation, Docker publication, Helm chart publication, and GitHub Pages deployment
-- `docker/openclaw-runtime` builds a self-hosted gateway image
-- `deploy/helm/devplat` packages that image for Kubernetes and k3s
+- GitHub Packages publishes npm packages
+- GHCR publishes the runtime image and the OCI Helm chart
+- GitHub Pages publishes the documentation site

@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress';
 export default defineConfig({
   title: 'DevPlat',
   description:
-    'Platform and operations guide for the DevPlat monorepo, OpenClaw adapter, and deployment surfaces.',
+    'Platform and operations guide for the DevPlat monorepo, OpenClaw adapter, and delivery surfaces.',
   base: '/devplat/',
   cleanUrls: true,
   lastUpdated: true,
@@ -13,8 +13,9 @@ export default defineConfig({
     },
     nav: [
       { text: 'Guide', link: '/guides/introduction' },
+      { text: 'Lifecycle', link: '/guides/platform-lifecycle' },
       { text: 'Architecture', link: '/guides/architecture' },
-      { text: 'Reference', link: '/guides/package-reference' },
+      { text: 'Quality', link: '/guides/quality-performance-policy' },
       { text: 'Operator', link: '/guides/operator-guide' },
       { text: 'Developer', link: '/guides/developer-guide' },
     ],
@@ -23,7 +24,12 @@ export default defineConfig({
         text: 'Guide',
         items: [
           { text: 'Introduction', link: '/guides/introduction' },
+          { text: 'Platform Lifecycle', link: '/guides/platform-lifecycle' },
           { text: 'Architecture', link: '/guides/architecture' },
+          {
+            text: 'Quality and Performance Policy',
+            link: '/guides/quality-performance-policy',
+          },
           { text: 'Package Reference', link: '/guides/package-reference' },
           { text: 'OpenClaw Setup', link: '/guides/openclaw-setup' },
           {

@@ -3,15 +3,18 @@
 ## Node and Package Manager
 
 - `.nvmrc` pins the development baseline to Node `24.14.1`
-- `packageManager` pins npm `11.12.1`
+- `packageManager` pins `npm@11.12.1`
+- runtime verification scripts ensure local and CI execution stay aligned with repository policy
 
 ## TypeScript
 
-- Primary development compiler: TypeScript `6.0.2`
-- Compatibility CI: latest stable `5.x` and `6.x`
-- `NodeNext` module settings are enforced across source packages
+- primary authoring target: TypeScript `6.0.2`
+- compatibility validation runs on Linux only against the latest stable TypeScript `5.x` and `6.x` releases
+- source packages compile under `NodeNext` module settings
 
-## OpenClaw and Discord
+Compatibility validation runs on Linux only against the latest stable TypeScript `5.x` and `6.x` releases.
+
+## Operator and Adapter Configuration
 
 Runtime configuration normalization reads:
 
@@ -28,4 +31,5 @@ Runtime configuration normalization reads:
 ## Generated Artifacts
 
 - JSON schemas: `packages/*/schemas/*.schema.json`
-- Plugin manifest: `packages/openclaw/openclaw.plugin.json`
+- OpenClaw manifest: `packages/openclaw/openclaw.plugin.json`
+- docs publication: `site/guide-docs/.vitepress/dist`
