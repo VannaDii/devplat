@@ -280,38 +280,90 @@ export async function collectInstructionErrors({
   rootDirectory = defaultRootDirectory,
 } = {}) {
   const errors = [];
-  const fileContents = new Map();
+  const versionContext = await getInstructionVersionContext(rootDirectory);
+  const fileContents = await loadRequiredFileContents({
+    errors,
+    label: 'instruction surface',
+    relativePaths: REQUIRED_INSTRUCTION_FILES,
+    rootDirectory,
+  });
 
+  await validateRequiredPaths({
+    errors,
+    label: 'workflow surface',
+    relativePaths: REQUIRED_WORKFLOW_FILES,
+    rootDirectory,
+  });
+  validateRequiredHeadings({ errors, fileContents });
+  validateRequiredText({
+    errors,
+    fileContents,
+    ...versionContext,
+  });
+
+  const docsConfig = fileContents.get('site/guide-docs/.vitepress/config.mts');
+  if (docsConfig !== undefined) {
+    validateDocsNavigation(docsConfig, errors);
+  }
+
+  validatePlatformScope(fileContents, errors);
+  await validateOpenClawToolDocumentation(rootDirectory, errors);
+
+  return errors;
+}
+
+async function getInstructionVersionContext(rootDirectory) {
   const packageJsonPath = resolve(rootDirectory, 'package.json');
   const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
   const expectedNodeVersion = String(
     await readFile(resolve(rootDirectory, '.nvmrc'), 'utf8'),
   ).trim();
-  const normalizedNodeVersion = expectedNodeVersion.replace(/^v/u, '');
-  const expectedPackageManager = String(packageJson.packageManager ?? '');
-  const expectedTypeScriptVersion = installedTypeScriptVersion;
 
-  for (const relativePath of REQUIRED_INSTRUCTION_FILES) {
-    const absolutePath = resolve(rootDirectory, relativePath);
-    try {
-      await access(absolutePath, constants.F_OK);
-    } catch {
-      errors.push(`Missing required instruction surface: ${relativePath}`);
+  return {
+    expectedNodeVersion,
+    expectedPackageManager: String(packageJson.packageManager ?? ''),
+    expectedTypeScriptVersion: installedTypeScriptVersion,
+    normalizedNodeVersion: expectedNodeVersion.replace(/^v/u, ''),
+  };
+}
+
+async function loadRequiredFileContents({
+  errors,
+  label,
+  relativePaths,
+  rootDirectory,
+}) {
+  const fileContents = new Map();
+
+  for (const relativePath of relativePaths) {
+    if (!(await pathExists(resolve(rootDirectory, relativePath)))) {
+      errors.push(`Missing required ${label}: ${relativePath}`);
       continue;
     }
 
-    fileContents.set(relativePath, await readFile(absolutePath, 'utf8'));
+    fileContents.set(
+      relativePath,
+      await readFile(resolve(rootDirectory, relativePath), 'utf8'),
+    );
   }
 
-  for (const relativePath of REQUIRED_WORKFLOW_FILES) {
-    const absolutePath = resolve(rootDirectory, relativePath);
-    try {
-      await access(absolutePath, constants.F_OK);
-    } catch {
-      errors.push(`Missing required workflow surface: ${relativePath}`);
+  return fileContents;
+}
+
+async function validateRequiredPaths({
+  errors,
+  label,
+  relativePaths,
+  rootDirectory,
+}) {
+  for (const relativePath of relativePaths) {
+    if (!(await pathExists(resolve(rootDirectory, relativePath)))) {
+      errors.push(`Missing required ${label}: ${relativePath}`);
     }
   }
+}
 
+function validateRequiredHeadings({ errors, fileContents }) {
   for (const [relativePath, headings] of REQUIRED_HEADINGS) {
     const content = fileContents.get(relativePath);
     if (content === undefined) {
@@ -326,7 +378,16 @@ export async function collectInstructionErrors({
       }
     }
   }
+}
 
+function validateRequiredText({
+  errors,
+  expectedNodeVersion,
+  expectedPackageManager,
+  expectedTypeScriptVersion,
+  fileContents,
+  normalizedNodeVersion,
+}) {
   for (const rule of buildRequiredTextRules({
     expectedNodeVersion,
     normalizedNodeVersion,
@@ -344,16 +405,6 @@ export async function collectInstructionErrors({
       }
     }
   }
-
-  const docsConfig = fileContents.get('site/guide-docs/.vitepress/config.mts');
-  if (docsConfig !== undefined) {
-    validateDocsNavigation(docsConfig, errors);
-  }
-
-  validatePlatformScope(fileContents, errors);
-  await validateOpenClawToolDocumentation(rootDirectory, errors);
-
-  return errors;
 }
 
 async function validateOpenClawToolDocumentation(rootDirectory, errors) {
@@ -684,7 +735,7 @@ async function getDocumentedOpenClawTools(rootDirectory) {
   return tools;
 }
 
-async function getRegisteredOpenClawTools(rootDirectory) {
+export async function getRegisteredOpenClawTools(rootDirectory) {
   const indexText = await readFile(
     resolve(rootDirectory, 'packages/openclaw/src/index.ts'),
     'utf8',
@@ -721,6 +772,15 @@ async function getRegisteredOpenClawTools(rootDirectory) {
   }
 
   return tools;
+}
+
+async function pathExists(path) {
+  try {
+    await access(path, constants.F_OK);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function hasExactLine(content, line) {

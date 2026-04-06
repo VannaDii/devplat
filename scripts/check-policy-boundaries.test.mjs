@@ -20,150 +20,177 @@ afterEach(async () => {
 });
 
 describe('check-policy-boundaries', () => {
-  it('passes on the repository source files', async () => {
-    await expect(
-      collectPolicyBoundaryErrors({ rootDirectory: repoRootDirectory }),
-    ).resolves.toEqual([]);
-  });
+  const cases = [
+    {
+      name: 'passes on the repository source files',
+      inputs: {
+        rootDirectory: repoRootDirectory,
+      },
+      mock: async ({ rootDirectory }) => rootDirectory,
+      assert: (errors) => {
+        expect(errors).toEqual([]);
+      },
+    },
+    {
+      name: 'fails when a non-storage package accesses .devplat directly',
+      inputs: {
+        files: {
+          'packages/storage/src/file-store/service.ts': `
+            import { resolve } from 'node:path';
 
-  it('fails when a non-storage package accesses .devplat directly', async () => {
-    const rootDirectory = await createFixtureRoot({
-      'packages/storage/src/file-store/service.ts': `
-        import { resolve } from 'node:path';
+            export function createStorageRoot(): string {
+              return resolve('.devplat', 'records');
+            }
+          `,
+          'packages/core/src/example/service.ts': `
+            import { resolve } from 'node:path';
 
-        export function createStorageRoot(): string {
-          return resolve('.devplat', 'records');
-        }
-      `,
-      'packages/core/src/example/service.ts': `
-        import { resolve } from 'node:path';
+            export function createBadPath(): string {
+              return resolve('.devplat', 'records');
+            }
+          `,
+        },
+      },
+      mock: async ({ files }) => createFixtureRoot(files),
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('packages/core/src/example/service.ts') &&
+              error.includes('.devplat'),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'fails when decorators appear outside approved source directories',
+      inputs: {
+        files: {
+          'packages/core/src/example/service.ts': `
+            function sealed(target: unknown): void {
+              void target;
+            }
 
-        export function createBadPath(): string {
-          return resolve('.devplat', 'records');
-        }
-      `,
-    });
+            @sealed
+            export class ExampleService {}
+          `,
+        },
+      },
+      mock: async ({ files }) => createFixtureRoot(files),
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('packages/core/src/example/service.ts') &&
+              error.includes(
+                'decorators outside approved OpenClaw or Discord source directories',
+              ),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'fails when a non-adapter package imports an adapter package',
+      inputs: {
+        files: {
+          'packages/core/src/example/service.ts': `
+            import { DiscordControlPlaneService } from '@vannadii/devplat-discord';
 
-    const errors = await collectPolicyBoundaryErrors({ rootDirectory });
+            export function createService(): DiscordControlPlaneService {
+              return new DiscordControlPlaneService();
+            }
+          `,
+        },
+      },
+      mock: async ({ files }) => createFixtureRoot(files),
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('packages/core/src/example/service.ts') &&
+              error.includes('@vannadii/devplat-discord'),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'fails when a non-adapter package declares an adapter dependency',
+      inputs: {
+        files: {
+          'packages/core/package.json': `
+            {
+              "name": "@vannadii/devplat-core",
+              "version": "0.0.0",
+              "dependencies": {
+                "@vannadii/devplat-discord": "0.0.0"
+              }
+            }
+          `,
+        },
+      },
+      mock: async ({ files }) => createFixtureRoot(files),
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes('packages/core/package.json') &&
+              error.includes('@vannadii/devplat-discord'),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
+      name: 'allows decorators inside adapter packages',
+      inputs: {
+        files: {
+          'packages/openclaw/src/example/service.ts': `
+            function capability(target: unknown): void {
+              void target;
+            }
 
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('packages/core/src/example/service.ts') &&
-          error.includes('.devplat'),
-      ),
-    ).toBe(true);
-  });
+            @capability
+            export class ExampleTool {}
+          `,
+        },
+      },
+      mock: async ({ files }) => createFixtureRoot(files),
+      assert: (errors) => {
+        expect(errors).toEqual([]);
+      },
+    },
+    {
+      name: 'allows the OpenClaw adapter to depend on the Discord control plane',
+      inputs: {
+        files: {
+          'packages/openclaw/package.json': `
+            {
+              "name": "@vannadii/devplat-openclaw",
+              "version": "0.0.0",
+              "dependencies": {
+                "@vannadii/devplat-discord": "0.0.0"
+              }
+            }
+          `,
+          'packages/openclaw/src/example/service.ts': `
+            import { DiscordControlPlaneService } from '@vannadii/devplat-discord';
 
-  it('fails when decorators appear outside adapter packages', async () => {
-    const rootDirectory = await createFixtureRoot({
-      'packages/core/src/example/service.ts': `
-        function sealed(target: unknown): void {
-          void target;
-        }
+            export function createService(): DiscordControlPlaneService {
+              return new DiscordControlPlaneService();
+            }
+          `,
+        },
+      },
+      mock: async ({ files }) => createFixtureRoot(files),
+      assert: (errors) => {
+        expect(errors).toEqual([]);
+      },
+    },
+  ];
 
-        @sealed
-        export class ExampleService {}
-      `,
-    });
-
-    const errors = await collectPolicyBoundaryErrors({ rootDirectory });
-
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('packages/core/src/example/service.ts') &&
-          error.includes('decorators outside adapter packages'),
-      ),
-    ).toBe(true);
-  });
-
-  it('fails when a non-adapter package imports an adapter package', async () => {
-    const rootDirectory = await createFixtureRoot({
-      'packages/core/src/example/service.ts': `
-        import { DiscordControlPlaneService } from '@vannadii/devplat-discord';
-
-        export function createService(): DiscordControlPlaneService {
-          return new DiscordControlPlaneService();
-        }
-      `,
-    });
-
-    const errors = await collectPolicyBoundaryErrors({ rootDirectory });
-
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('packages/core/src/example/service.ts') &&
-          error.includes('@vannadii/devplat-discord'),
-      ),
-    ).toBe(true);
-  });
-
-  it('fails when a non-adapter package declares an adapter dependency', async () => {
-    const rootDirectory = await createFixtureRoot({
-      'packages/core/package.json': `
-        {
-          "name": "@vannadii/devplat-core",
-          "version": "0.0.0",
-          "dependencies": {
-            "@vannadii/devplat-discord": "0.0.0"
-          }
-        }
-      `,
-    });
-
-    const errors = await collectPolicyBoundaryErrors({ rootDirectory });
-
-    expect(
-      errors.some(
-        (error) =>
-          error.includes('packages/core/package.json') &&
-          error.includes('@vannadii/devplat-discord'),
-      ),
-    ).toBe(true);
-  });
-
-  it('allows decorators inside adapter packages', async () => {
-    const rootDirectory = await createFixtureRoot({
-      'packages/openclaw/src/example/service.ts': `
-        function capability(target: unknown): void {
-          void target;
-        }
-
-        @capability
-        export class ExampleTool {}
-      `,
-    });
-
-    await expect(
-      collectPolicyBoundaryErrors({ rootDirectory }),
-    ).resolves.toEqual([]);
-  });
-
-  it('allows the OpenClaw adapter to depend on the Discord control plane', async () => {
-    const rootDirectory = await createFixtureRoot({
-      'packages/openclaw/package.json': `
-        {
-          "name": "@vannadii/devplat-openclaw",
-          "version": "0.0.0",
-          "dependencies": {
-            "@vannadii/devplat-discord": "0.0.0"
-          }
-        }
-      `,
-      'packages/openclaw/src/example/service.ts': `
-        import { DiscordControlPlaneService } from '@vannadii/devplat-discord';
-
-        export function createService(): DiscordControlPlaneService {
-          return new DiscordControlPlaneService();
-        }
-      `,
-    });
-
-    await expect(
-      collectPolicyBoundaryErrors({ rootDirectory }),
-    ).resolves.toEqual([]);
+  it.each(cases)('$name', async (testCase) => {
+    const rootDirectory = await testCase.mock(testCase.inputs);
+    const outcome = await collectPolicyBoundaryErrors({ rootDirectory });
+    testCase.assert(outcome);
   });
 });
 

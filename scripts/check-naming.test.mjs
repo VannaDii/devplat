@@ -33,6 +33,24 @@ describe('check-naming', () => {
       },
     },
     {
+      name: 'fails when a branch name includes a registered non-foundation tool',
+      inputs: {
+        branchName: 'chore/execute-command-guardrails',
+        prTitle: 'chore: tighten policy enforcement',
+      },
+      mock: async () => undefined,
+      assert: (errors) => {
+        expect(
+          errors.some(
+            (error) =>
+              error.includes(
+                "Branch name 'chore/execute-command-guardrails'",
+              ) && error.includes("'execute_command'"),
+          ),
+        ).toBe(true);
+      },
+    },
+    {
       name: 'fails when a pull request title includes a spaced tool name variant',
       inputs: {
         branchName: 'chore/instruction-governance',

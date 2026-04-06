@@ -131,7 +131,7 @@ export async function collectPolicyBoundaryErrors({
             node.getStart(sourceFile),
           );
           errors.push(
-            `${relative(rootDirectory, filePath)}:${location.line + 1}:${location.character + 1} uses decorators outside adapter packages.`,
+            `${relative(rootDirectory, filePath)}:${location.line + 1}:${location.character + 1} uses decorators outside approved OpenClaw or Discord source directories.`,
           );
         }
       });

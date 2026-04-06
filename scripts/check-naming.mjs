@@ -4,7 +4,7 @@ import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
-import { REQUIRED_OPENCLAW_TOOLS } from './check-instructions.mjs';
+import { getRegisteredOpenClawTools } from './check-instructions.mjs';
 
 const execFileAsync = promisify(execFile);
 const defaultRootDirectory = resolve(import.meta.dirname, '..');
@@ -15,7 +15,7 @@ export async function collectNamingErrors({
   branchName,
   prTitle,
   rootDirectory = defaultRootDirectory,
-  toolNames = REQUIRED_OPENCLAW_TOOLS,
+  toolNames,
 } = {}) {
   const errors = [];
   const resolvedBranchName = await resolveBranchName({
@@ -23,11 +23,15 @@ export async function collectNamingErrors({
     rootDirectory,
   });
   const resolvedPullRequestTitle = await resolvePullRequestTitle({ prTitle });
+  const resolvedToolNames = await resolveToolNames({
+    rootDirectory,
+    toolNames,
+  });
 
   if (resolvedBranchName.length > 0) {
     const matchingToolName = findMatchingToolName({
       subject: resolvedBranchName,
-      toolNames,
+      toolNames: resolvedToolNames,
     });
     if (matchingToolName !== null) {
       errors.push(
@@ -45,7 +49,7 @@ export async function collectNamingErrors({
 
     const matchingToolName = findMatchingToolName({
       subject: resolvedPullRequestTitle,
-      toolNames,
+      toolNames: resolvedToolNames,
     });
     if (matchingToolName !== null) {
       errors.push(
@@ -55,6 +59,14 @@ export async function collectNamingErrors({
   }
 
   return errors;
+}
+
+async function resolveToolNames({ rootDirectory, toolNames }) {
+  if (Array.isArray(toolNames)) {
+    return toolNames;
+  }
+
+  return [...(await getRegisteredOpenClawTools(rootDirectory))];
 }
 
 async function resolveBranchName({ branchName, rootDirectory }) {
