@@ -406,6 +406,8 @@ function buildRequiredTextRules({
       path: 'AGENTS.md',
       requiredText: [
         'Use `PLATFORM.md` as the authoritative foundation-scope document for required packages, surfaces, workflows, and acceptance criteria.',
+        'Branch names and pull request titles must not include any registered tool name.',
+        'Pull request titles must use conventional commit format.',
         'Do not put business logic inside decorators, `@vannadii/devplat-openclaw`, or `@vannadii/devplat-discord`.',
         'Do not colocate domain logic beside OpenClaw or Discord just because those packages initiate the workflow.',
         'Discord interactions must stay thread-aware and bound to the correct spec, slice, or pull request context.',
@@ -419,6 +421,8 @@ function buildRequiredTextRules({
       path: '.github/copilot-instructions.md',
       requiredText: [
         'Use `PLATFORM.md` as the authoritative foundation-scope document for required packages, workflows, delivery surfaces, and acceptance criteria.',
+        'Keep branch names and pull request titles free of registered tool names.',
+        'Keep pull request titles in conventional commit form.',
         'Never place business logic inside decorators, `@vannadii/devplat-openclaw`, or `@vannadii/devplat-discord`.',
         'Do not colocate domain logic next to OpenClaw or Discord entrypoints just because the workflow starts there.',
         'Fail closed when a Discord interaction cannot be resolved to a single bound thread context.',
@@ -474,6 +478,17 @@ function buildRequiredTextRules({
         LINUX_COMPATIBILITY_SENTENCE,
         'Use [`PLATFORM.md`](./PLATFORM.md) as the authoritative foundation-scope document for required packages, workflows, delivery surfaces, and acceptance criteria.',
         'Keep Discord interactions thread-aware and fail closed when the thread context is missing or ambiguous.',
+        'Keep branch names and pull request titles descriptive of intent and never reuse any registered tool name.',
+        'Keep pull request titles in conventional commit format.',
+        'naming rules',
+        'Pull request titles must also use conventional commit format.',
+      ],
+    },
+    {
+      path: '.github/instructions/github.instructions.md',
+      requiredText: [
+        'Branch names and pull request titles must describe intent, not reuse any registered tool name.',
+        'Pull request titles must use conventional commit format.',
       ],
     },
     {
@@ -516,6 +531,14 @@ function buildRequiredTextRules({
       requiredText: [
         '`@vannadii/devplat-memory`: persistent knowledge, constraints, and history',
         '`@vannadii/devplat-openclaw`: OpenClaw plugin entrypoint and tool registration surface, kept adapter-only',
+      ],
+    },
+    {
+      path: 'site/guide-docs/guides/developer-guide.md',
+      requiredText: [
+        '`npm run check:naming`',
+        'keep branch names and pull request titles free of registered tool names',
+        'keep pull request titles in conventional commit format',
       ],
     },
     {
@@ -574,6 +597,7 @@ function buildRequiredTextRules({
     {
       path: '.github/pull_request_template.md',
       requiredText: [
+        'Pull request titles must be conventional commit messages and must not use any registered tool name.',
         '### Performance Impact',
         '### Rollback Notes',
         '## Validation Performed',

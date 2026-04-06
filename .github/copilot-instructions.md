@@ -6,6 +6,8 @@
 - Run `nvm use` before install, test, lint, typecheck, build, or release guidance.
 - Preserve strict TypeScript, ESLint, coverage, schema, policy, Sonar, and audit requirements.
 - Use `PLATFORM.md` as the authoritative foundation-scope document for required packages, workflows, delivery surfaces, and acceptance criteria.
+- Keep branch names and pull request titles free of registered tool names.
+- Keep pull request titles in conventional commit form.
 - Prefer explicit, traceable behavior over hidden convenience.
 
 ## Architectural Boundaries

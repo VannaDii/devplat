@@ -1,5 +1,7 @@
 ## Merge Contract
 
+Pull request titles must be conventional commit messages and must not use any registered tool name.
+
 ### Behavioral Change
 
 - _<Describe the behavior change, intent, and value.>_

@@ -22,6 +22,7 @@ Use the root `PLATFORM.md` file as the authoritative foundation-scope document. 
 - `npm run check:schemas`
 - `npm run check:openclaw-manifest`
 - `npm run check:instructions`
+- `npm run check:naming`
 - `npm run check:policy-boundaries`
 - `npm run check:repo`
 
@@ -50,4 +51,6 @@ Use the root `PLATFORM.md` file as the authoritative foundation-scope document. 
 - keep public contracts aligned across types, codecs, generated schemas, and docs
 - keep GitHub, Discord, OpenClaw, and operator-facing behavior auditable
 - keep Discord interactions thread-aware and fail closed on missing or ambiguous thread context
+- keep branch names and pull request titles free of registered tool names
+- keep pull request titles in conventional commit format
 - document release, rollback, and performance impact when a change touches those surfaces

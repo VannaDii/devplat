@@ -23,6 +23,8 @@ Use [`PLATFORM.md`](./PLATFORM.md) as the authoritative foundation-scope documen
 4. Treat GitHub as the source of truth for specs, implementation PRs, reviews, approvals, and merge history.
 5. Treat Discord and OpenClaw as operator control surfaces with auditable artifacts, never as hidden state stores.
 6. Keep Discord interactions thread-aware and fail closed when the thread context is missing or ambiguous.
+7. Keep branch names and pull request titles descriptive of intent and never reuse any registered tool name.
+8. Keep pull request titles in conventional commit format.
 
 ## Package Contract
 
@@ -43,14 +45,16 @@ npm run check:pre-push
 That gate covers:
 
 - generated schemas and the OpenClaw manifest
-- repo structure, dependency graph, instruction drift, and policy boundaries
+- repo structure, dependency graph, instruction drift, naming rules, and policy boundaries
 - lint, typecheck, coverage, build, and docs build
 
 ## Review and Release
 
 - Use conventional commits. The repo enforces them through Husky and Commitlint.
+- Pull request titles must also use conventional commit format.
 - Add a changeset for any publishable package change or release-facing behavior change.
 - Pull requests must describe behavior change, risk, schema and artifact impact, operator impact, performance impact, release impact, rollback notes, and exact validation performed.
+- Pull request titles must describe the change outcome and must not repeat any registered tool name.
 - Do not hide significant behavior changes behind formatting-only commits.
 - Keep release surfaces aligned across GitHub Packages, GHCR Docker, GHCR Helm, and GitHub Pages when a change affects them.
 
