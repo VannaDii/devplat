@@ -33,9 +33,14 @@ jobs:
 
       - name: Resolve metadata
         id: meta_vars
+        shell: bash
         run: |
           echo "node_version=$(tr -d 'v' < .nvmrc)" >> "$GITHUB_OUTPUT"
-          echo "package_version=$(node -p \"require('./packages/openclaw/package.json').version\")" >> "$GITHUB_OUTPUT"
+          echo "registry_owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+          package_version="$(
+            node --input-type=module -e "import { readFileSync } from 'node:fs'; console.log(JSON.parse(readFileSync('packages/openclaw/package.json', 'utf8')).version);"
+          )"
+          echo "package_version=$package_version" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.6.0
@@ -54,7 +59,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5.8.0
         with:
-          images: ghcr.io/${{ github.repository_owner }}/devplat-openclaw-runtime
+          images: ghcr.io/${{ steps.meta_vars.outputs.registry_owner }}/devplat-openclaw-runtime
           tags: |
             type=raw,value=${{ steps.meta_vars.outputs.package_version }}
             type=raw,value=latest
