@@ -8,16 +8,27 @@ import type {
   WorktreeSyncResult,
 } from './types.js';
 
+function trimWorktreeValue(value: string): string {
+  return value.trim();
+}
+
 export function createWorktreeAllocation(
   input: WorktreeAllocation,
 ): WorktreeAllocation {
+  const taskId = trimWorktreeValue(input.taskId);
+  const branchName = trimWorktreeValue(input.branchName);
+  const worktreePath = trimWorktreeValue(input.worktreePath);
+
   return appendTrace(
     {
       ...input,
       summary: input.summary.trim(),
       updatedAt: new Date(input.updatedAt).toISOString(),
+      taskId,
+      branchName,
+      worktreePath,
     },
-    `worktree:${input.taskId}:${input.branchName}`,
+    `worktree:${taskId}:${branchName}`,
   );
 }
 
@@ -26,15 +37,19 @@ export function allocateWorktree(
   branchName: string,
   worktreeRoot = '.worktrees',
 ): WorktreeAllocation {
+  const normalizedTaskId = trimWorktreeValue(taskId);
+  const normalizedBranchName = trimWorktreeValue(branchName);
+  const normalizedWorktreeRoot = trimWorktreeValue(worktreeRoot);
+
   return createWorktreeAllocation({
-    id: `worktree-${taskId}`,
-    summary: `Allocated worktree for ${taskId}`,
+    id: `worktree-${normalizedTaskId}`,
+    summary: `Allocated worktree for ${normalizedTaskId}`,
     status: 'approved',
     trace: [],
     updatedAt: new Date().toISOString(),
-    taskId,
-    branchName,
-    worktreePath: `${worktreeRoot}/${branchName}`,
+    taskId: normalizedTaskId,
+    branchName: normalizedBranchName,
+    worktreePath: `${normalizedWorktreeRoot}/${normalizedBranchName}`,
   });
 }
 
@@ -45,14 +60,20 @@ export function describeWorktreeAllocation(input: WorktreeAllocation): string {
 export function createWorktreeSyncResult(
   input: WorktreeSyncResult,
 ): WorktreeSyncResult {
+  const taskId = trimWorktreeValue(input.taskId);
+  const branchName = trimWorktreeValue(input.branchName);
+
   return appendTrace(
     {
       ...input,
       summary: input.summary.trim(),
       baseBranch: input.baseBranch.trim(),
       updatedAt: new Date(input.updatedAt).toISOString(),
+      taskId,
+      branchName,
+      worktreePath: trimWorktreeValue(input.worktreePath),
     },
-    `worktree:sync:${input.taskId}:${input.branchName}:${input.syncMode}`,
+    `worktree:sync:${taskId}:${branchName}:${input.syncMode}`,
   );
 }
 
@@ -82,13 +103,19 @@ export function syncWorktree(
 export function createWorktreeReleaseResult(
   input: WorktreeReleaseResult,
 ): WorktreeReleaseResult {
+  const taskId = trimWorktreeValue(input.taskId);
+  const branchName = trimWorktreeValue(input.branchName);
+
   return appendTrace(
     {
       ...input,
       summary: input.summary.trim(),
       updatedAt: new Date(input.updatedAt).toISOString(),
+      taskId,
+      branchName,
+      worktreePath: trimWorktreeValue(input.worktreePath),
     },
-    `worktree:release:${input.taskId}:${input.branchName}:${input.releaseMode}`,
+    `worktree:release:${taskId}:${branchName}:${input.releaseMode}`,
   );
 }
 

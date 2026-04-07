@@ -6,6 +6,9 @@ const sensitiveActions = new Set([
   'approve-this',
   'merge-now',
   'rebase-all-dependents',
+  'sync-worktree',
+  'release-worktree',
+  'update-spec',
 ]);
 
 export function createPolicyDecision(input: PolicyDecision): PolicyDecision {

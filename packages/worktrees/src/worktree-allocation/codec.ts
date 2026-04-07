@@ -4,9 +4,21 @@ import { LifecycleStatusCodec, type Exact } from '@vannadii/devplat-core';
 
 import type {
   WorktreeAllocation,
+  WorktreeReleaseMode,
   WorktreeReleaseResult,
+  WorktreeSyncMode,
   WorktreeSyncResult,
 } from './types.js';
+
+export const WorktreeSyncModeCodec = t.union([
+  t.literal('fast-forward'),
+  t.literal('rebase'),
+]);
+
+export const WorktreeReleaseModeCodec = t.union([
+  t.literal('archive'),
+  t.literal('delete'),
+]);
 
 export const WorktreeAllocationCodec = t.type({
   id: t.string,
@@ -29,7 +41,7 @@ export const WorktreeSyncResultCodec = t.type({
   branchName: t.string,
   worktreePath: t.string,
   baseBranch: t.string,
-  syncMode: t.union([t.literal('fast-forward'), t.literal('rebase')]),
+  syncMode: WorktreeSyncModeCodec,
   changed: t.boolean,
   conflictsDetected: t.boolean,
 });
@@ -43,7 +55,7 @@ export const WorktreeReleaseResultCodec = t.type({
   taskId: t.string,
   branchName: t.string,
   worktreePath: t.string,
-  releaseMode: t.union([t.literal('archive'), t.literal('delete')]),
+  releaseMode: WorktreeReleaseModeCodec,
   released: t.boolean,
 });
 
@@ -57,7 +69,17 @@ export type _WorktreeSyncResultExact = Exact<
   t.TypeOf<typeof WorktreeSyncResultCodec>
 >;
 
+export type _WorktreeSyncModeExact = Exact<
+  WorktreeSyncMode,
+  t.TypeOf<typeof WorktreeSyncModeCodec>
+>;
+
 export type _WorktreeReleaseResultExact = Exact<
   WorktreeReleaseResult,
   t.TypeOf<typeof WorktreeReleaseResultCodec>
+>;
+
+export type _WorktreeReleaseModeExact = Exact<
+  WorktreeReleaseMode,
+  t.TypeOf<typeof WorktreeReleaseModeCodec>
 >;

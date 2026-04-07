@@ -31,6 +31,7 @@ import type { SpecRecord } from '@vannadii/devplat-specs';
 import type { DevplatConfig } from '@vannadii/devplat-config';
 import type {
   WorktreeAllocation,
+  WorktreeReleaseMode,
   WorktreeSyncMode,
 } from '@vannadii/devplat-worktrees';
 
@@ -83,7 +84,7 @@ export interface SyncWorktreeToolInput {
 
 export interface ReleaseWorktreeToolInput {
   allocation: WorktreeAllocation;
-  releaseMode?: 'archive' | 'delete';
+  releaseMode?: WorktreeReleaseMode;
 }
 
 export interface BindDiscordThreadToolInput extends DiscordChannelBinding {

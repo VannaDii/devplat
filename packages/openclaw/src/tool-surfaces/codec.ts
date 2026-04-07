@@ -30,7 +30,11 @@ import { SpecRecordCodec } from '@vannadii/devplat-specs';
 import { PullRequestRecordCodec } from '@vannadii/devplat-prs';
 import { TaskRecordCodec } from '@vannadii/devplat-queue';
 import { StoredRecordCodec } from '@vannadii/devplat-storage';
-import { WorktreeAllocationCodec } from '@vannadii/devplat-worktrees';
+import {
+  WorktreeAllocationCodec,
+  WorktreeReleaseModeCodec,
+  WorktreeSyncModeCodec,
+} from '@vannadii/devplat-worktrees';
 
 import type {
   ApproveSpecRecordToolInput,
@@ -156,7 +160,7 @@ export const SyncWorktreeToolInputCodec: t.Type<SyncWorktreeToolInput> =
       baseBranch: t.string,
     }),
     t.partial({
-      syncMode: t.union([t.literal('fast-forward'), t.literal('rebase')]),
+      syncMode: WorktreeSyncModeCodec,
     }),
   ]) as t.Type<SyncWorktreeToolInput>;
 
@@ -166,7 +170,7 @@ export const ReleaseWorktreeToolInputCodec: t.Type<ReleaseWorktreeToolInput> =
       allocation: WorktreeAllocationCodec,
     }),
     t.partial({
-      releaseMode: t.union([t.literal('archive'), t.literal('delete')]),
+      releaseMode: WorktreeReleaseModeCodec,
     }),
   ]) as t.Type<ReleaseWorktreeToolInput>;
 

@@ -9,11 +9,7 @@
           "$ref": "#/definitions/WorktreeAllocation"
         },
         "releaseMode": {
-          "type": "string",
-          "enum": [
-            "archive",
-            "delete"
-          ]
+          "$ref": "#/definitions/WorktreeReleaseMode"
         }
       },
       "required": [
@@ -79,6 +75,13 @@
         "failed",
         "rebasing",
         "complete"
+      ]
+    },
+    "WorktreeReleaseMode": {
+      "type": "string",
+      "enum": [
+        "archive",
+        "delete"
       ]
     }
   }

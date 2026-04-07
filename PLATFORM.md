@@ -313,9 +313,11 @@ The primary CI workflow must continue to cover:
 Pre-commit must:
 
 - verify Node version
-- generate schemas and OpenClaw manifest once
-- stage generated files once
+- generate schemas and the OpenClaw manifest before `lint-staged`
+- stage generated files before `lint-staged`
 - run `lint-staged`
+- regenerate schemas and the OpenClaw manifest after `lint-staged`
+- restage generated files after `lint-staged`
 - run workspace typecheck
 - run repository validation, including schema and manifest checks
 
