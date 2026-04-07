@@ -273,7 +273,10 @@ jobs:
       - name: Verify Sonar token
         shell: bash
         run: |
-          test -n "${SONAR_TOKEN}"
+          if [[ -z "${SONAR_TOKEN}" ]]; then
+            echo "SONAR_TOKEN is not set. Configure secrets.SONAR_TOKEN for this workflow." >&2
+            exit 1
+          fi
 
       - name: Cache Sonar packages
         uses: actions/cache@v5.0.4

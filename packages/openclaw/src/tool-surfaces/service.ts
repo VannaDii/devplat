@@ -1399,32 +1399,10 @@ export function createExecuteRebaseDependentsTool(): AnyAgentTool {
         );
       }
 
-      const branching = new RebaseDependentsService();
-      const worktrees = new WorktreeAllocationService();
-      const plan = branching.createForMerge(
-        decoded.value.record,
-        decoded.value.dependentBranches,
+      const result = new RebaseDependentsService().executeForMerge(
+        decoded.value,
       );
-      const syncMode = decoded.value.syncMode ?? 'rebase';
-      const syncResults = plan.dependentBranches.map((branchName, index) => {
-        const allocation = worktrees.allocate(
-          `pr-${String(decoded.value.record.prNumber)}-dependent-${String(index + 1)}`,
-          branchName,
-        );
-        return worktrees.sync(allocation, plan.baseBranch, syncMode);
-      });
-
-      return Promise.resolve(
-        createTextResult({
-          plan,
-          syncMode,
-          syncResults,
-          executed: syncResults.length > 0,
-          conflictsDetected: syncResults.some(
-            (result) => result.conflictsDetected,
-          ),
-        }),
-      );
+      return Promise.resolve(createTextResult(result));
     },
   };
 

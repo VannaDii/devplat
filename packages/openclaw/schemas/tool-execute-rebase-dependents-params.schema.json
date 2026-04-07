@@ -3,6 +3,9 @@
   "$ref": "#/definitions/ExecuteRebaseDependentsToolInput",
   "definitions": {
     "ExecuteRebaseDependentsToolInput": {
+      "$ref": "#/definitions/ExecuteRebaseDependentsInput"
+    },
+    "ExecuteRebaseDependentsInput": {
       "type": "object",
       "properties": {
         "record": {

@@ -13,7 +13,10 @@ import {
   DiscordControlRequestCodec,
   DiscordThreadSessionCodec,
 } from '@vannadii/devplat-discord';
-import { RebasePlanCodec } from '@vannadii/devplat-branching';
+import {
+  ExecuteRebaseDependentsInputCodec,
+  RebasePlanCodec,
+} from '@vannadii/devplat-branching';
 import { GitHubActionRequestCodec } from '@vannadii/devplat-github';
 import { MemoryEntryCodec } from '@vannadii/devplat-memory';
 import { TelemetryEventCodec } from '@vannadii/devplat-observability';
@@ -272,15 +275,7 @@ export const PlanRebaseDependentsToolInputCodec: t.Type<PlanRebaseDependentsTool
   });
 
 export const ExecuteRebaseDependentsToolInputCodec: t.Type<ExecuteRebaseDependentsToolInput> =
-  t.intersection([
-    t.type({
-      record: PullRequestRecordCodec,
-      dependentBranches: RebasePlanCodec.props.dependentBranches,
-    }),
-    t.partial({
-      syncMode: t.union([t.literal('fast-forward'), t.literal('rebase')]),
-    }),
-  ]) as t.Type<ExecuteRebaseDependentsToolInput>;
+  ExecuteRebaseDependentsInputCodec as t.Type<ExecuteRebaseDependentsToolInput>;
 
 export const SubmitGitHubActionToolInputCodec: t.Type<SubmitGitHubActionToolInput> =
   t.type({

@@ -15,7 +15,10 @@ import type { LifecycleStatus } from '@vannadii/devplat-core';
 import type { GitHubActionRequest } from '@vannadii/devplat-github';
 import type { MemoryEntry } from '@vannadii/devplat-memory';
 import type { TelemetryEvent } from '@vannadii/devplat-observability';
-import type { RebasePlan } from '@vannadii/devplat-branching';
+import type {
+  ExecuteRebaseDependentsInput,
+  RebasePlan,
+} from '@vannadii/devplat-branching';
 import type { StoreScope } from '@vannadii/devplat-storage';
 import type { PullRequestRecord } from '@vannadii/devplat-prs';
 import type { TaskRecord } from '@vannadii/devplat-queue';
@@ -181,11 +184,7 @@ export interface PlanRebaseDependentsToolInput {
   dependentBranches: RebasePlan['dependentBranches'];
 }
 
-export interface ExecuteRebaseDependentsToolInput {
-  record: PullRequestRecord;
-  dependentBranches: RebasePlan['dependentBranches'];
-  syncMode?: WorktreeSyncMode;
-}
+export type ExecuteRebaseDependentsToolInput = ExecuteRebaseDependentsInput;
 
 export interface SubmitGitHubActionToolInput {
   request: GitHubActionRequest;
