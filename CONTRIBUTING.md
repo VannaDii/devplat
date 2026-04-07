@@ -26,6 +26,7 @@ Use [`PLATFORM.md`](./PLATFORM.md) as the authoritative foundation-scope documen
 7. Keep branch names and pull request titles descriptive of intent and never reuse any registered tool name.
 8. Treat `codex` as a reserved tool name and never use it in branch names or pull request titles.
 9. Keep pull request titles in conventional commit format.
+10. Do not open or update a pull request until every changed executable source file is covered 100% by automated unit tests.
 
 ## Package Contract
 
@@ -47,7 +48,7 @@ That gate covers:
 
 - generated schemas and the OpenClaw manifest
 - repo structure, dependency graph, instruction drift, naming rules, and policy boundaries
-- lint, typecheck, coverage, build, and docs build
+- lint, typecheck, changed-file coverage, full coverage, build, and docs build
 
 ## Review and Release
 
@@ -58,6 +59,7 @@ That gate covers:
 - Pull request bodies must use `.github/pull_request_template.md` and populate every section rather than replacing it with an ad hoc summary.
 - Pull request titles must describe the change outcome and must not repeat any registered tool name.
 - Treat `codex` as a reserved tool name here too; it must not appear in branch names or pull request titles.
+- Do not open or update a pull request until `npm run check:changed-coverage` confirms 100% automated unit-test coverage for every changed executable source file.
 - Do not hide significant behavior changes behind formatting-only commits.
 - Keep release surfaces aligned across GitHub Packages, GHCR Docker, GHCR Helm, and GitHub Pages when a change affects them.
 
@@ -66,6 +68,7 @@ That gate covers:
 A change is not complete until it satisfies all of the following:
 
 - strict TypeScript, ESLint, coverage, schema, and Sonar expectations still pass
+- every changed executable source file has 100% automated unit-test coverage
 - GitHub, Discord, OpenClaw, and operator-facing behavior stays auditable
 - Discord workflows remain thread-aware and bound to the correct work item context
 - public contracts stay aligned across TypeScript types, codecs, generated schemas, and docs

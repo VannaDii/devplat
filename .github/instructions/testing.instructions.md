@@ -6,6 +6,7 @@
 - Test pure logic directly, step by step, and before higher-level orchestration paths.
 - Test services for orchestration, delegation, policy checks, persistence boundaries, side-effect boundaries, and release-surface coordination where relevant.
 - Prefer structured `const cases = [...]` tables. Each case should declare `inputs`, a `mock` setup function, and an `assert` function, then run through a single implementation per suite.
+- Treat 100% automated unit-test coverage for every changed executable source file as the minimum bar before opening or updating a pull request.
 
 ## Failure Clarity
 
@@ -17,3 +18,4 @@
 
 - Add or update tests when lifecycle, policy, operator, performance, or release behavior changes.
 - Keep repo checks for instruction drift and policy boundaries covered with unit tests.
+- Run `npm run check:changed-coverage` before opening or updating a pull request.

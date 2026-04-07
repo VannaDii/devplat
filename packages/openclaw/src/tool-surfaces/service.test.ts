@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   createApproveSpecRecordTool,
@@ -47,6 +47,11 @@ import {
   createVerifySonarBootstrapTool,
 } from './service.js';
 
+afterEach(() => {
+  vi.resetModules();
+  vi.restoreAllMocks();
+});
+
 describe('tool surface service', () => {
   it('creates OpenClaw-compatible tool definitions', async () => {
     const tool = createRunGatesTool({
@@ -75,6 +80,21 @@ describe('tool surface service', () => {
       passed: true,
       results: [{ name: 'lint', success: true }],
     });
+  });
+
+  it('fails closed when a generated tool schema is not a JSON object', async () => {
+    vi.resetModules();
+    vi.doMock('node:fs', () => ({
+      readFileSync() {
+        return '[]';
+      },
+    }));
+
+    const serviceModule = await import('./service.js');
+
+    expect(() => serviceModule.createRunGatesTool()).toThrow(
+      'Schema tool-run-gates-params.schema.json must contain a JSON object.',
+    );
   });
 
   it('creates research brief artifacts from valid tool input', async () => {
@@ -178,6 +198,14 @@ describe('tool surface service', () => {
         version: 3,
       },
     });
+  });
+
+  it('returns decode failures for invalid spec revision input', async () => {
+    const result = await createUpdateSpecRecordTool().execute('tool-call-s6', {
+      specId: 'spec-1',
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
   });
 
   it('creates slice plans from valid tool input', async () => {
@@ -753,6 +781,16 @@ describe('tool surface service', () => {
       releaseMode: 'delete',
       released: true,
     });
+  });
+
+  it('returns decode failures for invalid worktree release input', async () => {
+    const result = await createReleaseWorktreeTool().execute('tool-call-3c', {
+      allocation: {
+        id: 'worktree-task-1',
+      },
+    });
+
+    expect(result.details).toMatchObject({ status: 'failed' });
   });
 
   it('binds Discord threads from valid tool input', async () => {
@@ -1455,6 +1493,19 @@ describe('tool surface service', () => {
     });
   });
 
+  it('returns decode failures for invalid pull request merge input', async () => {
+    const result = await createSubmitPullRequestMergeTool().execute(
+      'tool-call-pr1b',
+      {
+        record: {
+          prNumber: 42,
+        },
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
+  });
+
   it('returns decode failures for invalid pull request update input', async () => {
     const result = await createSubmitPullRequestUpdateTool().execute(
       'tool-call-pr2',
@@ -1524,6 +1575,43 @@ describe('tool surface service', () => {
         },
       ],
     });
+  });
+
+  it('defaults dependent rebase execution to rebase sync mode', async () => {
+    const result = await createExecuteRebaseDependentsTool().execute(
+      'tool-call-rb1b',
+      {
+        record: {
+          prNumber: 42,
+          branchName: 'feature/discord-tools',
+          baseBranch: 'main',
+          title: 'Expand OpenClaw tools',
+          labels: ['automation'],
+          reviewState: 'approved',
+          mergeReady: true,
+          updatedAt: '2026-04-04T00:00:00.000Z',
+        },
+        dependentBranches: ['feature/downstream'],
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      syncMode: 'rebase',
+      executed: true,
+    });
+  });
+
+  it('returns decode failures for invalid dependent rebase execution input', async () => {
+    const result = await createExecuteRebaseDependentsTool().execute(
+      'tool-call-rb1c',
+      {
+        record: {
+          prNumber: 42,
+        },
+      },
+    );
+
+    expect(result.details).toMatchObject({ status: 'failed' });
   });
 
   it('returns decode failures for invalid rebase plan input', async () => {

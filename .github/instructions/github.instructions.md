@@ -14,6 +14,7 @@
 - Treat `codex` as a reserved tool name and keep it out of branch names and pull request titles.
 - Pull request titles must use conventional commit format.
 - Pull request bodies must use the repository template at `.github/pull_request_template.md` and fill every section with concrete change data.
+- Do not open or update a pull request until `npm run check:changed-coverage` confirms 100% automated unit-test coverage for every changed executable source file.
 - Reviews, approvals, rebases, retries, and merges must leave an auditable GitHub trail.
 
 ## Review and Merge
