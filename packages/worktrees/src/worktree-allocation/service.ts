@@ -2,8 +2,16 @@ import {
   allocateWorktree,
   createWorktreeAllocation,
   describeWorktreeAllocation,
+  releaseWorktree,
+  syncWorktree,
 } from './logic.js';
-import type { WorktreeAllocation } from './types.js';
+import type {
+  WorktreeAllocation,
+  WorktreeReleaseMode,
+  WorktreeReleaseResult,
+  WorktreeSyncMode,
+  WorktreeSyncResult,
+} from './types.js';
 
 export class WorktreeAllocationService {
   public execute(input: WorktreeAllocation): WorktreeAllocation {
@@ -16,5 +24,20 @@ export class WorktreeAllocationService {
 
   public allocate(taskId: string, branchName: string): WorktreeAllocation {
     return allocateWorktree(taskId, branchName);
+  }
+
+  public sync(
+    allocation: WorktreeAllocation,
+    baseBranch: string,
+    syncMode?: WorktreeSyncMode,
+  ): WorktreeSyncResult {
+    return syncWorktree(allocation, baseBranch, syncMode);
+  }
+
+  public release(
+    allocation: WorktreeAllocation,
+    releaseMode?: WorktreeReleaseMode,
+  ): WorktreeReleaseResult {
+    return releaseWorktree(allocation, releaseMode);
   }
 }

@@ -26,7 +26,8 @@
   "dependencies": {
     "io-ts": "2.2.22",
     "@vannadii/devplat-core": "0.0.0",
-    "@vannadii/devplat-prs": "0.0.0"
+    "@vannadii/devplat-prs": "0.0.0",
+    "@vannadii/devplat-worktrees": "0.0.0"
   },
   "repository": {
     "type": "git",

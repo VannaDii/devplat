@@ -50,6 +50,10 @@ export default defineConfig({
             text: 'SonarCloud Integration',
             link: '/guides/sonarcloud-integration',
           },
+          {
+            text: 'Publishing and Release',
+            link: '/guides/publishing-release',
+          },
           { text: 'Operator Guide', link: '/guides/operator-guide' },
           { text: 'Developer Guide', link: '/guides/developer-guide' },
         ],

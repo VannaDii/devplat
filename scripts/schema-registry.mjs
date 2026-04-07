@@ -180,6 +180,12 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'UpdateSpecRecordToolInput',
+    'schemas/tool-update-spec-record-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'CreateSlicePlanToolInput',
     'schemas/tool-create-slice-plan-params.schema.json',
   ],
@@ -254,6 +260,18 @@ export const schemaRegistry = [
     'tool-surfaces',
     'AllocateWorktreeToolInput',
     'schemas/tool-allocate-worktree-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'SyncWorktreeToolInput',
+    'schemas/tool-sync-worktree-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'ReleaseWorktreeToolInput',
+    'schemas/tool-release-worktree-params.schema.json',
   ],
   [
     'openclaw',
@@ -372,8 +390,20 @@ export const schemaRegistry = [
   [
     'openclaw',
     'tool-surfaces',
+    'SubmitPullRequestMergeToolInput',
+    'schemas/tool-submit-pull-request-merge-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
     'PlanRebaseDependentsToolInput',
     'schemas/tool-plan-rebase-dependents-params.schema.json',
+  ],
+  [
+    'openclaw',
+    'tool-surfaces',
+    'ExecuteRebaseDependentsToolInput',
+    'schemas/tool-execute-rebase-dependents-params.schema.json',
   ],
   [
     'openclaw',

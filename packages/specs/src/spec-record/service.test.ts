@@ -41,4 +41,38 @@ describe('SpecRecordService', () => {
     expect(artifact.status).toBe('draft');
     expect(draft.version).toBe(1);
   });
+
+  it('increments spec versions for updated revisions and returns them to review', () => {
+    const service = new SpecRecordService();
+    const updated = service.update({
+      specId: 'spec-003',
+      researchId: 'research-003',
+      title: 'Approved spec',
+      objective: 'Preserve revision history.',
+      acceptanceCriteria: ['record updates'],
+      approvalState: 'approved',
+      version: 3,
+      updatedAt: '2026-04-04T00:00:00.000Z',
+    });
+
+    expect(updated.version).toBe(4);
+    expect(updated.approvalState).toBe('review');
+  });
+
+  it('preserves non-approved review state when creating an updated revision', () => {
+    const service = new SpecRecordService();
+    const updated = service.update({
+      specId: 'spec-004',
+      researchId: 'research-004',
+      title: 'Review spec',
+      objective: 'Keep in-review revisions in review.',
+      acceptanceCriteria: ['retain review state'],
+      approvalState: 'review',
+      version: 1,
+      updatedAt: '2026-04-04T00:00:00.000Z',
+    });
+
+    expect(updated.version).toBe(2);
+    expect(updated.approvalState).toBe('review');
+  });
 });

@@ -24,6 +24,12 @@
 - `merge`: trigger the merge path for the bound pull request context
 - `rebase dependents`: trigger branching coordination for the bound context
 - `pause` or `resume`: change execution state without leaving the bound thread
+- `show status`: summarize the active work item and last known lifecycle state
+- `show last artifact`: surface the latest auditable artifact for the bound thread
+- `explain failure`: summarize the latest failing gate, review, or remediation state
+- `sync worktree`: refresh the bound branch workspace against its base branch
+- `release worktree`: clean up the bound branch workspace after completion or abandonment
+- `update spec`: create a new revision of the bound spec while preserving approval history
 
 ## Approval Flow
 
@@ -46,3 +52,4 @@
 - every action is auditable
 - no context leakage between threads
 - thread == unit of work
+- missing or ambiguous thread context must fail closed rather than guess

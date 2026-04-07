@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/ExecuteRebaseDependentsToolInput",
+  "definitions": {
+    "ExecuteRebaseDependentsToolInput": {
+      "$ref": "#/definitions/ExecuteRebaseDependentsInput"
+    },
+    "ExecuteRebaseDependentsInput": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "$ref": "#/definitions/PullRequestRecord"
+        },
+        "dependentBranches": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "syncMode": {
+          "$ref": "#/definitions/WorktreeSyncMode"
+        }
+      },
+      "required": [
+        "record",
+        "dependentBranches"
+      ],
+      "additionalProperties": false
+    },
+    "PullRequestRecord": {
+      "type": "object",
+      "properties": {
+        "prNumber": {
+          "type": "number"
+        },
+        "branchName": {
+          "type": "string"
+        },
+        "baseBranch": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reviewState": {
+          "$ref": "#/definitions/PullRequestReviewState"
+        },
+        "mergeReady": {
+          "type": "boolean"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "prNumber",
+        "branchName",
+        "baseBranch",
+        "title",
+        "labels",
+        "reviewState",
+        "mergeReady",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "PullRequestReviewState": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "review",
+        "approved",
+        "changes-requested"
+      ]
+    },
+    "WorktreeSyncMode": {
+      "type": "string",
+      "enum": [
+        "fast-forward",
+        "rebase"
+      ]
+    }
+  }
+}

@@ -7,6 +7,22 @@ import {
 } from './logic.js';
 
 describe('PolicyDecision logic', () => {
+  it('flags new risky control actions for approval', () => {
+    const sensitiveActions = [
+      'sync-worktree',
+      'release-worktree',
+      'update-spec',
+    ];
+
+    for (const action of sensitiveActions) {
+      const decision = evaluatePolicyDecision(action, false);
+
+      expect(decision.allowed).toBe(false);
+      expect(decision.requiresApproval).toBe(true);
+      expect(decision.trace).toContain(`policy:${action}`);
+    }
+  });
+
   it('flags sensitive actions for approval', () => {
     const decision = evaluatePolicyDecision('merge-now', false);
     expect(decision.allowed).toBe(false);

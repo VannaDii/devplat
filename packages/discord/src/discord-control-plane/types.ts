@@ -4,9 +4,16 @@ export type DiscordControlAction =
   | 'run-this'
   | 'approve-this'
   | 'pause-this'
+  | 'resume-this'
   | 'rebase-all-dependents'
   | 'retry-gates'
-  | 'merge-now';
+  | 'merge-now'
+  | 'show-status'
+  | 'show-last-artifact'
+  | 'explain-failure'
+  | 'sync-worktree'
+  | 'release-worktree'
+  | 'update-spec';
 
 export interface DiscordControlRequest {
   id: string;

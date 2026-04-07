@@ -1,7 +1,16 @@
 import type { PullRequestRecord } from '@vannadii/devplat-prs';
+import { WorktreeAllocationService } from '@vannadii/devplat-worktrees';
 
-import { createRebasePlan, describeRebasePlan } from './logic.js';
-import type { RebasePlan } from './types.js';
+import {
+  createRebaseExecutionResult,
+  createRebasePlan,
+  describeRebasePlan,
+} from './logic.js';
+import type {
+  ExecuteRebaseDependentsInput,
+  RebaseExecutionResult,
+  RebasePlan,
+} from './types.js';
 
 export class RebaseDependentsService {
   public create(input: RebasePlan): RebasePlan {
@@ -23,6 +32,29 @@ export class RebaseDependentsService {
       rebaseRequired: dependentBranches.length > 0,
       conflictsExpected: false,
       updatedAt: input.updatedAt,
+    });
+  }
+
+  public executeForMerge(
+    input: ExecuteRebaseDependentsInput,
+  ): RebaseExecutionResult {
+    const plan = this.createForMerge(input.record, input.dependentBranches);
+    const syncMode = input.syncMode ?? 'rebase';
+    const worktrees = new WorktreeAllocationService();
+    const syncResults = plan.dependentBranches.map((branchName, index) => {
+      const allocation = worktrees.allocate(
+        `pr-${String(input.record.prNumber)}-dependent-${String(index + 1)}`,
+        branchName,
+      );
+      return worktrees.sync(allocation, plan.baseBranch, syncMode);
+    });
+
+    return createRebaseExecutionResult({
+      plan,
+      syncMode,
+      syncResults,
+      executed: false,
+      conflictsDetected: false,
     });
   }
 

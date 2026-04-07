@@ -52,5 +52,15 @@ await runCommand('stage generated artifacts', 'git', [
   'packages/openclaw/openclaw.plugin.json',
 ]);
 await runCommand('lint-staged', 'npx', ['--no', '--', 'lint-staged']);
+await runCommand('prepare:generated after lint-staged', 'npm', [
+  'run',
+  'prepare:generated',
+]);
+await runCommand('restage generated artifacts', 'git', [
+  'add',
+  '--',
+  ':(glob)packages/*/schemas/*.schema.json',
+  'packages/openclaw/openclaw.plugin.json',
+]);
 await runCommand('typecheck:workspace', 'npm', ['run', 'typecheck:workspace']);
-await runCommand('check:schemas', 'npm', ['run', 'check:schemas']);
+await runCommand('check:repo', 'npm', ['run', 'check:repo']);

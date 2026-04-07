@@ -13,7 +13,10 @@ import {
   DiscordControlRequestCodec,
   DiscordThreadSessionCodec,
 } from '@vannadii/devplat-discord';
-import { RebasePlanCodec } from '@vannadii/devplat-branching';
+import {
+  ExecuteRebaseDependentsInputCodec,
+  RebasePlanCodec,
+} from '@vannadii/devplat-branching';
 import { GitHubActionRequestCodec } from '@vannadii/devplat-github';
 import { MemoryEntryCodec } from '@vannadii/devplat-memory';
 import { TelemetryEventCodec } from '@vannadii/devplat-observability';
@@ -30,6 +33,11 @@ import { SpecRecordCodec } from '@vannadii/devplat-specs';
 import { PullRequestRecordCodec } from '@vannadii/devplat-prs';
 import { TaskRecordCodec } from '@vannadii/devplat-queue';
 import { StoredRecordCodec } from '@vannadii/devplat-storage';
+import {
+  WorktreeAllocationCodec,
+  WorktreeReleaseModeCodec,
+  WorktreeSyncModeCodec,
+} from '@vannadii/devplat-worktrees';
 
 import type {
   ApproveSpecRecordToolInput,
@@ -50,6 +58,7 @@ import type {
   CreateRebaseResultToolInput,
   CreateTaskRecordToolInput,
   CreateSpecRecordToolInput,
+  ExecuteRebaseDependentsToolInput,
   EvaluateSlicePlanReadinessToolInput,
   ExecuteCommandToolInput,
   EvaluateSonarQualityGateToolInput,
@@ -61,14 +70,18 @@ import type {
   PlanRebaseDependentsToolInput,
   ReadStoredRecordToolInput,
   RecordTelemetryEventToolInput,
+  ReleaseWorktreeToolInput,
   RememberMemoryEntryToolInput,
   ResolveRuntimeConfigToolInput,
   RunGatesToolInput,
   RunSupervisorStepToolInput,
+  SubmitPullRequestMergeToolInput,
   StoreRecordToolInput,
   SubmitGitHubActionToolInput,
   SubmitPullRequestUpdateToolInput,
+  SyncWorktreeToolInput,
   UpdateTaskToolInput,
+  UpdateSpecRecordToolInput,
   ValidateArtifactToolInput,
   VerifySonarBootstrapToolInput,
 } from './types.js';
@@ -86,6 +99,9 @@ export const CreateSpecRecordToolInputCodec: t.Type<CreateSpecRecordToolInput> =
 
 export const ApproveSpecRecordToolInputCodec: t.Type<ApproveSpecRecordToolInput> =
   SpecRecordCodec as t.Type<ApproveSpecRecordToolInput>;
+
+export const UpdateSpecRecordToolInputCodec: t.Type<UpdateSpecRecordToolInput> =
+  SpecRecordCodec as t.Type<UpdateSpecRecordToolInput>;
 
 export const CreateSlicePlanToolInputCodec: t.Type<CreateSlicePlanToolInput> =
   SlicePlanCodec as t.Type<CreateSlicePlanToolInput>;
@@ -139,6 +155,27 @@ export const AllocateWorktreeToolInputCodec: t.Type<AllocateWorktreeToolInput> =
     taskId: t.string,
     branchName: t.string,
   });
+
+export const SyncWorktreeToolInputCodec: t.Type<SyncWorktreeToolInput> =
+  t.intersection([
+    t.type({
+      allocation: WorktreeAllocationCodec,
+      baseBranch: t.string,
+    }),
+    t.partial({
+      syncMode: WorktreeSyncModeCodec,
+    }),
+  ]) as t.Type<SyncWorktreeToolInput>;
+
+export const ReleaseWorktreeToolInputCodec: t.Type<ReleaseWorktreeToolInput> =
+  t.intersection([
+    t.type({
+      allocation: WorktreeAllocationCodec,
+    }),
+    t.partial({
+      releaseMode: WorktreeReleaseModeCodec,
+    }),
+  ]) as t.Type<ReleaseWorktreeToolInput>;
 
 export const BindDiscordThreadToolInputCodec: t.Type<BindDiscordThreadToolInput> =
   t.intersection([
@@ -225,11 +262,20 @@ export const SubmitPullRequestUpdateToolInputCodec: t.Type<SubmitPullRequestUpda
     actorId: t.string,
   });
 
+export const SubmitPullRequestMergeToolInputCodec: t.Type<SubmitPullRequestMergeToolInput> =
+  t.type({
+    record: PullRequestRecordCodec,
+    actorId: t.string,
+  });
+
 export const PlanRebaseDependentsToolInputCodec: t.Type<PlanRebaseDependentsToolInput> =
   t.type({
     record: PullRequestRecordCodec,
     dependentBranches: RebasePlanCodec.props.dependentBranches,
   });
+
+export const ExecuteRebaseDependentsToolInputCodec: t.Type<ExecuteRebaseDependentsToolInput> =
+  ExecuteRebaseDependentsInputCodec as t.Type<ExecuteRebaseDependentsToolInput>;
 
 export const SubmitGitHubActionToolInputCodec: t.Type<SubmitGitHubActionToolInput> =
   t.type({

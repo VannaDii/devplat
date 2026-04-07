@@ -15,7 +15,10 @@ import type { LifecycleStatus } from '@vannadii/devplat-core';
 import type { GitHubActionRequest } from '@vannadii/devplat-github';
 import type { MemoryEntry } from '@vannadii/devplat-memory';
 import type { TelemetryEvent } from '@vannadii/devplat-observability';
-import type { RebasePlan } from '@vannadii/devplat-branching';
+import type {
+  ExecuteRebaseDependentsInput,
+  RebasePlan,
+} from '@vannadii/devplat-branching';
 import type { StoreScope } from '@vannadii/devplat-storage';
 import type { PullRequestRecord } from '@vannadii/devplat-prs';
 import type { TaskRecord } from '@vannadii/devplat-queue';
@@ -29,6 +32,11 @@ import type {
 } from '@vannadii/devplat-sonarcloud';
 import type { SpecRecord } from '@vannadii/devplat-specs';
 import type { DevplatConfig } from '@vannadii/devplat-config';
+import type {
+  WorktreeAllocation,
+  WorktreeReleaseMode,
+  WorktreeSyncMode,
+} from '@vannadii/devplat-worktrees';
 
 export interface RunGatesToolInput {
   gateNames: string[];
@@ -40,6 +48,8 @@ export type CreateResearchBriefToolInput = ResearchBrief;
 export type CreateSpecRecordToolInput = SpecRecord;
 
 export type ApproveSpecRecordToolInput = SpecRecord;
+
+export type UpdateSpecRecordToolInput = SpecRecord;
 
 export type CreateSlicePlanToolInput = SlicePlan;
 
@@ -67,6 +77,17 @@ export type CreateRebaseResultToolInput = RebaseResultArtifact;
 export interface AllocateWorktreeToolInput {
   taskId: string;
   branchName: string;
+}
+
+export interface SyncWorktreeToolInput {
+  allocation: WorktreeAllocation;
+  baseBranch: string;
+  syncMode?: WorktreeSyncMode;
+}
+
+export interface ReleaseWorktreeToolInput {
+  allocation: WorktreeAllocation;
+  releaseMode?: WorktreeReleaseMode;
 }
 
 export interface BindDiscordThreadToolInput extends DiscordChannelBinding {
@@ -153,10 +174,17 @@ export interface SubmitPullRequestUpdateToolInput {
   actorId: string;
 }
 
+export interface SubmitPullRequestMergeToolInput {
+  record: PullRequestRecord;
+  actorId: string;
+}
+
 export interface PlanRebaseDependentsToolInput {
   record: PullRequestRecord;
   dependentBranches: RebasePlan['dependentBranches'];
 }
+
+export type ExecuteRebaseDependentsToolInput = ExecuteRebaseDependentsInput;
 
 export interface SubmitGitHubActionToolInput {
   request: GitHubActionRequest;

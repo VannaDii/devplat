@@ -40,4 +40,36 @@ describe('RebaseDependentsService', () => {
     expect(executed.rebaseRequired).toBe(false);
     expect(service.explain(executed)).toContain('0 dependents');
   });
+
+  it('executes dependent rebases through worktree sync orchestration', () => {
+    const service = new RebaseDependentsService();
+    const snapshot = service.executeForMerge({
+      record: {
+        prNumber: 42,
+        branchName: 'feature/release-flow',
+        baseBranch: 'main',
+        title: 'Release workflow hardening',
+        labels: ['release'],
+        reviewState: 'approved',
+        mergeReady: true,
+        updatedAt: '2026-04-04T00:00:00.000Z',
+      },
+      dependentBranches: ['feature/a'],
+    });
+
+    expect(snapshot).toMatchObject({
+      plan: {
+        mergedPrNumber: 42,
+        dependentBranches: ['feature/a'],
+      },
+      syncMode: 'rebase',
+      executed: true,
+      syncResults: [
+        {
+          branchName: 'feature/a',
+          baseBranch: 'main',
+        },
+      ],
+    });
+  });
 });

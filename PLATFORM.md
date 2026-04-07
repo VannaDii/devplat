@@ -2,38 +2,70 @@
 
 ## Summary
 
-DevPlat is a Discord-first autonomous development platform delivered as a strict TypeScript monorepo. It uses OpenClaw as the runtime and control plane, GitHub as the source of truth for code workflow, SonarCloud for quality and compliance, GitHub Packages for npm distribution, GHCR for container and Helm distribution, and GitHub Pages for documentation.
+DevPlat is a Discord-first autonomous development platform delivered as a strict native-ESM TypeScript monorepo. It uses OpenClaw as the runtime/control surface, GitHub as the source of truth for specs and pull requests, SonarCloud for quality gating, GitHub Packages for npm distribution, GHCR for Docker and Helm distribution, and GitHub Pages for guide-style documentation.
 
-The current repository already establishes the monorepo structure, strict TypeScript and linting discipline, package layout covering platform domains, docs workspace, and distribution placeholders. This spec defines completion of the platform foundation, including distribution, deployment, documentation, adapter surfaces, and CI enforcement.
+The repository already has a strong foundation. This document captures:
+
+- what is already implemented
+- what remains between the current repository and the intended platform
+- the minimum completion bar for OpenClaw, Discord, CI/CD, and distribution
+- a package-by-package gap analysis against the current platform specs
+
+## Current Baseline
+
+The repository already provides:
+
+- npm workspaces for `packages/*` and `site/guide-docs`
+- Node and npm alignment through `.nvmrc`, `engines`, and install-time verification
+- strict root scripts for build, typecheck, tests, docs, schema generation, manifest generation, and repo validation
+- the full package inventory for the foundation scope
+- generated JSON schemas and a deterministic `openclaw.plugin.json`
+- CI for setup, generated artifacts, repo validation, lint, typecheck, coverage tests, build, docs build, and SonarCloud
+- a Linux-only TypeScript compatibility matrix for TS `5.x` and `6.x`
+- GitHub Pages deployment through the artifact flow
+- GHCR publication workflows for the Docker runtime image and Helm chart
+- Docker and Helm scaffolding in the expected repository locations
+
+This phase is therefore not about creating the monorepo. It is about closing the remaining platform-completion gap cleanly and explicitly.
+
+## Remaining Gap
+
+The main remaining work is:
+
+- complete the OpenClaw adapter surface so the tools match the intended platform operations, not just record normalization
+- keep Discord thread-aware and expand operator actions to cover common development operations
+- harden hook and CI enforcement so schema, manifest, and Sonar requirements fail loudly
+- close documentation gaps, especially publishing/release guidance and current-vs-target implementation notes
+- continue normalizing packages toward the fuller per-package specs below
 
 ## Goals
 
 - Normalize all packages into a clean, enforceable architecture.
-- Deliver a complete OpenClaw adapter exposing the platform.
-- Deliver Docker runtime and Helm deployment artifacts.
-- Deliver a full documentation site with GitHub Pages publishing.
-- Deliver CI and CD pipelines covering lint, typecheck, test, docs, quality, packaging, and publishing.
+- Deliver a complete OpenClaw adapter exposing the intended DevPlat tool surface.
+- Deliver thread-aware Discord workflows as the primary operator interface.
+- Deliver Docker runtime and Helm deployment artifacts through GHCR.
+- Deliver a complete VitePress documentation site through GitHub Pages.
 - Enforce strict engineering discipline from day one.
-- Support Discord as the primary human interaction surface with full auditability.
+- Preserve GitHub as the source of truth and keep Discord/OpenClaw flows auditable.
 
 ## Non-goals
 
-- Full autonomous development logic implementation.
-- Multi-platform runtime beyond Linux containers.
-- Full production-grade distributed storage abstraction.
-- Backward compatibility for legacy TypeScript versions beyond the explicit matrix.
+- Fully implementing every platform business behavior in this phase.
+- Supporting non-Linux runtime environments.
+- Supporting additional chat/control surfaces beyond OpenClaw and Discord as first-class UX.
+- Optimizing for TypeScript compatibility outside the explicit Linux TS `5.x` and `6.x` lanes.
 
 ## Technology Standards
 
-- Node.js: `>= 24`, pinned via `.nvmrc`
+- Node.js: `>= 24`, pinned through `.nvmrc`
 - npm: `>= 11`
-- TypeScript authoring baseline: latest stable `6.x`
-- TypeScript compatibility matrix: latest stable `5.x` and `6.x`
+- TypeScript authoring baseline: stable `6.x`
+- TypeScript compatibility matrix: stable `5.x` and `6.x`
 - Module system: ESM with `NodeNext`
 - Runtime target: Linux containers
-- Container base: latest stable Alpine Linux
+- Container base: stable Alpine Linux
 - Docs: VitePress
-- CI and CD: GitHub Actions
+- CI/CD: GitHub Actions
 - Quality gate: SonarCloud
 
 ## Repository Structure
@@ -42,85 +74,147 @@ The current repository already establishes the monorepo structure, strict TypeSc
 - `docker/openclaw-runtime/`: container runtime
 - `deploy/helm/devplat/`: OCI Helm chart
 - `site/guide-docs/`: VitePress documentation site
-- `scripts/`: repo validation and generation scripts
+- `scripts/`: validation and generation scripts
 - `.github/workflows/`: CI, release, publishing, and deployment workflows
 
 ## Package Responsibilities
 
 ### Core Layer
 
-- `@vannadii/devplat-core`: IDs, enums, result types, error types, lifecycle state definitions, and zero-side-effect shared interfaces
-- `@vannadii/devplat-config`: environment parsing, typed configuration, defaults, and overrides
-- `@vannadii/devplat-artifacts`: artifact schemas, versioned contracts, and validation utilities
+- `@vannadii/devplat-core`: domain-wide lifecycle state, result/error primitives, shared metadata helpers, exactness helpers
+- `@vannadii/devplat-config`: environment parsing, typed configuration, defaults, normalization
+- `@vannadii/devplat-artifacts`: artifact envelopes, validators, schema contracts, versioned machine-readable handoffs
 
 ### Planning Layer
 
-- `@vannadii/devplat-memory`: persistent knowledge, decisions, constraints, and history
-- `@vannadii/devplat-research`: intelligence gathering and feasibility analysis
-- `@vannadii/devplat-specs`: spec authoring, lifecycle, and spec pull request generation
-- `@vannadii/devplat-slicing`: decomposition into implementation units and slice dependency graphs
+- `@vannadii/devplat-memory`: persistent knowledge, decisions, constraints, long-lived context
+- `@vannadii/devplat-research`: research intake and structured implementation context
+- `@vannadii/devplat-specs`: spec drafting, revisioning, lifecycle state, approval state
+- `@vannadii/devplat-slicing`: dependency-aware implementation decomposition
 
 ### Execution Layer
 
-- `@vannadii/devplat-queue`: task lifecycle state machine and queue coordination
-- `@vannadii/devplat-worktrees`: git worktree management and branch-safe isolation
-- `@vannadii/devplat-execution`: subprocess execution and structured logs and results
-- `@vannadii/devplat-gates`: build, lint, typecheck, test, coverage orchestration, and failure classification
+- `@vannadii/devplat-queue`: task lifecycle state and queue coordination
+- `@vannadii/devplat-worktrees`: isolated worktree allocation, sync, release, and safety rules
+- `@vannadii/devplat-execution`: structured command execution
+- `@vannadii/devplat-gates`: build/lint/type/test/coverage orchestration and classification
 
 ### Review Layer
 
-- `@vannadii/devplat-review`: automated code and spec review
-- `@vannadii/devplat-remediation`: fix planning and safe autofix application
+- `@vannadii/devplat-review`: structured automated review findings
+- `@vannadii/devplat-remediation`: remediation planning, retry hints, autofix eligibility
 
 ### Delivery Layer
 
-- `@vannadii/devplat-prs`: pull request creation, updates, and comment syncing
-- `@vannadii/devplat-branching`: rebase orchestration and dependency-aware branch updates
+- `@vannadii/devplat-prs`: pull request lifecycle state and merge-readiness state
+- `@vannadii/devplat-branching`: dependent branch refresh and rebase coordination
 
 ### Control Layer
 
-- `@vannadii/devplat-supervisor`: orchestration loop, task routing, and escalation decisions
-- `@vannadii/devplat-observability`: metrics, logs, and audit trail
+- `@vannadii/devplat-supervisor`: orchestration decisions, routing, and escalation
+- `@vannadii/devplat-observability`: telemetry, auditability, correlation, and trace history
 
-### Integrations
+### Integrations and Control Planes
 
-- `@vannadii/devplat-github`: repository and pull request interactions
-- `@vannadii/devplat-sonarcloud`: quality gate integration and issue ingestion
-
-### Control Planes
-
+- `@vannadii/devplat-github`: GitHub action/request translation
+- `@vannadii/devplat-sonarcloud`: SonarCloud quality gate interpretation and issue normalization
 - `@vannadii/devplat-openclaw`: adapter only, registers all platform tools, no business logic
-- `@vannadii/devplat-discord`: primary human interface and workflow orchestration via threads
-- `@vannadii/devplat-policy`: governance rules and approval constraints
-- `@vannadii/devplat-storage`: persistence abstraction
+- `@vannadii/devplat-discord`: thread-aware operator workflow model
+- `@vannadii/devplat-policy`: approval, privilege, and escalation constraints
+- `@vannadii/devplat-storage`: persistence abstraction and initial `.devplat` implementation
+
+## Package Analysis Snapshot
+
+- `@vannadii/devplat-core`: current code covers lifecycle status, trace snapshots, result primitives, and exactness; remaining gap is typed IDs, richer error taxonomy, and typed timestamp/value-object helpers.
+- `@vannadii/devplat-config`: current code covers normalized runtime config for GitHub, Discord, OpenClaw, and Sonar; remaining gap is broader deployment/storage/worktree defaults and fuller config error surfaces.
+- `@vannadii/devplat-artifacts`: current code covers artifact envelope, approval, audit, merge, rebase, and validation; remaining gap is a fuller artifact registry, explicit migration strategy, and additional artifacts such as research/spec/slice/task/review operator handoff envelopes.
+- `@vannadii/devplat-memory`: current code covers a basic memory entry contract and persistence path; remaining gap is separate decision-log, trap, and query/update models.
+- `@vannadii/devplat-research`: current code covers a structured research brief artifact; remaining gap is deeper capability comparison, feasibility breakdown, and richer source attribution.
+- `@vannadii/devplat-specs`: current code covers spec records, approval, and explicit revision updates; remaining gap is richer revision history and PR-ready rendering contracts.
+- `@vannadii/devplat-slicing`: current code covers slice plans and readiness checks; remaining gap is an explicit dependency-graph artifact and richer PR-sized work packet modeling.
+- `@vannadii/devplat-queue`: current code covers task creation, claim, and lifecycle updates; remaining gap is a fuller queue abstraction including release/resume history and transition-event outputs.
+- `@vannadii/devplat-worktrees`: current code covers allocation plus explicit sync and release result contracts; remaining gap is deeper branch-safety validation and real cleanup/sync execution semantics.
+- `@vannadii/devplat-execution`: current code covers structured subprocess execution and timeouts; remaining gap is explicit retry policy, truncation policy, and retry outcome contracts.
+- `@vannadii/devplat-gates`: current code covers gate execution/reporting; remaining gap is richer failure classification and remediation hints.
+- `@vannadii/devplat-sonarcloud`: current code covers bootstrap verification and quality gate interpretation; remaining gap is fuller issue normalization into review/remediation inputs.
+- `@vannadii/devplat-review`: current code covers structured review findings; remaining gap is broader review summary generation and conformance-review contracts.
+- `@vannadii/devplat-remediation`: current code covers remediation planning; remaining gap is explicit remediation result artifacts and unresolved issue summaries.
+- `@vannadii/devplat-prs`: current code covers PR normalization plus update and merge submission semantics; remaining gap is richer PR body/update projections and deeper review/remediation status projection.
+- `@vannadii/devplat-branching`: current code covers dependent rebase planning; remaining gap is a fuller branch dependency graph and conflict classification beyond planned refreshes.
+- `@vannadii/devplat-supervisor`: current code covers minimal next-step decision and telemetry; remaining gap is broader lifecycle routing across research, specs, slicing, implementation, review, remediation, merge, and continuation.
+- `@vannadii/devplat-observability`: current code covers telemetry events; remaining gap is richer audit-specific schemas, run metrics, and run summaries.
+- `@vannadii/devplat-github`: current code covers GitHub action requests and policy-aware submission semantics; remaining gap is richer normalized repo/PR state and issue/spec-PR contracts.
+- `@vannadii/devplat-openclaw`: current code covers deterministic plugin config, tool input validation, and adapter delegation; remaining gap is keeping the tool inventory aligned with the intended end-to-end platform surface.
+- `@vannadii/devplat-discord`: current code covers thread-aware bindings, thread sessions, approvals, and control requests; remaining gap is broader PR-thread modeling and richer response-format contracts.
+- `@vannadii/devplat-policy`: current code covers basic privileged-action decisions; remaining gap is richer merge/autofix/escalation policy modeling.
+- `@vannadii/devplat-storage`: current code covers filesystem-backed record storage under `.devplat`; remaining gap is richer storage interfaces and explicit layout contracts for every domain surface.
 
 ## OpenClaw Adapter Requirements
 
-- Expose all required platform capabilities as tools.
-- Map tool calls to platform packages instead of reimplementing them.
-- Register routes and services only where adapter transport requires them.
-- Generate `openclaw.plugin.json` deterministically.
-- Remain logic-free beyond adapter validation, translation, and formatting.
+`@vannadii/devplat-openclaw` must remain adapter-only.
+
+It must:
+
+- expose the required platform capabilities as tools
+- validate and decode OpenClaw input through platform codecs
+- delegate behavior into platform packages instead of owning business logic
+- generate `openclaw.plugin.json` deterministically
+- document the tool surface in both package docs and guide docs
+
+### Required Tool Surface
+
+The foundation-phase adapter must expose tools for:
+
+- research initiation
+- spec creation, approval, and explicit spec update
+- slice generation and readiness checks
+- queue claim and lifecycle updates
+- worktree allocation, sync, and release
+- command execution
+- gate execution
+- artifact validation
+- review and remediation triggering
+- runtime config and plugin config translation
+- storage read/list/write actions
+- telemetry and policy evaluation
+- supervisor step control
+- pull request update and merge submission
+- dependent rebase planning and explicit execution semantics
 
 ## Discord Workflow Model
 
-### Core Requirement
+### Hard Requirement
 
 All interactions MUST be thread-aware.
 
+All Discord interactions MUST be thread-aware.
+
 ### Rules
 
-- Every spec, slice, and pull request must have a dedicated thread.
-- No global command execution without explicit scoping.
-- All actions must resolve context from thread metadata.
+- every spec must have a thread
+- every slice must have a thread
+- every pull request workflow must have a thread in the target end state
+- no operator action may run against ambiguous global context
+- all lifecycle-changing actions must resolve context from thread metadata
+- if thread context is missing or ambiguous, the system must fail closed unless an explicit override path exists
 
-### Interaction Types
+### Expected Operator Actions
 
-- `run this`: execute in thread context
-- `approve this`: approve the current spec, slice, or pull request state
-- `retry`: re-run failed gates or remediation
-- `merge`: trigger the merge pipeline
-- `rebase dependents`: trigger branching coordination
+Discord operator actions must cover common development operations such as:
+
+- `run this`
+- `approve this`
+- `retry this`
+- `merge this`
+- `rebase dependents`
+- `pause`
+- `resume`
+- `show status`
+- `show last artifact`
+- `explain failure`
+- `sync worktree`
+- `release worktree`
+- `update spec`
 
 ### Guarantees
 
@@ -142,134 +236,170 @@ All interactions MUST be thread-aware.
 - Docker runtime usage
 - Helm and k3s deployment
 - SonarCloud setup and expectations
+- publishing and release
 - operator guide
 - developer guide
 
 ### Publishing
 
-- GitHub Actions builds and deploys the site.
-- Deploy through the Pages artifact flow.
-- Do not use a `gh-pages` branch.
-- Do not use a custom domain.
+- GitHub Actions must build and deploy the site
+- deployment must use the Pages artifact flow
+- no `gh-pages` branch
+- no custom domain required for foundation completion
 
 ## Docker Runtime
 
-- Location: `docker/openclaw-runtime/`
+- location: `docker/openclaw-runtime/`
 - Alpine-based image
 - Node aligned with `.nvmrc`
 - OpenClaw installed
 - DevPlat installed
-- entrypoint starts the OpenClaw gateway
-- configurable via environment
-- published to GHCR with tagged and `latest` variants
+- default entrypoint starts the OpenClaw gateway
+- runtime remains configurable through environment and mounted config
+- published to GHCR with version and `latest` tags
 
 ## Helm Chart
 
-- Location: `deploy/helm/devplat/`
-- deployment and service templates
-- `values.yaml` configuration
-- optional PVC and ingress
-- GHCR image reference
-- k3s compatibility
-- OCI chart published to GHCR
+- location: `deploy/helm/devplat/`
+- includes deployment and service templates
+- includes `values.yaml`
+- supports optional PVC and ingress
+- references the GHCR runtime image
+- remains suitable for k3s
+- publishes as an OCI chart to GHCR
 
 ## CI and CD Requirements
 
 ### CI
 
+The primary CI workflow must continue to cover:
+
+- setup and Node alignment
+- generated artifacts
+- repo validation
 - lint
 - typecheck
-- test
+- tests with coverage
 - build
 - docs build
 - SonarCloud scan
 
 ### TypeScript Matrix
 
-- TS6 primary lane
-- TS5 compatibility lane
-- Linux only
-- runs typecheck, test, and build
+- TS `6.x` remains the primary authoring lane
+- TS `5.x` and `6.x` must be compatibility-tested on Linux
+- the compatibility lanes must run typecheck, test, and build
+- lint stays on the primary lane
 
 ### Release and Distribution
 
-- Changesets release pull request flow
-- npm publication to GitHub Packages
-- Docker publication to GHCR
-- Helm OCI publication to GHCR
+- Changesets manages release pull request flow
+- npm publication goes to GitHub Packages
+- Docker publication goes to GHCR
+- Helm OCI publication goes to GHCR
 - docs build and deploy through GitHub Pages
 
 ## SonarCloud
 
-- integrate Vitest coverage
-- enforce the quality gate
-- exclude `dist`, generated schemas, coverage artifacts, and transient workspace data
+- Vitest coverage must feed SonarCloud via `sonar.javascript.lcov.reportPaths`
+- the quality gate must be enforced in CI
+- missing `SONAR_TOKEN` is a failure, not a silent skip
+- `dist`, generated schemas, coverage artifacts, and transient workspace state must stay excluded appropriately
 
 ## Hooks
 
 ### Pre-commit
 
+Pre-commit must:
+
 - verify Node version
-- generate schemas and manifest
-- stage generated files
-- run lint-staged
-- run typecheck
-- validate schemas
+- generate schemas and the OpenClaw manifest before `lint-staged`
+- stage generated files before `lint-staged`
+- run `lint-staged`
+- regenerate schemas and the OpenClaw manifest after `lint-staged`
+- restage generated files after `lint-staged`
+- run workspace typecheck
+- run repository validation, including schema and manifest checks
 
 ### Pre-push
 
-- run the full repo checks
+Pre-push must:
+
+- verify Node alignment
+- regenerate committed artifacts
+- run full repo validation
+- run build, coverage tests, and docs build
 
 ## Validation Scripts
 
-Must enforce:
+Repository validation must enforce:
 
 - package structure
 - exports correctness
 - dependency graph rules
 - schema integrity
 - manifest correctness
+- instruction drift
+- naming rules
+- policy boundaries
+- unit-test presence
+
+## Package Completion Rules
+
+Every package is expected to provide:
+
+- `package.json`
+- `tsconfig.json`
+- `src/index.ts`
+- `README.md`
+- scripts for `build`, `clean`, `lint`, `typecheck`, and `test`
+
+The current repo already satisfies the structural/package metadata rules broadly, but package `README.md` coverage remains incomplete and stays on the normalization backlog until every publishable package has one.
 
 ## Acceptance Criteria
 
-- repo builds cleanly
-- TypeScript `5.x` and `6.x` Linux matrix passes
-- SonarCloud quality gate passes
-- Docker image builds and publishes
-- Helm chart packages and publishes
-- docs deploy successfully
-- OpenClaw exposes the full required platform surface
-- Discord workflows are thread-aware and auditable
-- docs fully explain setup and usage
+This phase is complete when:
+
+- `nvm use && npm ci` succeeds
+- root lint, typecheck, test, build, and docs build succeed
+- repo validation succeeds
+- SonarCloud quality gate succeeds
+- TS `5.x` and `6.x` Linux jobs succeed
+- Docker runtime builds and publishes to GHCR
+- Helm chart packages and publishes to GHCR
+- GitHub Pages docs deploys successfully through artifact-based publishing
+- `@vannadii/devplat-openclaw` exposes the intended foundation tool surface
+- Discord interactions are thread-aware and auditable
+- docs are sufficient for operators and contributors to install and use the platform without private guidance
+
+## Recommended First Vertical Slice
+
+Prioritize an end-to-end thread-aware operator path before broadening deeper package behavior:
+
+1. a Discord thread receives `run this`
+2. thread context resolves the active work item
+3. OpenClaw routes into the DevPlat gate tool surface
+4. a gate-run artifact is generated and validated
+5. the result returns to the same thread
+6. the operator can retry or approve in-thread
+
+That slice proves the core architecture: thread-aware control, adapter correctness, artifact handling, and operator UX.
 
 ## Implementation Phases
 
 ### Phase 1
 
-- package normalization
-- dependency enforcement
-- adapter surface completion
+- package normalization and boundary enforcement
+- complete the explicit OpenClaw and Discord control surfaces
 
 ### Phase 2
 
-- docs site
-- TypeScript matrix
-- CI expansion
+- docs completion, release guidance, and GitHub Pages stability
+- TypeScript compatibility and CI hardening
 
 ### Phase 3
 
-- Docker runtime
-- GHCR publication
-
-### Phase 4
-
-- Helm chart
-- k3s deployment readiness
-
-### Phase 5
-
-- SonarCloud hardening
-- final polish
+- Docker, Helm, SonarCloud hardening, and final polish
 
 ## Final Principle
 

@@ -30,4 +30,19 @@ The runtime expects OpenClaw configuration through environment variables, mounte
 
 ## Tool Surface
 
-The adapter exposes research, specs, slicing, runtime config, artifacts, GitHub, Discord, SonarCloud, task queue, storage, worktrees, execution, policy, telemetry, and supervisor capabilities. Keep required tool names documented in `packages/openclaw/README.md`, keep the manifest deterministic, and keep Discord-related tools thread-aware.
+The adapter exposes research, specs, slicing, runtime config, artifacts, GitHub, Discord, SonarCloud, task queue, storage, worktrees, execution, policy, telemetry, and supervisor capabilities.
+
+Required foundation-phase tool coverage includes:
+
+- research initiation and structured research artifacts
+- spec creation, approval, and explicit spec revision updates
+- slice generation and readiness evaluation
+- queue claim and lifecycle updates
+- worktree allocation, sync, and release
+- gate execution
+- artifact validation
+- review and remediation triggering
+- supervisor step control
+- pull request update, merge, and dependent rebase execution semantics
+
+Keep required tool names documented in `packages/openclaw/README.md`, keep the manifest deterministic, and keep Discord-related tools thread-aware.

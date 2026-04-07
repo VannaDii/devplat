@@ -1,8 +1,27 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#/definitions/DiscordControlRequest",
+  "$ref": "#/definitions/SyncWorktreeToolInput",
   "definitions": {
-    "DiscordControlRequest": {
+    "SyncWorktreeToolInput": {
+      "type": "object",
+      "properties": {
+        "allocation": {
+          "$ref": "#/definitions/WorktreeAllocation"
+        },
+        "baseBranch": {
+          "type": "string"
+        },
+        "syncMode": {
+          "$ref": "#/definitions/WorktreeSyncMode"
+        }
+      },
+      "required": [
+        "allocation",
+        "baseBranch"
+      ],
+      "additionalProperties": false
+    },
+    "WorktreeAllocation": {
       "type": "object",
       "properties": {
         "id": {
@@ -23,20 +42,14 @@
         "updatedAt": {
           "type": "string"
         },
-        "actorId": {
+        "taskId": {
           "type": "string"
         },
-        "threadId": {
+        "branchName": {
           "type": "string"
         },
-        "channelId": {
+        "worktreePath": {
           "type": "string"
-        },
-        "action": {
-          "$ref": "#/definitions/DiscordControlAction"
-        },
-        "privileged": {
-          "type": "boolean"
         }
       },
       "required": [
@@ -45,11 +58,9 @@
         "status",
         "trace",
         "updatedAt",
-        "actorId",
-        "threadId",
-        "channelId",
-        "action",
-        "privileged"
+        "taskId",
+        "branchName",
+        "worktreePath"
       ],
       "additionalProperties": false
     },
@@ -70,22 +81,11 @@
         "complete"
       ]
     },
-    "DiscordControlAction": {
+    "WorktreeSyncMode": {
       "type": "string",
       "enum": [
-        "run-this",
-        "approve-this",
-        "pause-this",
-        "resume-this",
-        "rebase-all-dependents",
-        "retry-gates",
-        "merge-now",
-        "show-status",
-        "show-last-artifact",
-        "explain-failure",
-        "sync-worktree",
-        "release-worktree",
-        "update-spec"
+        "fast-forward",
+        "rebase"
       ]
     }
   }

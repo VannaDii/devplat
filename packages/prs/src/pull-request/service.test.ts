@@ -67,4 +67,25 @@ describe('PullRequestService', () => {
     expect(created.branchName).toBe('feature/wip');
     expect(executed.title).toBe('Work in progress');
   });
+
+  it('submits explicit merge requests through the GitHub workflow service', async () => {
+    const rootDirectory = await mkdtemp(resolve(tmpdir(), 'devplat-prs-'));
+    const github = new GitHubWorkflowService(
+      new DecisionPolicyService(),
+      new TelemetryEventService(new FileStoreService(rootDirectory)),
+    );
+    const service = new PullRequestService(github);
+    const result = await service.submitMerge({
+      prNumber: 52,
+      branchName: 'feature/merge-ready',
+      baseBranch: 'main',
+      title: 'Merge-ready automation',
+      labels: ['merge'],
+      reviewState: 'approved',
+      mergeReady: true,
+      updatedAt: '2026-04-04T00:00:00.000Z',
+    });
+
+    expect(result.request.action).toBe('merge-pr');
+  });
 });

@@ -35,6 +35,7 @@
     "check:openclaw-manifest": "node scripts/check-openclaw-manifest.mjs",
     "check:instructions": "node scripts/check-instructions.mjs",
     "check:naming": "node scripts/check-naming.mjs",
+    "check:changed-coverage": "node scripts/check-changed-coverage.mjs",
     "check:policy-boundaries": "node scripts/check-policy-boundaries.mjs",
     "check:unit-tests": "node scripts/check-unit-tests.mjs",
     "check:pre-commit": "node scripts/check-pre-commit.mjs",

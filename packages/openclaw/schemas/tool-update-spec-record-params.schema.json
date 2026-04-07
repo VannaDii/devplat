@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/UpdateSpecRecordToolInput",
+  "definitions": {
+    "UpdateSpecRecordToolInput": {
+      "$ref": "#/definitions/SpecRecord"
+    },
+    "SpecRecord": {
+      "type": "object",
+      "properties": {
+        "specId": {
+          "type": "string"
+        },
+        "researchId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "acceptanceCriteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "approvalState": {
+          "$ref": "#/definitions/SpecApprovalState"
+        },
+        "version": {
+          "type": "number"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "specId",
+        "researchId",
+        "title",
+        "objective",
+        "acceptanceCriteria",
+        "approvalState",
+        "version",
+        "updatedAt"
+      ],
+      "additionalProperties": false
+    },
+    "SpecApprovalState": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "review",
+        "approved"
+      ]
+    }
+  }
+}

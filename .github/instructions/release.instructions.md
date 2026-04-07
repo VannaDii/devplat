@@ -21,5 +21,6 @@
 
 ## Rollback
 
+- Pull request bodies must use `.github/pull_request_template.md` so release impact and rollback notes stay consistent across changes.
 - Pull requests must state rollback notes when they affect packages, images, charts, docs, or operator workflows.
 - Keep rollback paths compatible with GitHub history and existing release automation.
