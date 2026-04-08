@@ -10,6 +10,7 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
+    "ignoreDeprecations": "6.0",
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "noImplicitReturns": true,
