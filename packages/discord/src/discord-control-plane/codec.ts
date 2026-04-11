@@ -15,7 +15,10 @@ export const DiscordControlRequestCodec = t.type({
   channelId: t.string,
   action: t.union([
     t.literal('run-this'),
+    t.literal('claim-this'),
     t.literal('approve-this'),
+    t.literal('block-this'),
+    t.literal('complete-this'),
     t.literal('pause-this'),
     t.literal('resume-this'),
     t.literal('rebase-all-dependents'),

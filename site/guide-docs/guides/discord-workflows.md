@@ -12,14 +12,36 @@
 
 - open a Discord thread for the work item
 - bind the thread to the platform record
+- use `spec`, `implementation`, and `pull-request` thread kinds to keep operator context explicit
 - route implementation updates, audit events, approvals, retries, and rebase notices through the thread binding
 - require every lifecycle-changing action to resolve its context from thread metadata
 - fail closed when a command is issued without a valid thread binding
 
+## Server and API Alignment
+
+- normalize Discord REST access against `https://discord.com/api/v10`
+- provide an application id, public key, and bot token through runtime config or referenced secrets
+- install the app with the `bot` and `applications.commands` scopes
+- grant only the permissions needed for thread-aware operation: `ViewChannel`, `SendMessages`, `CreatePublicThreads`, `CreatePrivateThreads`, `SendMessagesInThreads`, `ManageThreads`, and `ReadMessageHistory`
+- keep thread creation anchored to the configured spec, implementation, and pull-request parent channels so thread inheritance stays explicit
+
+## Channel Layout
+
+- `spec` parent channel: source for spec threads and approval routing
+- `implementation` parent channel: source for execution and remediation threads
+- `pull-request` parent channel: source for PR coordination threads
+- `audit` channel: operator-visible audit summaries and privileged-action traces
+- `project-management` channel: query-only status surface for active work summaries that link back to the bound work threads
+
+Project-management lookups must stay read-only. Any lifecycle-changing action still executes from the bound spec, implementation, or pull-request thread.
+
 ## Operator Actions
 
 - `run this`: execute work in the active thread context
+- `claim this`: claim the bound queue work item before execution begins
 - `approve this`: approve the bound spec, slice, or pull request state
+- `block this`: mark the active work item blocked without leaving thread context
+- `complete this`: mark the active work item complete when the thread reaches a terminal handoff
 - `retry`: re-run failed gates or remediation in the bound thread context
 - `merge`: trigger the merge path for the bound pull request context
 - `rebase dependents`: trigger branching coordination for the bound context

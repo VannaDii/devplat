@@ -61,4 +61,22 @@ describe('DiscordControlRequest logic', () => {
     expect(request.action).toBe('show-last-artifact');
     expect(request.trace).toContain('discord:thread-3:show-last-artifact');
   });
+
+  it('accepts queue-oriented operator actions for common development flow', () => {
+    const request = createDiscordControlRequest({
+      id: 'discord-004',
+      summary: '  claim this task  ',
+      status: 'review',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      actorId: 'user-4',
+      threadId: 'thread-4',
+      channelId: 'channel-4',
+      action: 'claim-this',
+      privileged: false,
+    });
+
+    expect(request.summary).toBe('claim this task');
+    expect(request.trace).toContain('discord:thread-4:claim-this');
+  });
 });

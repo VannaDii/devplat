@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { isAbsolute, normalize, resolve, sep } from 'node:path';
 
 import type { AnyAgentTool } from 'openclaw/plugin-sdk/plugin-entry';
+import type { DiscordThreadSession } from '@vannadii/devplat-discord';
 
 import { RebaseDependentsService } from '@vannadii/devplat-branching';
 import {
@@ -89,6 +90,7 @@ import {
   VerifySonarBootstrapToolInputCodec,
 } from './codec.js';
 import { createToolPayloadText } from './logic.js';
+import type { OpenDiscordThreadToolInput } from './types.js';
 
 function readSchema(fileName: string): Record<string, unknown> {
   const filePath = resolve(
@@ -119,6 +121,12 @@ function createTextResult(payload: unknown): {
     ],
     details: payload,
   };
+}
+
+function toDiscordThreadSession(
+  input: OpenDiscordThreadToolInput,
+): DiscordThreadSession {
+  return input;
 }
 
 function normalizeExecutionCwd(cwd: string | undefined):
@@ -802,7 +810,7 @@ export function createOpenDiscordThreadTool(): AnyAgentTool {
     name: 'open_discord_thread',
     label: 'Open Discord Thread',
     description:
-      'Open and persist a Discord spec or implementation thread session with audit artifacts.',
+      'Open and persist a Discord spec, implementation, or pull-request thread session with audit artifacts.',
     parameters: readSchema(
       'tool-open-discord-thread-params.schema.json',
     ) as unknown,
@@ -813,21 +821,7 @@ export function createOpenDiscordThreadTool(): AnyAgentTool {
       }
 
       const result = await new DiscordThreadSessionService().openThread(
-        {
-          id: decoded.value.id,
-          summary: decoded.value.summary,
-          status: decoded.value.status,
-          trace: decoded.value.trace,
-          updatedAt: decoded.value.updatedAt,
-          guildId: decoded.value.guildId,
-          channelId: decoded.value.channelId,
-          parentChannelId: decoded.value.parentChannelId,
-          threadId: decoded.value.threadId,
-          kind: decoded.value.kind,
-          specId: decoded.value.specId,
-          sliceId: decoded.value.sliceId,
-          artifactId: decoded.value.artifactId,
-        },
+        toDiscordThreadSession(decoded.value),
         decoded.value.actorId,
       );
       return createTextResult(result);

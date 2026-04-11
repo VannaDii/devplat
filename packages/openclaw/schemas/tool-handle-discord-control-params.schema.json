@@ -77,7 +77,10 @@
       "type": "string",
       "enum": [
         "run-this",
+        "claim-this",
         "approve-this",
+        "block-this",
+        "complete-this",
         "pause-this",
         "resume-this",
         "rebase-all-dependents",

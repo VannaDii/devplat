@@ -96,9 +96,9 @@ export interface BindDiscordThreadToolInput extends DiscordChannelBinding {
   actorId: string;
 }
 
-export interface OpenDiscordThreadToolInput extends DiscordThreadSession {
+export type OpenDiscordThreadToolInput = DiscordThreadSession & {
   actorId: string;
-}
+};
 
 export type HandleDiscordApprovalToolInput = DiscordApprovalRequest;
 

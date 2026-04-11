@@ -19,12 +19,32 @@ Runtime configuration normalization reads:
 - `GITHUB_OWNER`
 - `GITHUB_REPO`
 - `OPENCLAW_PLUGIN_ID`
+- `DISCORD_API_BASE_URL`
+- `DISCORD_APPLICATION_ID`
+- `DISCORD_PUBLIC_KEY`
+- `DISCORD_BOT_TOKEN`
 - `DISCORD_DEFAULT_GUILD_ID`
 - `DISCORD_SPEC_CHANNEL_ID`
 - `DISCORD_IMPLEMENTATION_CHANNEL_ID`
+- `DISCORD_PULL_REQUEST_CHANNEL_ID`
 - `DISCORD_AUDIT_CHANNEL_ID`
+- `DISCORD_PROJECT_MANAGEMENT_CHANNEL_ID`
 - `SONAR_ORGANIZATION`
 - `SONAR_PROJECT_KEY`
+
+The normalized Discord runtime config also fixes:
+
+- API version `v10`
+- OAuth install scopes `bot` and `applications.commands`
+- required guild/channel permissions for thread-aware control: `ViewChannel`, `SendMessages`, `CreatePublicThreads`, `CreatePrivateThreads`, `SendMessagesInThreads`, `ManageThreads`, and `ReadMessageHistory`
+
+Recommended channel layout:
+
+- spec parent channel for spec threads
+- implementation parent channel for implementation threads
+- pull-request parent channel for pull-request threads
+- audit channel for operator-visible audit traffic
+- project-management channel for non-mutating status queries that link back to the active bound threads
 
 ## Generated Artifacts
 

@@ -279,10 +279,16 @@ describe('tool surface service', () => {
         env: {
           GITHUB_OWNER: 'VannaDii',
           GITHUB_REPO: 'devplat',
+          DISCORD_API_BASE_URL: 'https://discord.com/api/v10',
+          DISCORD_APPLICATION_ID: 'application-1',
+          DISCORD_PUBLIC_KEY: 'public-key-1',
+          DISCORD_BOT_TOKEN: 'bot-token-1',
           DISCORD_DEFAULT_GUILD_ID: 'guild-1',
           DISCORD_SPEC_CHANNEL_ID: 'spec-1',
           DISCORD_IMPLEMENTATION_CHANNEL_ID: 'impl-1',
+          DISCORD_PULL_REQUEST_CHANNEL_ID: 'pr-1',
           DISCORD_AUDIT_CHANNEL_ID: 'audit-1',
+          DISCORD_PROJECT_MANAGEMENT_CHANNEL_ID: 'pm-1',
           OPENCLAW_PLUGIN_ID: '@vannadii/devplat-openclaw',
           SONAR_ORGANIZATION: 'vannadii',
           SONAR_PROJECT_KEY: 'vannadii_devplat',
@@ -294,8 +300,23 @@ describe('tool surface service', () => {
       githubOwner: 'VannaDii',
       githubRepo: 'devplat',
       discord: {
+        apiBaseUrl: 'https://discord.com/api/v10',
+        apiVersion: 'v10',
+        applicationId: 'application-1',
+        publicKey: 'public-key-1',
+        botToken: 'bot-token-1',
+        installScopes: ['bot', 'applications.commands'],
         defaultGuildId: 'guild-1',
         specChannelId: 'spec-1',
+        requiredPermissions: [
+          'ViewChannel',
+          'SendMessages',
+          'CreatePublicThreads',
+          'CreatePrivateThreads',
+          'SendMessagesInThreads',
+          'ManageThreads',
+          'ReadMessageHistory',
+        ],
       },
       sonar: {
         projectKey: 'vannadii_devplat',
@@ -329,10 +350,27 @@ describe('tool surface service', () => {
         githubOwner: 'VannaDii',
         githubRepo: 'devplat',
         discord: {
+          apiBaseUrl: 'https://discord.com/api/v10',
+          apiVersion: 'v10',
+          applicationId: 'application-1',
+          publicKey: 'public-key-1',
+          botToken: 'bot-token-1',
+          installScopes: ['bot', 'applications.commands'],
+          requiredPermissions: [
+            'ViewChannel',
+            'SendMessages',
+            'CreatePublicThreads',
+            'CreatePrivateThreads',
+            'SendMessagesInThreads',
+            'ManageThreads',
+            'ReadMessageHistory',
+          ],
           defaultGuildId: 'guild-1',
           specChannelId: 'spec-1',
           implementationChannelId: 'impl-1',
+          pullRequestChannelId: 'pr-1',
           auditChannelId: 'audit-1',
+          projectManagementChannelId: 'pm-1',
           threadBindingMode: 'inherit-parent',
         },
         openclaw: {
@@ -354,10 +392,13 @@ describe('tool surface service', () => {
 
     expect(result.details).toMatchObject({
       id: '@vannadii/devplat-openclaw:config',
+      apiVersion: 'v10',
       defaultGuildId: 'guild-1',
       specChannelId: 'spec-1',
       implementationChannelId: 'impl-1',
+      pullRequestChannelId: 'pr-1',
       auditChannelId: 'audit-1',
+      projectManagementChannelId: 'pm-1',
       actionGates: {
         approveThis: true,
         mergeNow: false,
@@ -845,6 +886,7 @@ describe('tool surface service', () => {
         kind: 'spec',
         specId: 'spec-1',
         sliceId: null,
+        pullRequestNumber: null,
         artifactId: 'artifact-1',
         actorId: 'operator-1',
       },
@@ -853,6 +895,62 @@ describe('tool surface service', () => {
     expect(result.details).toMatchObject({
       artifactId: 'artifact-1',
       persistedKey: 'session-1',
+    });
+  });
+
+  it('opens implementation Discord thread sessions from valid tool input', async () => {
+    const result = await createOpenDiscordThreadTool().execute(
+      'tool-call-dt1b',
+      {
+        id: 'session-1b',
+        summary: 'Implementation thread',
+        status: 'running',
+        trace: [],
+        updatedAt: '2026-04-04T00:00:00.000Z',
+        guildId: 'guild-1',
+        channelId: 'channel-1b',
+        parentChannelId: 'parent-1b',
+        threadId: 'thread-1b',
+        kind: 'implementation',
+        specId: 'spec-1',
+        sliceId: 'slice-1',
+        pullRequestNumber: null,
+        artifactId: 'artifact-1b',
+        actorId: 'operator-1',
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      artifactId: 'artifact-1b',
+      persistedKey: 'session-1b',
+    });
+  });
+
+  it('opens pull-request Discord thread sessions from valid tool input', async () => {
+    const result = await createOpenDiscordThreadTool().execute(
+      'tool-call-dt1c',
+      {
+        id: 'session-1c',
+        summary: 'Pull request thread',
+        status: 'review',
+        trace: [],
+        updatedAt: '2026-04-04T00:00:00.000Z',
+        guildId: 'guild-1',
+        channelId: 'channel-1c',
+        parentChannelId: 'parent-1c',
+        threadId: 'thread-1c',
+        kind: 'pull-request',
+        specId: null,
+        sliceId: null,
+        pullRequestNumber: 14,
+        artifactId: 'artifact-1c',
+        actorId: 'operator-1',
+      },
+    );
+
+    expect(result.details).toMatchObject({
+      artifactId: 'artifact-1c',
+      persistedKey: 'session-1c',
     });
   });
 

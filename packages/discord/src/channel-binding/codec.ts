@@ -18,6 +18,7 @@ export const DiscordChannelBindingCodec = t.type({
   kind: t.union([
     t.literal('spec'),
     t.literal('implementation'),
+    t.literal('pull-request'),
     t.literal('audit'),
   ]),
   threadBindingMode: t.literal('inherit-parent'),

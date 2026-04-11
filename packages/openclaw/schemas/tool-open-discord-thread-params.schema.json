@@ -3,77 +3,234 @@
   "$ref": "#/definitions/OpenDiscordThreadToolInput",
   "definitions": {
     "OpenDiscordThreadToolInput": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "summary": {
-          "type": "string"
-        },
-        "status": {
-          "$ref": "#/definitions/LifecycleStatus"
-        },
-        "trace": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "updatedAt": {
-          "type": "string"
-        },
-        "guildId": {
-          "type": "string"
-        },
-        "channelId": {
-          "type": "string"
-        },
-        "parentChannelId": {
-          "type": "string"
-        },
-        "threadId": {
-          "type": "string"
-        },
-        "kind": {
-          "$ref": "#/definitions/DiscordThreadKind"
-        },
-        "specId": {
-          "type": [
-            "string",
-            "null"
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "actorId": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            },
+            "status": {
+              "$ref": "#/definitions/LifecycleStatus"
+            },
+            "trace": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "updatedAt": {
+              "type": "string"
+            },
+            "guildId": {
+              "type": "string"
+            },
+            "channelId": {
+              "type": "string"
+            },
+            "parentChannelId": {
+              "type": "string"
+            },
+            "threadId": {
+              "type": "string"
+            },
+            "artifactId": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "spec"
+            },
+            "specId": {
+              "type": "string"
+            },
+            "sliceId": {
+              "type": "null"
+            },
+            "pullRequestNumber": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "actorId",
+            "artifactId",
+            "channelId",
+            "guildId",
+            "id",
+            "kind",
+            "parentChannelId",
+            "pullRequestNumber",
+            "sliceId",
+            "specId",
+            "status",
+            "summary",
+            "threadId",
+            "trace",
+            "updatedAt"
           ]
         },
-        "sliceId": {
-          "type": [
-            "string",
-            "null"
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "actorId": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            },
+            "status": {
+              "$ref": "#/definitions/LifecycleStatus"
+            },
+            "trace": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "updatedAt": {
+              "type": "string"
+            },
+            "guildId": {
+              "type": "string"
+            },
+            "channelId": {
+              "type": "string"
+            },
+            "parentChannelId": {
+              "type": "string"
+            },
+            "threadId": {
+              "type": "string"
+            },
+            "artifactId": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "implementation"
+            },
+            "specId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sliceId": {
+              "type": "string"
+            },
+            "pullRequestNumber": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "actorId",
+            "artifactId",
+            "channelId",
+            "guildId",
+            "id",
+            "kind",
+            "parentChannelId",
+            "pullRequestNumber",
+            "sliceId",
+            "specId",
+            "status",
+            "summary",
+            "threadId",
+            "trace",
+            "updatedAt"
           ]
         },
-        "artifactId": {
-          "type": "string"
-        },
-        "actorId": {
-          "type": "string"
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "actorId": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            },
+            "status": {
+              "$ref": "#/definitions/LifecycleStatus"
+            },
+            "trace": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "updatedAt": {
+              "type": "string"
+            },
+            "guildId": {
+              "type": "string"
+            },
+            "channelId": {
+              "type": "string"
+            },
+            "parentChannelId": {
+              "type": "string"
+            },
+            "threadId": {
+              "type": "string"
+            },
+            "artifactId": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "pull-request"
+            },
+            "specId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sliceId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pullRequestNumber": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "actorId",
+            "artifactId",
+            "channelId",
+            "guildId",
+            "id",
+            "kind",
+            "parentChannelId",
+            "pullRequestNumber",
+            "sliceId",
+            "specId",
+            "status",
+            "summary",
+            "threadId",
+            "trace",
+            "updatedAt"
+          ]
         }
-      },
-      "required": [
-        "actorId",
-        "artifactId",
-        "channelId",
-        "guildId",
-        "id",
-        "kind",
-        "parentChannelId",
-        "sliceId",
-        "specId",
-        "status",
-        "summary",
-        "threadId",
-        "trace",
-        "updatedAt"
-      ],
-      "additionalProperties": false
+      ]
     },
     "LifecycleStatus": {
       "type": "string",
@@ -90,13 +247,6 @@
         "failed",
         "rebasing",
         "complete"
-      ]
-    },
-    "DiscordThreadKind": {
-      "type": "string",
-      "enum": [
-        "spec",
-        "implementation"
       ]
     }
   }

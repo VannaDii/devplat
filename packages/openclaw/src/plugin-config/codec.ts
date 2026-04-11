@@ -4,16 +4,40 @@ import { LifecycleStatusCodec, type Exact } from '@vannadii/devplat-core';
 
 import type { OpenClawPluginConfig } from './types.js';
 
+const DiscordInstallScopeCodec = t.union([
+  t.literal('bot'),
+  t.literal('applications.commands'),
+]);
+
+const DiscordPermissionCodec = t.union([
+  t.literal('ViewChannel'),
+  t.literal('SendMessages'),
+  t.literal('CreatePublicThreads'),
+  t.literal('CreatePrivateThreads'),
+  t.literal('SendMessagesInThreads'),
+  t.literal('ManageThreads'),
+  t.literal('ReadMessageHistory'),
+]);
+
 export const OpenClawPluginConfigCodec = t.type({
   id: t.string,
   summary: t.string,
   status: LifecycleStatusCodec,
   trace: t.array(t.string),
   updatedAt: t.string,
+  apiBaseUrl: t.string,
+  apiVersion: t.literal('v10'),
+  applicationId: t.string,
+  publicKey: t.string,
+  botToken: t.string,
+  installScopes: t.readonlyArray(DiscordInstallScopeCodec),
+  requiredPermissions: t.readonlyArray(DiscordPermissionCodec),
   defaultGuildId: t.string,
   specChannelId: t.string,
   implementationChannelId: t.string,
+  pullRequestChannelId: t.string,
   auditChannelId: t.string,
+  projectManagementChannelId: t.string,
   threadBindingMode: t.literal('inherit-parent'),
   actionGates: t.type({
     approveThis: t.boolean,

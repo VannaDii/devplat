@@ -1,10 +1,32 @@
 import type { LifecycleStatus } from '@vannadii/devplat-core';
 
+export type DiscordApiVersion = 'v10';
+
+export type DiscordInstallScope = 'bot' | 'applications.commands';
+
+export type DiscordPermission =
+  | 'ViewChannel'
+  | 'SendMessages'
+  | 'CreatePublicThreads'
+  | 'CreatePrivateThreads'
+  | 'SendMessagesInThreads'
+  | 'ManageThreads'
+  | 'ReadMessageHistory';
+
 export interface DiscordRuntimeConfig {
+  apiBaseUrl: string;
+  apiVersion: DiscordApiVersion;
+  applicationId: string;
+  publicKey: string;
+  botToken: string;
+  installScopes: readonly DiscordInstallScope[];
+  requiredPermissions: readonly DiscordPermission[];
   defaultGuildId: string;
   specChannelId: string;
   implementationChannelId: string;
+  pullRequestChannelId: string;
   auditChannelId: string;
+  projectManagementChannelId: string;
   threadBindingMode: 'inherit-parent';
 }
 
