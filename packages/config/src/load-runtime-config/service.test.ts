@@ -7,7 +7,11 @@ describe('RuntimeConfigService', () => {
     {
       name: 'loads defaults from environment values',
       inputs: {
-        env: {},
+        env: {
+          DISCORD_APPLICATION_ID: 'application-default',
+          DISCORD_PUBLIC_KEY: 'public-key-default',
+          DISCORD_BOT_TOKEN: 'bot-token-default',
+        },
       },
       mock: ({ env }: { env: Record<string, string> }) =>
         new RuntimeConfigService().fromEnvironment(env),
@@ -54,6 +58,25 @@ describe('RuntimeConfigService', () => {
         expect(config.discord.projectManagementChannelId).toBe('pm');
         expect(config.openclaw.pluginId).toBe('@acme/platform-openclaw');
         expect(service.execute(config)).toBe(config);
+      },
+    },
+    {
+      name: 'fails fast when required Discord credentials are missing',
+      inputs: {
+        env: {
+          GITHUB_OWNER: 'AcmeOrg',
+        },
+      },
+      mock:
+        ({ env }: { env: Record<string, string> }) =>
+        () =>
+          new RuntimeConfigService().fromEnvironment(env),
+      assert: (
+        createConfig: () => ReturnType<RuntimeConfigService['fromEnvironment']>,
+      ) => {
+        expect(createConfig).toThrow(
+          'DISCORD_APPLICATION_ID must be set for Discord runtime configuration.',
+        );
       },
     },
   ];

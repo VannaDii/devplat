@@ -10,6 +10,9 @@ describe('DevplatConfig logic', () => {
         env: {
           GITHUB_OWNER: 'VannaDii',
           GITHUB_REPO: 'devplat',
+          DISCORD_APPLICATION_ID: 'application-1',
+          DISCORD_PUBLIC_KEY: 'public-key-1',
+          DISCORD_BOT_TOKEN: 'bot-token-1',
         },
       },
       mock: ({ env }: { env: Record<string, string> }) =>
@@ -41,6 +44,26 @@ describe('DevplatConfig logic', () => {
         expect(config.discord.threadBindingMode).toBe('inherit-parent');
         expect(config.sonar.minimumCoverage).toBe(90);
         expect(describeDevplatConfig(config)).toContain('VannaDii/devplat');
+      },
+    },
+    {
+      name: 'requires Discord credentials to be present',
+      inputs: {
+        env: {
+          GITHUB_OWNER: 'VannaDii',
+          GITHUB_REPO: 'devplat',
+        },
+      },
+      mock:
+        ({ env }: { env: Record<string, string> }) =>
+        () =>
+          createDefaultDevplatConfig(env),
+      assert: (
+        createConfig: () => ReturnType<typeof createDefaultDevplatConfig>,
+      ) => {
+        expect(createConfig).toThrow(
+          'DISCORD_APPLICATION_ID must be set for Discord runtime configuration.',
+        );
       },
     },
   ];

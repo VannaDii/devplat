@@ -14,6 +14,18 @@ const DISCORD_REQUIRED_PERMISSIONS = [
   'ReadMessageHistory',
 ] as const;
 
+function requireEnvValue(
+  env: Record<string, string | undefined>,
+  key: 'DISCORD_APPLICATION_ID' | 'DISCORD_PUBLIC_KEY' | 'DISCORD_BOT_TOKEN',
+): string {
+  const value = env[key]?.trim();
+  if (!value) {
+    throw new Error(`${key} must be set for Discord runtime configuration.`);
+  }
+
+  return value;
+}
+
 export function createDevplatConfig(input: DevplatConfig): DevplatConfig {
   return appendTrace(
     {
@@ -39,9 +51,9 @@ export function createDefaultDevplatConfig(
     discord: {
       apiBaseUrl: env['DISCORD_API_BASE_URL'] ?? 'https://discord.com/api/v10',
       apiVersion: 'v10',
-      applicationId: env['DISCORD_APPLICATION_ID'] ?? 'devplat-application',
-      publicKey: env['DISCORD_PUBLIC_KEY'] ?? 'devplat-public-key',
-      botToken: env['DISCORD_BOT_TOKEN'] ?? 'devplat-bot-token',
+      applicationId: requireEnvValue(env, 'DISCORD_APPLICATION_ID'),
+      publicKey: requireEnvValue(env, 'DISCORD_PUBLIC_KEY'),
+      botToken: requireEnvValue(env, 'DISCORD_BOT_TOKEN'),
       installScopes: [...DISCORD_INSTALL_SCOPES],
       requiredPermissions: [...DISCORD_REQUIRED_PERMISSIONS],
       defaultGuildId: env['DISCORD_DEFAULT_GUILD_ID'] ?? 'devplat-guild',

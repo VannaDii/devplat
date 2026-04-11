@@ -14,6 +14,8 @@
 - set Discord v10 connection values: API base URL, application id, public key, bot token, guild id, and the spec, implementation, pull-request, audit, and project-management channel ids
 - start the gateway locally, in Docker, or via Helm on k3s
 
+Missing Discord credentials should fail during config load. Do not rely on placeholder values for server connection setup.
+
 ## Day-1
 
 - watch GitHub Actions CI, the TypeScript compatibility matrix, Docker, Helm, and docs workflows

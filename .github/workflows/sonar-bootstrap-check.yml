@@ -3,6 +3,9 @@ name: Sonar Bootstrap Check
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   verify-sonar-configuration:
     name: Verify SonarCloud Config

@@ -20,9 +20,9 @@ Runtime configuration normalization reads:
 - `GITHUB_REPO`
 - `OPENCLAW_PLUGIN_ID`
 - `DISCORD_API_BASE_URL`
-- `DISCORD_APPLICATION_ID`
-- `DISCORD_PUBLIC_KEY`
-- `DISCORD_BOT_TOKEN`
+- `DISCORD_APPLICATION_ID` (required)
+- `DISCORD_PUBLIC_KEY` (required)
+- `DISCORD_BOT_TOKEN` (required)
 - `DISCORD_DEFAULT_GUILD_ID`
 - `DISCORD_SPEC_CHANNEL_ID`
 - `DISCORD_IMPLEMENTATION_CHANNEL_ID`
@@ -37,6 +37,8 @@ The normalized Discord runtime config also fixes:
 - API version `v10`
 - OAuth install scopes `bot` and `applications.commands`
 - required guild/channel permissions for thread-aware control: `ViewChannel`, `SendMessages`, `CreatePublicThreads`, `CreatePrivateThreads`, `SendMessagesInThreads`, `ManageThreads`, and `ReadMessageHistory`
+
+Missing required Discord credentials fail fast during config load instead of falling back to placeholder values.
 
 Recommended channel layout:
 

@@ -89,7 +89,10 @@ import {
   ValidateArtifactToolInputCodec,
   VerifySonarBootstrapToolInputCodec,
 } from './codec.js';
-import { createToolPayloadText } from './logic.js';
+import {
+  createToolPayloadText,
+  sanitizeToolPayloadForDisplay,
+} from './logic.js';
 import type { OpenDiscordThreadToolInput } from './types.js';
 
 function readSchema(fileName: string): Record<string, unknown> {
@@ -112,14 +115,16 @@ function createTextResult(payload: unknown): {
   content: Array<{ type: 'text'; text: string }>;
   details: unknown;
 } {
+  const safePayload = sanitizeToolPayloadForDisplay(payload);
+
   return {
     content: [
       {
         type: 'text',
-        text: createToolPayloadText(payload),
+        text: createToolPayloadText(safePayload),
       },
     ],
-    details: payload,
+    details: safePayload,
   };
 }
 

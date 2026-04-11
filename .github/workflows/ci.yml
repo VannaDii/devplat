@@ -94,6 +94,12 @@ jobs:
       - name: Generate Schemas and Manifest
         run: npm run prepare:generated
 
+      - name: Verify Generated Artifacts Are Committed
+        run: |
+          git diff --exit-code -- \
+            packages/openclaw/openclaw.plugin.json \
+            'packages/*/schemas/*.schema.json'
+
       - name: Upload Generated Artifacts
         uses: actions/upload-artifact@v7.0.0
         with:
@@ -120,12 +126,6 @@ jobs:
 
       - name: Install Deps
         run: npm ci
-
-      - name: Download Generated Artifacts
-        uses: actions/download-artifact@v8.0.1
-        with:
-          name: schemas-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .
 
       - name: Verify Repo
         env:

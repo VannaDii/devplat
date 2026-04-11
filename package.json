@@ -74,9 +74,20 @@
     "turbo": "2.9.4",
     "typescript": "6.0.2",
     "typescript-eslint": "8.58.0",
-    "vite": "8.0.5",
+    "vite": "8.0.6",
     "vitepress": "1.6.4",
     "vitest": "4.1.2"
+  },
+  "overrides": {
+    "@hono/node-server": "1.19.13",
+    "hono": "4.12.12",
+    "openclaw@2026.4.8": {
+      "@modelcontextprotocol/sdk": {
+        "@hono/node-server": "1.19.13",
+        "hono": "4.12.12"
+      },
+      "hono": "npm:hono@4.12.12"
+    }
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,mts,cts,json,md,yml,yaml}": [
