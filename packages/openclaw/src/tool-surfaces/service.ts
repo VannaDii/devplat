@@ -90,7 +90,7 @@ import {
   VerifySonarBootstrapToolInputCodec,
 } from './codec.js';
 import {
-  createToolPayloadText,
+  formatToolPayloadText,
   sanitizeToolPayloadForDisplay,
 } from './logic.js';
 import type { OpenDiscordThreadToolInput } from './types.js';
@@ -121,7 +121,7 @@ function createTextResult(payload: unknown): {
     content: [
       {
         type: 'text',
-        text: createToolPayloadText(safePayload),
+        text: formatToolPayloadText(safePayload),
       },
     ],
     details: safePayload,

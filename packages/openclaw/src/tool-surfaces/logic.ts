@@ -32,6 +32,10 @@ export function sanitizeToolPayloadForDisplay(payload: unknown): unknown {
   );
 }
 
+export function formatToolPayloadText(payload: unknown): string {
+  return JSON.stringify(payload, null, 2);
+}
+
 export function createToolPayloadText(payload: unknown): string {
-  return JSON.stringify(sanitizeToolPayloadForDisplay(payload), null, 2);
+  return formatToolPayloadText(sanitizeToolPayloadForDisplay(payload));
 }

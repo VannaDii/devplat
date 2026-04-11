@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createToolPayloadText,
+  formatToolPayloadText,
   sanitizeToolPayloadForDisplay,
 } from './logic.js';
 
@@ -16,6 +17,21 @@ describe('tool surface logic', () => {
         createToolPayloadText(payload),
       assert: (text: string) => {
         expect(text).toContain('"ok": true');
+      },
+    },
+    {
+      name: 'formats pre-sanitized payloads without re-sanitizing',
+      inputs: {
+        payload: {
+          discord: {
+            botToken: '[redacted]',
+          },
+        },
+      },
+      mock: ({ payload }: { payload: unknown }) =>
+        formatToolPayloadText(payload),
+      assert: (text: string) => {
+        expect(text).toContain('"botToken": "[redacted]"');
       },
     },
     {
