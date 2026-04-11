@@ -44,6 +44,7 @@ function runCommand(label, command, args) {
   });
 }
 
+await runCommand('verify:node', 'npm', ['run', 'verify:node']);
 await runCommand('prepare:generated', 'npm', ['run', 'prepare:generated']);
 await runCommand('stage generated artifacts', 'git', [
   'add',

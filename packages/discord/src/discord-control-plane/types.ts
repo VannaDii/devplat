@@ -2,7 +2,10 @@ import type { LifecycleStatus } from '@vannadii/devplat-core';
 
 export type DiscordControlAction =
   | 'run-this'
+  | 'claim-this'
   | 'approve-this'
+  | 'block-this'
+  | 'complete-this'
   | 'pause-this'
   | 'resume-this'
   | 'rebase-all-dependents'

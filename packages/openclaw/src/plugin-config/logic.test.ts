@@ -14,10 +14,27 @@ describe('OpenClawPluginConfig logic', () => {
       status: 'approved',
       trace: [],
       updatedAt: '2026-04-04T00:00:00.000Z',
+      apiBaseUrl: 'https://discord.com/api/v10',
+      apiVersion: 'v10',
+      applicationId: 'application-1',
+      publicKey: 'public-key-1',
+      botToken: 'bot-token-1',
+      installScopes: ['bot', 'applications.commands'],
+      requiredPermissions: [
+        'ViewChannel',
+        'SendMessages',
+        'CreatePublicThreads',
+        'CreatePrivateThreads',
+        'SendMessagesInThreads',
+        'ManageThreads',
+        'ReadMessageHistory',
+      ],
       defaultGuildId: 'guild-1',
       specChannelId: 'specs',
       implementationChannelId: 'impl',
+      pullRequestChannelId: 'prs',
       auditChannelId: 'audit',
+      projectManagementChannelId: 'pm',
       threadBindingMode: 'inherit-parent',
       actionGates: {
         approveThis: true,
@@ -41,10 +58,27 @@ describe('OpenClawPluginConfig logic', () => {
       githubOwner: 'VannaDii',
       githubRepo: 'devplat',
       discord: {
+        apiBaseUrl: 'https://discord.com/api/v10',
+        apiVersion: 'v10',
+        applicationId: 'application-9',
+        publicKey: 'public-key-9',
+        botToken: 'bot-token-9',
+        installScopes: ['bot', 'applications.commands'],
+        requiredPermissions: [
+          'ViewChannel',
+          'SendMessages',
+          'CreatePublicThreads',
+          'CreatePrivateThreads',
+          'SendMessagesInThreads',
+          'ManageThreads',
+          'ReadMessageHistory',
+        ],
         defaultGuildId: 'guild-9',
         specChannelId: 'specs',
         implementationChannelId: 'impl',
+        pullRequestChannelId: 'prs',
         auditChannelId: 'audit',
+        projectManagementChannelId: 'pm',
         threadBindingMode: 'inherit-parent',
       },
       openclaw: {
@@ -64,6 +98,9 @@ describe('OpenClawPluginConfig logic', () => {
     });
 
     expect(config.id).toBe('@vannadii/devplat-openclaw:config');
+    expect(config.apiVersion).toBe('v10');
+    expect(config.pullRequestChannelId).toBe('prs');
+    expect(config.projectManagementChannelId).toBe('pm');
     expect(config.threadBindingMode).toBe('inherit-parent');
     expect(config.trace).toContain('openclaw:plugin-config');
   });

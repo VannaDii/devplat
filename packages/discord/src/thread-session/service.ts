@@ -10,9 +10,22 @@ import {
   describeDiscordThreadSession,
 } from './logic.js';
 import type {
+  DiscordThreadKind,
   DiscordThreadSession,
+  DiscordThreadSessionInput,
   DiscordThreadSessionResult,
 } from './types.js';
+
+const THREAD_ARTIFACT_TYPE_BY_KIND: Record<
+  DiscordThreadKind,
+  | 'discord-spec-thread'
+  | 'discord-implementation-thread'
+  | 'discord-pull-request-thread'
+> = {
+  spec: 'discord-spec-thread',
+  implementation: 'discord-implementation-thread',
+  'pull-request': 'discord-pull-request-thread',
+};
 
 export class DiscordThreadSessionService {
   public constructor(
@@ -21,7 +34,7 @@ export class DiscordThreadSessionService {
     private readonly store = new FileStoreService(),
   ) {}
 
-  public execute(input: DiscordThreadSession): DiscordThreadSession {
+  public execute(input: DiscordThreadSessionInput): DiscordThreadSession {
     return createDiscordThreadSession(input);
   }
 
@@ -30,10 +43,12 @@ export class DiscordThreadSessionService {
   }
 
   public async openThread(
-    input: DiscordThreadSession,
+    input: DiscordThreadSessionInput,
     actorId = 'discord-system',
   ): Promise<DiscordThreadSessionResult> {
     const session = this.execute(input);
+    const artifactType = THREAD_ARTIFACT_TYPE_BY_KIND[session.kind];
+
     const artifact = this.artifacts.execute<
       Pick<
         DiscordThreadSession,
@@ -44,13 +59,11 @@ export class DiscordThreadSessionService {
         | 'kind'
         | 'specId'
         | 'sliceId'
+        | 'pullRequestNumber'
       >
     >({
       id: session.artifactId,
-      artifactType:
-        session.kind === 'spec'
-          ? 'discord-spec-thread'
-          : 'discord-implementation-thread',
+      artifactType,
       version: 1,
       summary: `Discord ${session.kind} thread ${session.threadId}`,
       status: session.status,
@@ -64,6 +77,7 @@ export class DiscordThreadSessionService {
         kind: session.kind,
         specId: session.specId,
         sliceId: session.sliceId,
+        pullRequestNumber: session.pullRequestNumber,
       },
     });
 
@@ -105,6 +119,7 @@ export class DiscordThreadSessionService {
         threadId: session.threadId,
         kind: session.kind,
         artifactId: artifact.id,
+        pullRequestNumber: session.pullRequestNumber,
       },
     });
 

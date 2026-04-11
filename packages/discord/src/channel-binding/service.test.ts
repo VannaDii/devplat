@@ -59,4 +59,32 @@ describe('DiscordChannelBindingService', () => {
 
     expect(explanation).toBe('audit:guild-1:channel-audit');
   });
+
+  it('persists pull request thread bindings with deterministic routing keys', async () => {
+    const rootDirectory = await mkdtemp(join(tmpdir(), 'devplat-discord-'));
+    const store = new FileStoreService(rootDirectory);
+    const service = new DiscordChannelBindingService(
+      new TelemetryEventService(store),
+      store,
+    );
+
+    const result = await service.bindThread(
+      {
+        id: 'binding-003',
+        summary: 'Pull request binding',
+        status: 'approved',
+        trace: [],
+        updatedAt: '2026-04-04T00:00:00.000Z',
+        guildId: 'guild-1',
+        channelId: 'channel-pr',
+        kind: 'pull-request',
+        threadBindingMode: 'inherit-parent',
+      },
+      'thread-pr-1',
+      'channel-pr',
+      'operator-2',
+    );
+
+    expect(result.routingKey).toBe('guild-1:pull-request:thread-pr-1');
+  });
 });

@@ -34,6 +34,18 @@ describe('discord control request codec', () => {
             action: 'explain-failure',
             privileged: false,
           },
+          {
+            id: 'control-3',
+            summary: 'Claim the bound work item.',
+            status: 'review',
+            trace: [],
+            updatedAt: '2026-04-04T00:00:00.000Z',
+            actorId: 'operator-1',
+            threadId: 'thread-1',
+            channelId: 'channel-1',
+            action: 'claim-this',
+            privileged: false,
+          },
         ],
       },
       mock: async ({ values }) =>
@@ -49,7 +61,7 @@ describe('discord control request codec', () => {
       inputs: {
         values: [
           {
-            id: 'control-3',
+            id: 'control-4',
             summary: 'Unknown action.',
             status: 'review',
             trace: [],

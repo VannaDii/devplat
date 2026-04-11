@@ -33,6 +33,7 @@ describe('DiscordThreadSessionService', () => {
       kind: 'spec',
       specId: 'spec-1',
       sliceId: null,
+      pullRequestNumber: null,
       artifactId: 'artifact-thread-1',
     });
 
@@ -57,6 +58,7 @@ describe('DiscordThreadSessionService', () => {
       kind: 'implementation',
       specId: 'spec-1',
       sliceId: 'slice-1',
+      pullRequestNumber: null,
       artifactId: 'artifact-thread-2',
     });
 
@@ -86,6 +88,7 @@ describe('DiscordThreadSessionService', () => {
       kind: 'implementation',
       specId: 'spec-2',
       sliceId: 'slice-2',
+      pullRequestNumber: null,
       artifactId: 'artifact-thread-3',
     });
 
@@ -94,5 +97,46 @@ describe('DiscordThreadSessionService', () => {
     expect(await store.list('telemetry')).toContain(
       'telemetry-thread-session-003',
     );
+  });
+
+  it('opens pull request threads with pull-request-specific artifacts', async () => {
+    const rootDirectory = await mkdtemp(join(tmpdir(), 'devplat-discord-'));
+    const store = new FileStoreService(rootDirectory);
+    const service = new DiscordThreadSessionService(
+      new ArtifactEnvelopeService(),
+      new TelemetryEventService(store),
+      store,
+    );
+
+    const result = await service.openThread({
+      id: 'thread-session-004',
+      summary: 'Pull request thread',
+      status: 'review',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      guildId: 'guild-1',
+      channelId: 'thread-4',
+      parentChannelId: 'channel-pr',
+      threadId: 'thread-4',
+      kind: 'pull-request',
+      specId: null,
+      sliceId: null,
+      pullRequestNumber: 12,
+      artifactId: 'artifact-thread-4',
+    });
+
+    expect(result.artifactId).toBe('artifact-thread-4');
+    expect(await store.list('artifacts')).toContain('artifact-thread-4');
+
+    const artifactRecord = await store.read('artifacts', 'artifact-thread-4');
+
+    expect(artifactRecord.ok).toBe(true);
+    if (!artifactRecord.ok) {
+      return;
+    }
+
+    expect(artifactRecord.value.payload).toMatchObject({
+      artifactType: 'discord-pull-request-thread',
+    });
   });
 });

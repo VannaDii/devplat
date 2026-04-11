@@ -66,4 +66,26 @@ describe('Discord channel binding logic', () => {
       }),
     ).toThrow('guildId');
   });
+
+  it('supports pull request channel bindings for review-thread routing', () => {
+    const binding = createDiscordChannelBinding({
+      id: 'binding-004',
+      summary: 'Pull request binding',
+      status: 'approved',
+      trace: [],
+      updatedAt: '2026-04-04T00:00:00.000Z',
+      guildId: 'guild-1',
+      channelId: 'channel-pr',
+      kind: 'pull-request',
+      threadBindingMode: 'inherit-parent',
+    });
+
+    const result = createDiscordThreadBindingResult(
+      binding,
+      'thread-pr-1',
+      'channel-pr',
+    );
+
+    expect(result.routingKey).toBe('guild-1:pull-request:thread-pr-1');
+  });
 });

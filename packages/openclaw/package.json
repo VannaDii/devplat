@@ -25,8 +25,6 @@
     "test": "vitest run --config ../../vitest.package.config.mts"
   },
   "dependencies": {
-    "io-ts": "2.2.22",
-    "openclaw": "2026.4.5",
     "@vannadii/devplat-artifacts": "0.0.0",
     "@vannadii/devplat-branching": "0.0.0",
     "@vannadii/devplat-config": "0.0.0",
@@ -40,15 +38,17 @@
     "@vannadii/devplat-policy": "0.0.0",
     "@vannadii/devplat-prs": "0.0.0",
     "@vannadii/devplat-queue": "0.0.0",
-    "@vannadii/devplat-research": "0.0.0",
     "@vannadii/devplat-remediation": "0.0.0",
+    "@vannadii/devplat-research": "0.0.0",
     "@vannadii/devplat-review": "0.0.0",
     "@vannadii/devplat-slicing": "0.0.0",
     "@vannadii/devplat-sonarcloud": "0.0.0",
     "@vannadii/devplat-specs": "0.0.0",
     "@vannadii/devplat-storage": "0.0.0",
     "@vannadii/devplat-supervisor": "0.0.0",
-    "@vannadii/devplat-worktrees": "0.0.0"
+    "@vannadii/devplat-worktrees": "0.0.0",
+    "io-ts": "2.2.22",
+    "openclaw": "2026.4.8"
   },
   "openclaw": {
     "extensions": [

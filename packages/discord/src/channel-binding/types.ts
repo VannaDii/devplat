@@ -1,6 +1,10 @@
 import type { LifecycleStatus } from '@vannadii/devplat-core';
 
-export type DiscordBindingKind = 'spec' | 'implementation' | 'audit';
+export type DiscordBindingKind =
+  | 'spec'
+  | 'implementation'
+  | 'pull-request'
+  | 'audit';
 
 export interface DiscordChannelBinding {
   id: string;

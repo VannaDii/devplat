@@ -104,6 +104,33 @@
     "DiscordRuntimeConfig": {
       "type": "object",
       "properties": {
+        "apiBaseUrl": {
+          "type": "string"
+        },
+        "apiVersion": {
+          "$ref": "#/definitions/DiscordApiVersion"
+        },
+        "applicationId": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "botToken": {
+          "type": "string"
+        },
+        "installScopes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DiscordInstallScope"
+          }
+        },
+        "requiredPermissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DiscordPermission"
+          }
+        },
         "defaultGuildId": {
           "type": "string"
         },
@@ -113,7 +140,13 @@
         "implementationChannelId": {
           "type": "string"
         },
+        "pullRequestChannelId": {
+          "type": "string"
+        },
         "auditChannelId": {
+          "type": "string"
+        },
+        "projectManagementChannelId": {
           "type": "string"
         },
         "threadBindingMode": {
@@ -122,13 +155,45 @@
         }
       },
       "required": [
+        "apiBaseUrl",
+        "apiVersion",
+        "applicationId",
+        "publicKey",
+        "botToken",
+        "installScopes",
+        "requiredPermissions",
         "defaultGuildId",
         "specChannelId",
         "implementationChannelId",
+        "pullRequestChannelId",
         "auditChannelId",
+        "projectManagementChannelId",
         "threadBindingMode"
       ],
       "additionalProperties": false
+    },
+    "DiscordApiVersion": {
+      "type": "string",
+      "const": "v10"
+    },
+    "DiscordInstallScope": {
+      "type": "string",
+      "enum": [
+        "bot",
+        "applications.commands"
+      ]
+    },
+    "DiscordPermission": {
+      "type": "string",
+      "enum": [
+        "ViewChannel",
+        "SendMessages",
+        "CreatePublicThreads",
+        "CreatePrivateThreads",
+        "SendMessagesInThreads",
+        "ManageThreads",
+        "ReadMessageHistory"
+      ]
     },
     "OpenClawActionGateConfig": {
       "type": "object",

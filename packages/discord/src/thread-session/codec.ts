@@ -7,7 +7,22 @@ import type {
   DiscordThreadSessionResult,
 } from './types.js';
 
-export const DiscordThreadSessionCodec = t.type({
+const PositivePullRequestNumberCodec = new t.Type<number, number>(
+  'PositivePullRequestNumber',
+  (input): input is number =>
+    typeof input === 'number' && Number.isInteger(input) && input >= 1,
+  (input, context) =>
+    typeof input === 'number' && Number.isInteger(input) && input >= 1
+      ? t.success(input)
+      : t.failure(
+          input,
+          context,
+          'pullRequestNumber must be a positive integer.',
+        ),
+  t.identity,
+);
+
+const DiscordThreadSessionBaseCodec = t.type({
   id: t.string,
   summary: t.string,
   status: LifecycleStatusCodec,
@@ -17,11 +32,44 @@ export const DiscordThreadSessionCodec = t.type({
   channelId: t.string,
   parentChannelId: t.string,
   threadId: t.string,
-  kind: t.union([t.literal('spec'), t.literal('implementation')]),
-  specId: t.union([t.string, t.null]),
-  sliceId: t.union([t.string, t.null]),
   artifactId: t.string,
 });
+
+const DiscordThreadSpecSessionCodec = t.intersection([
+  DiscordThreadSessionBaseCodec,
+  t.type({
+    kind: t.literal('spec'),
+    specId: t.string,
+    sliceId: t.null,
+    pullRequestNumber: t.null,
+  }),
+]);
+
+const DiscordThreadImplementationSessionCodec = t.intersection([
+  DiscordThreadSessionBaseCodec,
+  t.type({
+    kind: t.literal('implementation'),
+    specId: t.union([t.string, t.null]),
+    sliceId: t.string,
+    pullRequestNumber: t.null,
+  }),
+]);
+
+const DiscordThreadPullRequestSessionCodec = t.intersection([
+  DiscordThreadSessionBaseCodec,
+  t.type({
+    kind: t.literal('pull-request'),
+    specId: t.union([t.string, t.null]),
+    sliceId: t.union([t.string, t.null]),
+    pullRequestNumber: PositivePullRequestNumberCodec,
+  }),
+]);
+
+export const DiscordThreadSessionCodec: t.Type<DiscordThreadSession> = t.union([
+  DiscordThreadSpecSessionCodec,
+  DiscordThreadImplementationSessionCodec,
+  DiscordThreadPullRequestSessionCodec,
+]);
 
 export const DiscordThreadSessionResultCodec = t.type({
   session: DiscordThreadSessionCodec,

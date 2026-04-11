@@ -1,6 +1,6 @@
 # SonarCloud Integration
 
-CI runs Vitest coverage with LCOV output at `coverage/lcov.info` and waits for the SonarCloud quality gate. Missing `SONAR_TOKEN` is a CI failure, not a silent skip.
+CI runs Vitest coverage with LCOV output at `coverage/lcov.info` and waits for the SonarCloud quality gate. Sonar analysis must never be conditionally skipped; missing or misconfigured `SONAR_TOKEN` must fail the scan path.
 
 ## Scope
 
