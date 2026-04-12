@@ -79,6 +79,12 @@ const selectedPackages =
 const selectedPackageNames = new Set(
   selectedPackages.map((workspacePackage) => workspacePackage.packageJson.name),
 );
+const selectedPackageVersions = new Map(
+  selectedPackages.map((workspacePackage) => [
+    workspacePackage.packageJson.name,
+    `${workspacePackage.packageJson.version}-${suffix}`,
+  ]),
+);
 
 const manifest = {
   outDir: resolve(rootDirectory, outDir),
@@ -100,7 +106,8 @@ for (const {
     recursive: true,
     filter: shouldCopyPath,
   });
-  packageJson.version = `${packageJson.version}-${suffix}`;
+  packageJson.version =
+    selectedPackageVersions.get(packageJson.name) ?? packageJson.version;
 
   for (const dependencyField of dependencyFields) {
     const deps = packageJson[dependencyField];
@@ -109,9 +116,12 @@ for (const {
     }
 
     for (const dependencyName of Object.keys(deps)) {
-      if (selectedPackageNames.has(dependencyName)) {
-        deps[dependencyName] = packageJson.version;
+      if (!selectedPackageNames.has(dependencyName)) {
+        continue;
       }
+
+      deps[dependencyName] =
+        selectedPackageVersions.get(dependencyName) ?? deps[dependencyName];
     }
   }
 

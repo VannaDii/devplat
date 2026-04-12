@@ -59,7 +59,7 @@ const updatedChartYaml = replaceOne(
 );
 const updatedValuesYaml = replaceOne(
   valuesYaml,
-  /^  tag:\s.*$/mu,
+  /^ {2}tag:\s.*$/mu,
   `  tag: ${JSON.stringify(imageTag)}`,
   'chart image tag',
 );
