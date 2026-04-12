@@ -42,6 +42,15 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
 
+      - name: Create DevPlat bot token
+        id: devplat_bot_token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.BOT_CLIENT_ID }}
+          owner: ${{ github.repository_owner }}
+          permission-packages: write
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
       - name: Setup Node
         uses: actions/setup-node@v6.3.0
         with:
@@ -84,12 +93,12 @@ jobs:
       - name: Publish stable packages
         run: npm run release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ steps.devplat_bot_token.outputs.token }}
 
       - name: Publish missing stable packages
         run: node scripts/publish-unpublished-packages.mjs
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ steps.devplat_bot_token.outputs.token }}
 
       - name: Upload stable coverage artifacts
         if: always()
@@ -135,6 +144,15 @@ jobs:
         with:
           ref: ${{ steps.resolved.outputs.ref }}
           fetch-depth: 0
+
+      - name: Create DevPlat bot token
+        id: devplat_bot_token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.BOT_CLIENT_ID }}
+          owner: ${{ github.repository_owner }}
+          permission-packages: write
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
 
       - name: Derive artifact metadata
         id: artifact_meta
@@ -200,7 +218,7 @@ jobs:
       - name: Publish dev packages
         shell: bash
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ steps.devplat_bot_token.outputs.token }}
         run: |
           jq -r '.packages[].dir' "${{ steps.prepare.outputs.manifest }}" | while read -r dir; do
             npm publish --tag "${{ github.event.inputs.dist-tag || 'dev' }}" "$dir"
