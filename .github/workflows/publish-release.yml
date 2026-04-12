@@ -49,7 +49,7 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
           registry-url: https://npm.pkg.github.com
-          scope: "@vannadii"
+          scope: '@vannadii'
 
       - name: Derive artifact metadata
         id: artifact_meta
@@ -83,6 +83,11 @@ jobs:
 
       - name: Publish stable packages
         run: npm run release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish missing stable packages
+        run: node scripts/publish-unpublished-packages.mjs
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -157,55 +162,42 @@ jobs:
           echo "safe_workflow_name=${safe_workflow_name}" >> "$GITHUB_OUTPUT"
           echo "short_sha=${short_sha}" >> "$GITHUB_OUTPUT"
 
-      - name: Detect release impact
-        id: detect-impact
-        if: github.event_name == 'pull_request'
-        uses: ./.github/actions/detect-release-impact
-
       - name: Setup Node
-        if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
         uses: actions/setup-node@v6.3.0
         with:
           node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: package-lock.json
           registry-url: https://npm.pkg.github.com
-          scope: "@vannadii"
+          scope: '@vannadii'
 
       - name: Install dependencies
-        if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
         run: npm ci --ignore-scripts
 
       - name: Verify Node alignment
-        if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
         run: npm run verify:node
 
       - name: Generate committed artifacts
-        if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
         run: npm run prepare:generated
 
       - name: Test with coverage
-        if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
         run: npm run test:coverage:workspace
 
       - name: Build
-        if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
         run: npm run build:workspace
 
       - name: Prepare dev publish
         id: prepare
-        if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
         shell: bash
         run: |
           short_sha="$(git rev-parse --short HEAD)"
           suffix="${{ github.event.inputs.prerelease-id || 'dev' }}.${{ github.run_number }}.${short_sha}"
-          package_list="${{ steps.detect-impact.outputs.package-list || steps.resolved.outputs.package_list }}"
+          package_list="${{ steps.resolved.outputs.package_list }}"
           node scripts/prepare-dev-publish.mjs --suffix "${suffix}" --out-dir "${RUNNER_TEMP}/dev-publish" --packages "${package_list}" > "${RUNNER_TEMP}/dev-publish-manifest.json"
           echo "suffix=${suffix}" >> "$GITHUB_OUTPUT"
           echo "manifest=${RUNNER_TEMP}/dev-publish-manifest.json" >> "$GITHUB_OUTPUT"
 
       - name: Publish dev packages
-        if: github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true'
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -215,7 +207,7 @@ jobs:
           done
 
       - name: Upload dev coverage artifacts
-        if: always() && (github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true')
+        if: always()
         uses: actions/upload-artifact@v7.0.0
         with:
           name: dev-coverage-artifacts-${{ steps.artifact_meta.outputs.safe_workflow_name }}-${{ steps.artifact_meta.outputs.safe_ref_name }}-${{ steps.artifact_meta.outputs.short_sha }}
@@ -227,7 +219,7 @@ jobs:
             coverage/**
 
       - name: Upload dev publish artifacts
-        if: always() && (github.event_name == 'workflow_dispatch' || steps.detect-impact.outputs.should-publish-dev-build == 'true')
+        if: always()
         uses: actions/upload-artifact@v7.0.0
         with:
           name: dev-publish-artifacts-${{ steps.artifact_meta.outputs.safe_workflow_name }}-${{ steps.artifact_meta.outputs.safe_ref_name }}-${{ steps.artifact_meta.outputs.short_sha }}
@@ -235,7 +227,3 @@ jobs:
           path: |
             ${{ runner.temp }}/dev-publish/**
             packages/*/dist/**
-
-      - name: Skip summary
-        if: github.event_name == 'pull_request' && steps.detect-impact.outputs.should-publish-dev-build != 'true'
-        run: echo "Skipping dev publish."
