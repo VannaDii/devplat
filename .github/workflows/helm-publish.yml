@@ -21,6 +21,15 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.pull_request.merge_commit_sha }}
 
+      - name: Create DevPlat bot token
+        id: devplat_bot_token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.BOT_CLIENT_ID }}
+          owner: ${{ github.repository_owner }}
+          permission-packages: write
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
       - name: Setup Node
         uses: actions/setup-node@v6.3.0
         with:
@@ -81,7 +90,7 @@ jobs:
           helm package "${{ steps.stage.outputs.chart_dir }}" --destination .artifacts/helm
 
       - name: Log in to GHCR OCI registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin
+        run: echo "${{ steps.devplat_bot_token.outputs.token }}" | helm registry login ghcr.io -u "${{ steps.devplat_bot_token.outputs.app-slug }}[bot]" --password-stdin
 
       - name: Publish chart
         run: |
