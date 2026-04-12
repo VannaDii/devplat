@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
 
 const rootDirectory = resolve(import.meta.dirname, '..');
@@ -23,6 +23,34 @@ function parseArgs(argv) {
   };
 }
 
+async function discoverWorkspacePackages() {
+  const packagesDirectory = resolve(rootDirectory, 'packages');
+  const entries = await readdir(packagesDirectory, { withFileTypes: true });
+  const manifests = await Promise.all(
+    entries
+      .filter((entry) => entry.isDirectory())
+      .map(async (entry) => {
+        const sourceDirectory = resolve(packagesDirectory, entry.name);
+        const packageJsonPath = resolve(sourceDirectory, 'package.json');
+        const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+
+        return {
+          dirName: entry.name,
+          packageJson,
+          sourceDirectory,
+        };
+      }),
+  );
+
+  return manifests.sort((left, right) =>
+    left.packageJson.name.localeCompare(right.packageJson.name),
+  );
+}
+
+function shouldCopyPath(sourcePath) {
+  return !sourcePath.split('/').includes('node_modules');
+}
+
 const { outDir, suffix, packages } = parseArgs(process.argv.slice(2));
 if (!outDir || !suffix) {
   throw new Error(
@@ -30,9 +58,32 @@ if (!outDir || !suffix) {
   );
 }
 
-const selectedPackages = packages.length > 0 ? packages : [];
-const packageDirectories = selectedPackages.map((packageName) =>
-  packageName.replace('@vannadii/devplat-', ''),
+const workspacePackages = await discoverWorkspacePackages();
+const packagesByName = new Map(
+  workspacePackages.map((workspacePackage) => [
+    workspacePackage.packageJson.name,
+    workspacePackage,
+  ]),
+);
+const selectedPackages =
+  packages.length > 0
+    ? packages.map((packageName) => {
+        const workspacePackage = packagesByName.get(packageName);
+        if (workspacePackage === undefined) {
+          throw new Error(`Unknown workspace package '${packageName}'.`);
+        }
+
+        return workspacePackage;
+      })
+    : workspacePackages;
+const selectedPackageNames = new Set(
+  selectedPackages.map((workspacePackage) => workspacePackage.packageJson.name),
+);
+const selectedPackageVersions = new Map(
+  selectedPackages.map((workspacePackage) => [
+    workspacePackage.packageJson.name,
+    `${workspacePackage.packageJson.version}-${suffix}`,
+  ]),
 );
 
 const manifest = {
@@ -44,18 +95,19 @@ const manifest = {
 await rm(manifest.outDir, { recursive: true, force: true });
 await mkdir(manifest.outDir, { recursive: true });
 
-for (const packageDirectoryName of packageDirectories) {
-  const sourceDirectory = resolve(
-    rootDirectory,
-    'packages',
-    packageDirectoryName,
-  );
-  const packageJsonPath = resolve(sourceDirectory, 'package.json');
-  const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+for (const {
+  packageJson: sourcePackageJson,
+  sourceDirectory,
+} of selectedPackages) {
+  const packageJson = structuredClone(sourcePackageJson);
   const targetDirectory = resolve(manifest.outDir, basename(sourceDirectory));
 
-  await cp(sourceDirectory, targetDirectory, { recursive: true });
-  packageJson.version = `${packageJson.version}-${suffix}`;
+  await cp(sourceDirectory, targetDirectory, {
+    recursive: true,
+    filter: shouldCopyPath,
+  });
+  packageJson.version =
+    selectedPackageVersions.get(packageJson.name) ?? packageJson.version;
 
   for (const dependencyField of dependencyFields) {
     const deps = packageJson[dependencyField];
@@ -64,9 +116,12 @@ for (const packageDirectoryName of packageDirectories) {
     }
 
     for (const dependencyName of Object.keys(deps)) {
-      if (selectedPackages.includes(dependencyName)) {
-        deps[dependencyName] = packageJson.version;
+      if (!selectedPackageNames.has(dependencyName)) {
+        continue;
       }
+
+      deps[dependencyName] =
+        selectedPackageVersions.get(dependencyName) ?? deps[dependencyName];
     }
   }
 

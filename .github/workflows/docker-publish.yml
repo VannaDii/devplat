@@ -13,7 +13,7 @@ permissions:
 jobs:
   publish:
     name: Publish Docker Image
-    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && startsWith(github.event.pull_request.head.ref, 'changeset-release/'))
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
     runs-on: ubuntu-latest
 
     steps:
@@ -37,13 +37,43 @@ jobs:
       - name: Resolve metadata
         id: meta_vars
         shell: bash
+        env:
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref || '' }}
         run: |
           echo "node_version=$(tr -d 'v' < .nvmrc)" >> "$GITHUB_OUTPUT"
-          echo "registry_owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+          registry_owner="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "registry_owner=${registry_owner}" >> "$GITHUB_OUTPUT"
           package_version="$(
             node --input-type=module -e "import { readFileSync } from 'node:fs'; console.log(JSON.parse(readFileSync('packages/openclaw/package.json', 'utf8')).version);"
           )"
           echo "package_version=$package_version" >> "$GITHUB_OUTPUT"
+          short_sha="$(git rev-parse --short=12 HEAD)"
+          echo "short_sha=${short_sha}" >> "$GITHUB_OUTPUT"
+
+          if [[ -n "$PR_HEAD_REF" && "$PR_HEAD_REF" == changeset-release/* ]]; then
+            image_version="$package_version"
+            image_tags=$(
+              printf '%s\n' \
+                "ghcr.io/${registry_owner}/devplat-openclaw-runtime:${package_version}" \
+                "ghcr.io/${registry_owner}/devplat-openclaw-runtime:latest" \
+                "ghcr.io/${registry_owner}/devplat-openclaw-runtime:sha-${short_sha}"
+            )
+          else
+            image_version="${package_version}-dev.${GITHUB_RUN_NUMBER}.${short_sha}"
+            image_tags=$(
+              printf '%s\n' \
+                "ghcr.io/${registry_owner}/devplat-openclaw-runtime:${image_version}" \
+                "ghcr.io/${registry_owner}/devplat-openclaw-runtime:dev" \
+                "ghcr.io/${registry_owner}/devplat-openclaw-runtime:sha-${short_sha}"
+            )
+          fi
+
+          echo "image_version=${image_version}" >> "$GITHUB_OUTPUT"
+          {
+            echo "image_tags<<EOF"
+            printf '%s\n' "$image_tags"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4.0.0
@@ -58,16 +88,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v6.0.0
-        with:
-          images: ghcr.io/${{ steps.meta_vars.outputs.registry_owner }}/devplat-openclaw-runtime
-          tags: |
-            type=raw,value=${{ steps.meta_vars.outputs.package_version }}
-            type=raw,value=latest
-            type=sha
-
       - name: Build and publish image
         uses: docker/build-push-action@v7.0.0
         with:
@@ -76,5 +96,4 @@ jobs:
           push: true
           build-args: |
             NODE_VERSION=${{ steps.meta_vars.outputs.node_version }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta_vars.outputs.image_tags }}

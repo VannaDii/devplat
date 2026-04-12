@@ -15,13 +15,14 @@ DevPlat publishes through four primary surfaces:
 - let the `release.yml` workflow create or update the release pull request
 - merge the release pull request into `main`
 - let the publish workflows release packages, container artifacts, and charts from the merged state
+- let every non-release merge to `main` publish a full prerelease workspace snapshot plus aligned dev Docker and Helm artifacts
 
 ## Publish Workflows
 
 - `release.yml`: creates or updates the Changesets release pull request
-- `publish-release.yml`: publishes packages after the release pull request merges
-- `docker-publish.yml`: publishes `devplat-openclaw-runtime` to GHCR
-- `helm-publish.yml`: packages and pushes the Helm chart to GHCR OCI
+- `publish-release.yml`: publishes stable package versions after the release pull request merges, backfills any workspace packages that have not been published yet, and publishes full dev package snapshots for non-release merges to `main`
+- `docker-publish.yml`: publishes `devplat-openclaw-runtime` to GHCR with release tags for release merges and `dev` tags for non-release merges to `main`
+- `helm-publish.yml`: packages and pushes the Helm chart to GHCR OCI with release-aligned chart and image tags for release merges and prerelease tags for non-release merges to `main`
 - `docs-deploy.yml`: builds and deploys the VitePress site through the Pages artifact flow
 
 ## Required Validation
